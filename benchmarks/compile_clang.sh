@@ -2,10 +2,10 @@
 mkdir -p build
 ARGS="-g -O3 -m64 -std=c++11 -Wall -Ihashtable -I. allocator.cpp helpers.cpp report.cpp hashtable/test_hashtable.cpp testmain.cpp"
 
-#echo stl map
-#clang++ -o build/ht_stl_map -DIMPL_STL_MAP -DIMPL_ALLOCATOR_STL $ARGS
-#echo stl unordered map
-#clang++ -o build/ht_stl_unordered_map -DIMPL_STL_UNORDERED_MAP -DIMPL_ALLOCATOR_STL $ARGS
+echo stl map
+clang++ -o build/ht_stl_map -DIMPL_STL_MAP -DIMPL_ALLOCATOR_STL $ARGS
+echo stl unordered map
+clang++ -o build/ht_stl_unordered_map -DIMPL_STL_UNORDERED_MAP -DIMPL_ALLOCATOR_STL $ARGS
 
 #echo eastl hash_map
 #clang++ -o build/ht_eastl_hash_map -DIMPL_EASTL_HASH_MAP -DIMPL_ALLOCATOR_EASTL -I../../external/EASTL/include -I../../external/EASTL/test/packages/EABase/include/Common ../../external/EASTL/source/hashtable.cpp $ARGS
@@ -20,9 +20,9 @@ ARGS="-g -O3 -m64 -std=c++11 -Wall -Ihashtable -I. allocator.cpp helpers.cpp rep
 #echo google dense_hash_map
 #clang++ -o build/ht_google_dense_hash_map -DIMPL_GOOGLE_DENSEHASHMAP -DIMPL_ALLOCATOR_STL -I../../external/sparsehash/src $ARGS
 
+#echo dmHashTable
+#clang++ -o build/ht_dm_hashtable -DIMPL_DM_HASHTABLE -DIMPL_ALLOCATOR_NEW -I../../external/dmhashtable $ARGS
+
 echo jc hashtable
 clang++ -o build/ht_jc_hashtable -DIMPL_JC_HASHTABLE_RH -DIMPL_ALLOCATOR_NEW $ARGS
-
-#echo dmHashTable
-#clang++ -o build/ht_dm_hashtable -DIMPL_DM_HASHTABLE -DIMPL_ALLOCATOR_NEW $ARGS
 

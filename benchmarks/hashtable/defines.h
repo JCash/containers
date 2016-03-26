@@ -133,7 +133,7 @@ const uint32_t		MAX_LOAD_FACTOR = 95;  // percent
 	
 #elif defined(IMPL_DM_HASHTABLE)
 	#include "../memory.h"
-	#include "../../src/dmhashtable.h"
+	#include "dmhashtable.h"
 	#define CONTAINERNAME "dmHashTable"
 	typedef dmHashTable<keey_t, value_t> hashtable_t;
 
