@@ -22,7 +22,7 @@ A fast and small C++ implementation of a hash table
 
 # Benchmarks
 
-[Benchmarks](benchmarks/benchmarks.md)
+[Benchmarks Hashtable](benchmarks/benchmarks_ht.md)
 
 # Usage
 
