@@ -2,6 +2,7 @@
 
 import os
 import sys
+import time
 import subprocess
 from collections import OrderedDict
 import plotly.plotly as py
@@ -29,7 +30,7 @@ def convert_time(t, unit):
 
 def run_test(test, report, *args):
     cmd = [test]+map(str, args)
-    print "cmd:", ' '.join(cmd)
+    print "# cmd:", ' '.join(cmd)
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     p.wait()
     d = p.stdout.read()
@@ -66,7 +67,7 @@ def run_test(test, report, *args):
             report['allocations'][testname][name].append(allocations)
             
         else: # timings
-            index       = tokens.index("avg:")
+            index       = tokens.index("min:") # avg, median, min, max
             timing      = float(tokens[index+1])
             unit        = tokens[index+2]
             timing      = convert_time(timing, unit)
@@ -190,30 +191,34 @@ def make_table_report(data):
 
 
 if __name__ == '__main__':
+    timestart = time.time()
     
-    tests = [   './build/ht_stl_map',
-                    './build/ht_stl_unordered_map',
-                    './build/ht_boost_unordered_map',
-                    './build/ht_boost_flat_map',
-                    './build/ht_google_dense_hash_map',
-                    './build/ht_google_sparse_hash_map',
-                    './build/ht_eastl_hash_map',
-                    './build/ht_dm_hashtable',
-                    './build/ht_jc_hashtable']
-    tests = [   './build/ht_boost_flat_map',
+    tests = [   #'./build/ht_stl_map',
+                './build/ht_stl_unordered_map',
+                './build/ht_boost_unordered_map',
+                './build/ht_eastl_hash_map',
+                #'./build/ht_boost_flat_map',
+                './build/ht_google_dense_hash_map',
+                #'./build/ht_google_sparse_hash_map',
+                './build/ht_dm_hashtable',
+                #'./build/ht_jc_hashtable_ch',
+                #'./build/ht_jc_hashtable_rh',
+                './build/ht_jc_hashtable',]
+                
+    testsx = [   './build/ht_boost_flat_map',
                 #'./build/ht_dm_hashtable',
                 './build/ht_jc_hashtable']
     testsx = [   './build/ht_google_dense_hash_map',
                 './build/ht_dm_hashtable',
-                './build/ht_jc_hashtable']
-    testsx = [   './build/ht_dm_hashtable',
-                './build/ht_jc_hashtable']
+                './build/ht_jc_hashtable_ch',
+                './build/ht_jc_hashtable_oa',
+                './build/ht_jc_hashtable_rh']
     
-    
-    
+    iterations = 10
+    counts = [1000, 5000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000]
     #counts = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000]
     #counts = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 10000, 20000, 30000, 40000]
-    counts = [1000, 2000, 3000, 4000, 5000, 6000]
+    #counts = [1000, 2000, 3000, 4000, 5000, 6000]
     #counts = [10000]
     #counts = [100]
     
@@ -239,14 +244,16 @@ if __name__ == '__main__':
         
     for count in counts:
         for testname in tests:
-            run_test( testname, report, count, 10 )
+            run_test( testname, report, count, iterations )
     collect_table_data(counts, report, tabledata)
 
     if './build/ht_boost_flat_map' in tests:
         tests.remove('./build/ht_boost_flat_map')
 
     if False:
+        iterations = 2
         counts = [1000000, 2000000, 3000000, 4000000, 5000000]
+        #counts = [1000000]
         #counts = [1000]
         
         report = OrderedDict()
@@ -266,7 +273,7 @@ if __name__ == '__main__':
             
         for count in counts:
             for testname in tests:
-                run_test( testname, report, count, 2 )
+                run_test( testname, report, count, iterations )
                 
         collect_table_data(counts, report, tabledata)
 
@@ -285,3 +292,5 @@ if __name__ == '__main__':
     del tabledata['allocations']
     make_table_report(tabledata)
     
+    timeend = time.time()
+    print "# Report made in %f seconds" % (timeend - timestart)

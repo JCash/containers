@@ -28,7 +28,7 @@ int main(int argc, char **argv)
 			num_elements = 1;
 	}
 	*/
-	verbose = 1;
+	verbose = 0;
 
 	report_t results;
 	test(reportformat, num_iterations, num_elements, results, verbose);

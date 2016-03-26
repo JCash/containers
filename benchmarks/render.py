@@ -32,12 +32,14 @@ def parse_log(path):
             if not line:
                 continue
             tokens = line.split(' ', 1)
-            if tokens[0][0] == '#':
+            if tokens[0] == '##':
                 test = OrderedDict()
                 test['name'] = tokens[1]
                 test['counts'] = list()
                 headers = None        
                 tests.append(test)
+                continue
+            elif tokens[0] == '#':
                 continue
             
             tokens = line.split('|')
@@ -118,9 +120,9 @@ def render_pygal(test):
     print "Wrote", outpath
 
 def random_color():
-    r = 100 + random.randint(0, 155)
-    g = 100 + random.randint(0, 155)
-    b = 100 + random.randint(0, 155)
+    r = 100 + random.randint(0, 155) % 155
+    g = 100 + random.randint(0, 155)*3 % 155
+    b = 100 + random.randint(0, 155)*7 % 155
     return '#%0x%0x%0x' % (r, g, b)
 
 def render_matplotlib(test):
@@ -141,23 +143,28 @@ def render_matplotlib(test):
     
     fig, _ = plt.subplots()
     
+    #colormap = plt.cm.gist_ncar
+    #plt.gca().set_prop_cycle([colormap(i) for i in np.linspace(0, 0.9, len(test['headers']))])
+
     bars = []
     offset = 0
-    for name, values in test['headers'].iteritems():
+    markers='ov*sxd'
+    for i, (name, values) in enumerate(test['headers'].iteritems()):
         values = [x * scale for x in values]
-        plt.bar(index + offset, values, bar_width,
+        """plt.bar(index + offset, values, bar_width,
                      alpha=opacity,
-                     color=random_color(),
+                     #color=random_color(),
                      label=name)
+        """
+        plt.plot(test['counts'], values, label=name, color=random_color(), marker=markers[i % len(markers)])
         offset += bar_width
     
     plt.xlabel('Elements')
     plt.ylabel(test['unit'])
     plt.title(test['name'])
-    plt.xticks(index + offset*0.5, map( str, test['counts']) )
-    plt.legend(loc=[0.03, 0.65])
+    plt.legend(loc=[0.03, 1.0 - len(test['headers']) * 0.068])
      
-    plt.tight_layout()
+    #plt.tight_layout()
     
     outpath = '../images/%s.png' % test['name'].lower().replace(' ', '_')
     plt.savefig(outpath)

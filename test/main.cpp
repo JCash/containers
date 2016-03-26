@@ -1,7 +1,7 @@
 #define JC_TEST_IMPLEMENTATION
 #include "jc_test.h"
 
-#include "list.cpp"
+//#include "list.cpp"
 #include "hashtable.cpp"
 
 int main(int argc, const char** argv)

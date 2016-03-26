@@ -36,9 +36,6 @@ static void Report(size_t reportformat,
 						const SMemoryStats& memstats,
 						size_t num_iterations, size_t num_elements, float multiplier)
 {
-	//jc_voronoi                  used 8371052 bytes in 497 allocations
-	//jc_voronoi                  iterations: 1    avg: 51.633 ms    median: 51.633 ms    min: 51.633 ms    max: 51.633 ms
-
 	if( reportformat == 0 )
 	{
 		printf("%s\t%s\tused %lu bytes in %lu allocations\n", container, title, memstats.peak_alloc_size, memstats.peak_num_allocs);
