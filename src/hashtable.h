@@ -8,6 +8,9 @@ ABOUT:
 	- Supports keys with % and == operators
 	- Supports values with = operator
 
+VERSION:
+	1.0 - Initial add
+
 LICENSE:
 
 	The MIT License (MIT)
