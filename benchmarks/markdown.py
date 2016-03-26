@@ -1,4 +1,5 @@
 import sys, os, subprocess
+from render import get_path_from_test_name
 
 def run(cmd):
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
@@ -21,6 +22,16 @@ def get_log(path):
                 continue
             lines.append(line)
     return lines
+    
+def get_tests(log):
+    tests = []
+    for line in log:
+        if not line.startswith('## '):
+            continue
+        tokens = line.strip().split(' ', 1)
+        tests.append(tokens[1])
+    return tests
+        
         
 if __name__ == '__main__':
 
@@ -31,4 +42,15 @@ if __name__ == '__main__':
     print ""
     print "Benchmarks run on a:", get_machine(), " ", get_cpu() 
     print ""
-    print "".join(get_log(log))
+    
+    print "<sub>"
+    lines = get_log(log)
+    print "".join(lines)
+    
+    tests = get_tests(lines)
+    print "# Images"
+    for test in tests:
+        print '<img src="%s" alt="%s" width="350"><br>' % (get_path_from_test_name(test), test)
+
+    print "</sub>"
+    

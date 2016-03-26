@@ -200,7 +200,7 @@ if __name__ == '__main__':
                 #'./build/ht_boost_flat_map',
                 './build/ht_google_dense_hash_map',
                 #'./build/ht_google_sparse_hash_map',
-                './build/ht_dm_hashtable',
+                #'./build/ht_dm_hashtable',
                 #'./build/ht_jc_hashtable_ch',
                 #'./build/ht_jc_hashtable_rh',
                 './build/ht_jc_hashtable',]

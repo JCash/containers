@@ -93,10 +93,13 @@ def render(test):
     
     data = Data(bars)
     fig = Figure(data=data, layout=layout)
-    outpath = '../images/%s.png' % test['name'].lower().replace(' ', '_')
+    outpath = get_path_from_test_name(test['name'])
     py.image.save_as(fig, outpath)
     
     print "Wrote", outpath
+    
+def get_path_from_test_name(name):
+    return '../images/%s.png' % name.lower().replace(' ', '_')
 
 def render_pygal(test):
 
