@@ -31,7 +31,11 @@ def get_tests(log):
         tokens = line.strip().split(' ', 1)
         tests.append(tokens[1])
     return tests
-        
+
+def sub(x):
+    if x[0] == '|':
+        return x
+    return '<sub>%s</sub>' %x
         
 if __name__ == '__main__':
 
@@ -42,15 +46,21 @@ if __name__ == '__main__':
     print ""
     print "Benchmarks run on a:", get_machine(), " ", get_cpu() 
     print ""
+
+    lines = get_log(log)
+
+    print "# Images"
+
+    tests = get_tests(lines)
+    for test in tests:
+        print '<img src="%s" alt="%s" width="350">' % (get_path_from_test_name(test), test)
+
+    print "# Tables"
     
     print "<sub>"
-    lines = get_log(log)
-    print "".join(lines)
+    for line in lines:
+        tokens = line.split()
+        tokens = map(sub, tokens)
+        print " ".join(tokens)
     
-    tests = get_tests(lines)
-    print "# Images"
-    for test in tests:
-        print '<img src="%s" alt="%s" width="350"><br>' % (get_path_from_test_name(test), test)
-
-    print "</sub>"
     
