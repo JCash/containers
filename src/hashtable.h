@@ -143,7 +143,7 @@ public:
 	
 	inline VALUE* Get(const KEY& key)
 	{
-		return GetInternal(key);
+		return const_cast<VALUE*>(GetInternal(key));
 	}
 	
 	inline const VALUE* Get(const KEY& key) const
@@ -297,7 +297,7 @@ private:
 	KEY         m_EmptyKey;	// A key that is guaranteed by the user to not be inserted
 	Entry*      m_Entries;
 	
-	inline VALUE* GetInternal(const KEY& key)
+	inline const VALUE* GetInternal(const KEY& key) const
 	{
 		uint32_t dist = 0;
 		uint32_t indexinit = key & m_CapacityMask;

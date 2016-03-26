@@ -78,10 +78,14 @@ static void hashtable_insert_remove(SCtx* ctx)
 		ht.Put( 1234, v );
 		
 		ASSERT_EQ( 1, ht.Size() );
-
-		const SPod* value = ht.Get(1234);
-		ASSERT_TRUE( value != 0 );
-		ASSERT_EQ( v, *value );
+        
+		SPod* value = ht.Get(1234);
+        ASSERT_TRUE( value != 0 );
+        ASSERT_EQ( v, *value );
+        
+		const SPod* constvalue = const_cast<const TestHT64&>(ht).Get(1234);
+		ASSERT_TRUE( constvalue != 0 );
+		ASSERT_EQ( v, *constvalue );
 
 		ht.Erase(1234);
 		
