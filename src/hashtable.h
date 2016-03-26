@@ -260,8 +260,8 @@ public:
 			}
 		}
 		
-		const KEY* 		GetKey() const		{ return &m_HashTable->m_Entries[m_EntryIndex].m_Key; }
-		const VALUE* 	GetValue() const	{ return &m_HashTable->m_Entries[m_EntryIndex].m_Value; }
+		const KEY*      GetKey() const		{ return &m_HashTable->m_Entries[m_EntryIndex].m_Key; }
+		const VALUE*    GetValue() const	{ return &m_HashTable->m_Entries[m_EntryIndex].m_Value; }
 		
 		inline Iterator& operator++ ()
 		{
@@ -287,15 +287,15 @@ public:
 private:
 	struct Entry
 	{
-		KEY			m_Key;		// Key is also the hash
-		VALUE		m_Value;
+		KEY     m_Key;		// Key is also the hash
+		VALUE   m_Value;
 	};
 
-	uint32_t 	m_Capacity;
-	uint32_t 	m_CapacityMask;
-	uint32_t 	m_Size;
-	KEY 		m_EmptyKey;	// A key that is guaranteed by the user to not be inserted
-	Entry*	 	m_Entries;
+	uint32_t    m_Capacity;
+	uint32_t    m_CapacityMask;
+	uint32_t    m_Size;
+	KEY         m_EmptyKey;	// A key that is guaranteed by the user to not be inserted
+	Entry*      m_Entries;
 	
 	inline VALUE* GetInternal(const KEY& key)
 	{

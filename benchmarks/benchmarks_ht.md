@@ -14,7 +14,7 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 <img src="../images/timings_adds_and_removes.png" alt="Timings adds_and_removes" width="350">
 # Tables
 <sub>
-<sub>##</sub> <sub>Timings</sub> <sub>insert_sequential</sub>
+## <sub>Timings</sub> <sub>insert_sequential</sub>
 
 | <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
 |-------:|--------------------|----------------------|-----------------|------------------------|---------------|
@@ -32,7 +32,7 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 | <sub>100000</sub> | <sub>8.7586</sub> <sub>ms</sub> | <sub>9.2398</sub> <sub>ms</sub> | <sub>7.0148</sub> <sub>ms</sub> | <sub>2.9692</sub> <sub>ms</sub> | <sub>0.2245</sub> <sub>ms</sub> |
 
 
-<sub>##</sub> <sub>Timings</sub> <sub>insert_random</sub>
+## <sub>Timings</sub> <sub>insert_random</sub>
 
 | <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
 |-------:|--------------------|----------------------|-----------------|------------------------|---------------|
@@ -50,7 +50,7 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 | <sub>100000</sub> | <sub>14.5588</sub> <sub>ms</sub> | <sub>17.1879</sub> <sub>ms</sub> | <sub>11.4229</sub> <sub>ms</sub> | <sub>6.6065</sub> <sub>ms</sub> | <sub>2.3743</sub> <sub>ms</sub> |
 
 
-<sub>##</sub> <sub>Timings</sub> <sub>get_sequential</sub>
+## <sub>Timings</sub> <sub>get_sequential</sub>
 
 | <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
 |-------:|--------------------|----------------------|-----------------|------------------------|---------------|
@@ -68,7 +68,7 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 | <sub>100000</sub> | <sub>1.7681</sub> <sub>ms</sub> | <sub>1.2458</sub> <sub>ms</sub> | <sub>1.1467</sub> <sub>ms</sub> | <sub>0.8092</sub> <sub>ms</sub> | <sub>0.1376</sub> <sub>ms</sub> |
 
 
-<sub>##</sub> <sub>Timings</sub> <sub>get_random</sub>
+## <sub>Timings</sub> <sub>get_random</sub>
 
 | <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
 |-------:|--------------------|----------------------|-----------------|------------------------|---------------|
@@ -86,7 +86,7 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 | <sub>100000</sub> | <sub>7.4481</sub> <sub>ms</sub> | <sub>5.7785</sub> <sub>ms</sub> | <sub>5.2061</sub> <sub>ms</sub> | <sub>2.6329</sub> <sub>ms</sub> | <sub>1.5942</sub> <sub>ms</sub> |
 
 
-<sub>##</sub> <sub>Timings</sub> <sub>erase_sequential</sub>
+## <sub>Timings</sub> <sub>erase_sequential</sub>
 
 | <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
 |-------:|--------------------|----------------------|-----------------|------------------------|---------------|
@@ -104,7 +104,7 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 | <sub>100000</sub> | <sub>17.9818</sub> <sub>ms</sub> | <sub>15.3503</sub> <sub>ms</sub> | <sub>11.9242</sub> <sub>ms</sub> | <sub>3.1052</sub> <sub>ms</sub> | <sub>2.3274</sub> <sub>ms</sub> |
 
 
-<sub>##</sub> <sub>Timings</sub> <sub>erase_random</sub>
+## <sub>Timings</sub> <sub>erase_random</sub>
 
 | <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
 |-------:|--------------------|----------------------|-----------------|------------------------|---------------|
@@ -122,7 +122,7 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 | <sub>100000</sub> | <sub>21.8800</sub> <sub>ms</sub> | <sub>23.1004</sub> <sub>ms</sub> | <sub>16.9499</sub> <sub>ms</sub> | <sub>2.8911</sub> <sub>ms</sub> | <sub>2.2601</sub> <sub>ms</sub> |
 
 
-<sub>##</sub> <sub>Timings</sub> <sub>iterator</sub>
+## <sub>Timings</sub> <sub>iterator</sub>
 
 | <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
 |-------:|--------------------|----------------------|-----------------|------------------------|---------------|
@@ -140,7 +140,7 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 | <sub>100000</sub> | <sub>1.8040</sub> <sub>ms</sub> | <sub>2.3138</sub> <sub>ms</sub> | <sub>1.4043</sub> <sub>ms</sub> | <sub>1.0595</sub> <sub>ms</sub> | <sub>0.3429</sub> <sub>ms</sub> |
 
 
-<sub>##</sub> <sub>Timings</sub> <sub>create_insert_sum</sub>
+## <sub>Timings</sub> <sub>create_insert_sum</sub>
 
 | <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
 |-------:|--------------------|----------------------|-----------------|------------------------|---------------|
@@ -158,7 +158,7 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 | <sub>100000</sub> | <sub>15.0190</sub> <sub>ms</sub> | <sub>15.0586</sub> <sub>ms</sub> | <sub>16.1472</sub> <sub>ms</sub> | <sub>2.0991</sub> <sub>ms</sub> | <sub>1.1236</sub> <sub>ms</sub> |
 
 
-<sub>##</sub> <sub>Timings</sub> <sub>adds_and_removes</sub>
+## <sub>Timings</sub> <sub>adds_and_removes</sub>
 
 | <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
 |-------:|--------------------|----------------------|-----------------|------------------------|---------------|

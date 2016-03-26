@@ -33,7 +33,7 @@ def get_tests(log):
     return tests
 
 def sub(x):
-    if x[0] == '|':
+    if x[0] in ('|', '#'):
         return x
     return '<sub>%s</sub>' %x
         

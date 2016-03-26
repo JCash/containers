@@ -1,20 +1,7 @@
 #include "jc_test.h"
-#include "hashtable_rh.h"
-
+#include "hashtable.h"
 
 #include <stdlib.h>
-
-//https://attractivechaos.wordpress.com/2008/10/07/another-look-at-my-old-benchmark/
-
-// tables to test
-// EASTL: hash_map.h, fixed_hash_map.h
-// STL: map, unordered_map
-// Foundation: hashmap.h, hashtable.h   https://github.com/rampantpixels/foundation_lib
-// ..//ProDBG/src/external/bgfx/3rdparty/glsl-optimizer/src/util/hash_table.h
-// ..//ProDBG/src/external/foundation_lib/foundation/hashtable.h
-// Bullet: bullet-2.82-r2704/src/LinearMath/btHashMap.h
-// boost: hash_map, flat_map
-// khash
 
 const uint32_t STRESS_COUNT = 2000000;
 const uint32_t PERCENT = 90;
@@ -57,10 +44,8 @@ static void hashtable_main_teardown(SCtx* ctx)
 static void test_setup(SCtx* ctx)
 {
 	ctx->count = 10;
-	//ctx->memorysize = TestHT64::CalcSize(1023, ctx->count);
 	ctx->memorysize = TestHT64::CalcSize(ctx->count);
 	ctx->memory = malloc( ctx->memorysize );
-	//ctx->ht.Create(1023, ctx->count, ctx->memory);
 	ctx->ht.Create(ctx->count, EMPTY_KEY, ctx->memory);
 }
 
@@ -71,12 +56,10 @@ static void test_teardown(SCtx* ctx)
 
 static void hashtable_create(SCtx* ctx)
 {
-	//TestHT64 ht(1023, ctx->count, ctx->memory);
 	TestHT64 ht(ctx->count, EMPTY_KEY, ctx->memory);
 	
 	ASSERT_TRUE( ht.Empty() );
 	
-	//ctx->ht.Create(1023, ctx->count, ctx->memory);
 	ctx->ht.Create(ctx->count, EMPTY_KEY, ctx->memory);
 
 	ASSERT_TRUE( ctx->ht.Empty() );
@@ -174,12 +157,10 @@ static void hashtable_stress(SCtx* ctx)
 	(void)ctx;
 	uint32_t count = 10;
 	uint32_t capacity = count;
-	//uint32_t memorysize = TestHT64::CalcSize(table_size, capacity);
 	uint32_t memorysize = TestHT64::CalcSize(capacity);
 	void* memory = malloc( memorysize );
 	
 	TestHT64 ht;
-	//ht.Create(table_size, capacity, memory);
 	ht.Create(capacity, EMPTY_KEY, memory);
 	
 	srand(0);
@@ -197,20 +178,14 @@ static void hashtable_stress(SCtx* ctx)
 		ht.Put( static_cast<uint64_t>(key), pod );
 		
 		comparison[key] = pod;
-		
-		//printf("PUT Key %d: %u\n", i, key);
 	}
 	ASSERT_EQ( (count*PERCENT)/100, ht.Size() );
 
 	TestHT64::Iterator testit = ht.Begin();
-	
-	//printf("\ntest\n");
-	
 	TestHT64::Iterator testitend = ht.End();
 	for( ; testit != testitend; ++testit )
 	{
 		uint64_t key = *testit.GetKey();
-		//printf("Key: %u\n", key);
 		
 		std::map<uint64_t, SPod>::const_iterator compit = comparison.find(key);
 		ASSERT_TRUE( compit != comparison.end() );
