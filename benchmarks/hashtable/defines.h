@@ -5,7 +5,7 @@
 typedef uint64_t 	keey_t;	// because iostream defines a key_t
 typedef uint64_t 	value_t;
 
-const uint32_t		MAX_LOAD_FACTOR = 95;  // percent 
+const uint32_t		MAX_LOAD_FACTOR = 95;  // percent
 
 #if defined(IMPL_STL_MAP) || defined(IMPL_STL_UNORDERED_MAP)
 	#ifdef IMPL_STL_UNORDERED_MAP
@@ -25,7 +25,7 @@ const uint32_t		MAX_LOAD_FACTOR = 95;  // percent
 	#include <EASTL/hash_map.h>
 	//typedef eastl::hash_map<keey_t, value_t, eastl::hash<keey_t>, eastl::equal_to<keey_t>, CustomAllocator::Allocator> hashtable_t;
 	typedef eastl::hash_map<keey_t, value_t> hashtable_t;
-	typedef hashtable_t::const_iterator iterator_t;	
+	typedef hashtable_t::const_iterator iterator_t;
 	#define STL_LIKE_CONTAINER 1
 
 #elif defined(IMPL_BOOST_UNORDERED_MAP)
@@ -43,14 +43,14 @@ const uint32_t		MAX_LOAD_FACTOR = 95;  // percent
 	typedef boost::container::flat_map<keey_t, value_t> hashtable_t;
 	typedef hashtable_t::const_iterator iterator_t;
 	#define STL_LIKE_CONTAINER 1
-	
+
 #elif defined(IMPL_GOOGLE_SPARSEHASHMAP)
 	#define CONTAINERNAME "google::sparse_hash_map"
 	#include <sparsehash/sparse_hash_map>
 	typedef google::sparse_hash_map<keey_t, value_t> hashtable_t;
 	typedef hashtable_t::const_iterator iterator_t;
 	#define GOOGLE_LIKE_CONTAINER 1
-	
+
 #elif defined(IMPL_GOOGLE_DENSEHASHMAP)
 	#define CONTAINERNAME "google::dense_hash_map"
 	#include <sparsehash/dense_hash_map>
@@ -58,8 +58,8 @@ const uint32_t		MAX_LOAD_FACTOR = 95;  // percent
 	//typedef google::dense_hash_map<keey_t, value_t, SPARSEHASH_HASH<keey_t>, std::equal_to<keey_t>, Allocator<std::pair<const keey_t, value_t>>> hashtable_t;
 	typedef hashtable_t::const_iterator iterator_t;
 	#define GOOGLE_LIKE_CONTAINER 1
-	
-#elif defined(IMPL_JC_HASHTABLE_CH) || defined(IMPL_JC_HASHTABLE_OA) || defined(IMPL_JC_HASHTABLE_RH)
+
+#elif defined(IMPL_JC_HASHTABLE_CH) || defined(IMPL_JC_HASHTABLE_OA) || defined(IMPL_JC_HASHTABLE)
 	#if defined(IMPL_JC_HASHTABLE_CH)
 		#include "../../src/hashtable_ch.h"
 		#define CONTAINERNAME "jc::hashtable_ch"
@@ -70,6 +70,7 @@ const uint32_t		MAX_LOAD_FACTOR = 95;  // percent
 		#include "../../src/hashtable.h"
 		#define CONTAINERNAME "jc::hashtable"
 	#endif
+
 	typedef jc::HashTable<keey_t, value_t> hashtable_t;
 	typedef hashtable_t::Iterator iterator_t;
 
@@ -106,6 +107,10 @@ const uint32_t		MAX_LOAD_FACTOR = 95;  // percent
 	{
 		return *ht.Get( key );
 	}
+    inline bool Exists(hashtable_t& ht, keey_t key)
+    {
+        return ht.Get( key ) != 0;
+    }
 	inline void Erase( hashtable_t& ht, keey_t key)
 	{
 		ht.Erase( key );
@@ -130,9 +135,8 @@ const uint32_t		MAX_LOAD_FACTOR = 95;  // percent
 	{
 		++it;
 	}
-	
+
 #elif defined(IMPL_DM_HASHTABLE)
-	#include "../memory.h"
 	#include "dmhashtable.h"
 	#define CONTAINERNAME "dmHashTable"
 	typedef dmHashTable<keey_t, value_t> hashtable_t;
@@ -163,13 +167,17 @@ const uint32_t		MAX_LOAD_FACTOR = 95;  // percent
 	{
 		return *ht.Get( key );
 	}
+    inline bool Exists(hashtable_t& ht, keey_t key)
+    {
+        return ht.Get( key ) != 0;
+    }
 	inline void Erase( hashtable_t& ht, keey_t key)
 	{
 		ht.Erase( key );
 	}
-	
+
 #endif
-	
+
 #ifdef GOOGLE_LIKE_CONTAINER
 	inline void Init( hashtable_t& ht, uint32_t numelements )
 	{
@@ -203,6 +211,10 @@ const uint32_t		MAX_LOAD_FACTOR = 95;  // percent
 	{
 		return ht[key];
 	}
+    inline bool Exists(hashtable_t& ht, keey_t key)
+    {
+        return ht.find( key ) != ht.end();
+    }
 	inline void Erase( hashtable_t& ht, keey_t key)
 	{
 		ht.erase( key );
@@ -260,6 +272,10 @@ const uint32_t		MAX_LOAD_FACTOR = 95;  // percent
 	{
 		return ht[key];
 	}
+    inline bool Exists(hashtable_t& ht, keey_t key)
+    {
+        return ht.find( key ) != ht.end();
+    }
 	inline void Erase( hashtable_t& ht, keey_t key)
 	{
 		ht.erase( key );
@@ -286,4 +302,3 @@ const uint32_t		MAX_LOAD_FACTOR = 95;  // percent
 	}
 #endif
 
-void test();

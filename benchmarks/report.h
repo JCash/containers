@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include "timeit.h"
-#include "memory.h"
+#include "allocator.h"
 
 struct STestReport
 {
@@ -20,7 +20,7 @@ struct STestReport
 
 struct SReport
 {
-	std::string containername;	
+	std::string containername;
 	std::vector<STestReport> tests;
 };
 

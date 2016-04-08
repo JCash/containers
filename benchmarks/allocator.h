@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <cstdlib>
+#include <limits>
 
 struct SMemoryStats
 {
@@ -17,10 +18,10 @@ class allocator_base
 public:
 	static void reset()
 	{
-		stats.num_allocs = 0;
-		stats.peak_num_allocs = 0;
-		stats.alloc_size = 0;
-		stats.peak_alloc_size = 0;
+	    stats.num_allocs = 0;
+	    stats.peak_num_allocs = 0;
+	    stats.alloc_size = 0;
+	    stats.peak_alloc_size = 0;
 	}
 
 	static void increase(size_t size)
@@ -37,13 +38,13 @@ public:
 		--stats.num_allocs;
 		stats.alloc_size -= size;
 	}
-	
+
 	static void* malloc(size_t size)
 	{
 		increase(size);
 		return std::malloc(size);
 	}
-	
+
 	static void free(void* p)
 	{
 		//decrease(size);
@@ -62,6 +63,23 @@ public:
 	#undef free
 	#define free(_POINTER)	allocator_base::free(_POINTER)
 #endif
+
+
+template<typename SetupFunc, typename Func, typename... FuncArgs>
+void CalcMemory(struct SMemoryStats& out, SetupFunc setupfunc, Func func, FuncArgs&... args)
+{
+    setupfunc(args...);
+
+    memset(&out, 0, sizeof(out));
+    allocator_base::reset();
+
+    func(args...);
+
+    out = allocator_base::stats;
+}
+
+
+
 
 #if defined(IMPL_ALLOCATOR_STL)
 
@@ -195,7 +213,7 @@ namespace container {
 
 struct true_type { enum { value = true }; };
 
-template<typename T> 
+template<typename T>
 class Allocator {
 public:
 	// types
@@ -206,21 +224,21 @@ public:
 	typedef const T &              const_reference;
 	typedef std::size_t            size_type;
 	typedef std::ptrdiff_t         difference_type;
-	typedef true_type 			   propagate_on_container_move_assignment;  // A integral constant of type bool with value true. 
-	typedef true_type 			   is_always_equal;                         // A integral constant of type bool with value true. 
-	
+	typedef true_type 			   propagate_on_container_move_assignment;  // A integral constant of type bool with value true.
+	typedef true_type 			   is_always_equal;                         // A integral constant of type bool with value true.
+
 	// member classes/structs/unions
-	template<typename T2> 
+	template<typename T2>
 	struct rebind {
 	// types
 		typedef Allocator< T2 > other;
 	};
-	
+
 	// construct/copy/destruct
 	Allocator() noexcept {}
 	Allocator(const Allocator &) noexcept {}
 	template<typename T2> Allocator(const Allocator< T2 > &) noexcept {}
-	
+
 	// public member functions
 	pointer allocate(size_type bytes)
 	{
@@ -233,7 +251,7 @@ public:
 		delete[] p;
 	}
 	size_type max_size() const noexcept	{ return std::numeric_limits<size_type>::max() / sizeof(T); }
-	
+
 	// friend functions
 	friend void swap(Allocator&, Allocator&) noexcept {}
 	friend bool operator==(const Allocator&, const Allocator&) noexcept { return true; }
@@ -244,7 +262,7 @@ public:
 } // boost
 
 
-#else 
+#else
 
 // use the new/delete functions
 

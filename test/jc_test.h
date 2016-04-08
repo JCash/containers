@@ -1,19 +1,19 @@
 /* jc_test.h	v0.1	Copyright 2016- Mathias Westerdahl
- * 
+ *
  * https://github.com/JCash
- * 
+ *
  * BRIEF:
- * 
+ *
  * 		A tiny single header C/C++ test framework
  * 		Made sure to compile with hardest warning/error levels possible
- * 		
- * HISTORY: 
- * 
+ *
+ * HISTORY:
+ *
  * 		0.1		Initial version
- * 		
+ *
  * USAGE:
- * 
- * 
+ *
+ *
  */
 
 #ifndef JC_TEST_H
@@ -109,12 +109,22 @@ extern jc_test_state jc_test_global_state;
     static void jc_test_global_init_##_NAME_(void) __attribute__((constructor)); \
     static void jc_test_global_init_##_NAME_(void)
 #endif
-  
+
+#if __x86_64__
 #define TEST_BEGIN(_NAME_, _FIXTURESETUP_, _FIXTURETEARDOWN_, _TESTSETUP_, _TESTTEARDOWN_)	\
 	static jc_test_fixture __jc_test_fixture_##_NAME_ = { #_NAME_, 0, \
 			JC_TEST_CAST(jc_fixture_setup_func, (_FIXTURESETUP_)), JC_TEST_CAST(jc_test_func, (_FIXTURETEARDOWN_)), \
 			JC_TEST_CAST(jc_test_func, (_TESTSETUP_)), JC_TEST_CAST(jc_test_func, (_TESTTEARDOWN_)), \
 			{0, 0, 0, 0, 0}, 0, 0, {
+#else
+
+#define TEST_BEGIN(_NAME_, _FIXTURESETUP_, _FIXTURETEARDOWN_, _TESTSETUP_, _TESTTEARDOWN_)  \
+    static jc_test_fixture __jc_test_fixture_##_NAME_ = { #_NAME_, 0, \
+            JC_TEST_CAST(jc_fixture_setup_func, (_FIXTURESETUP_)), JC_TEST_CAST(jc_test_func, (_FIXTURETEARDOWN_)), \
+            JC_TEST_CAST(jc_test_func, (_TESTSETUP_)), JC_TEST_CAST(jc_test_func, (_TESTTEARDOWN_)), \
+            {0, 0, 0, 0, 0}, 0, {
+#endif
+
 #define TEST_END(_NAME_)								{0, 0} } }; \
 														JC_TEST_INITIALIZER(_NAME_) \
 														{ \
@@ -130,7 +140,7 @@ extern void jc_test_run_all_tests(jc_test_state* state);
 extern void jc_test_assert(jc_test_fixture* fixture, bool cond, const char* msg);
 extern double jc_test_get_time();
 
-#define TEST_RUN(_NAME_)	jc_test_run_test_fixture( & __jc_test_fixture_##_NAME_ ) 
+#define TEST_RUN(_NAME_)	jc_test_run_test_fixture( & __jc_test_fixture_##_NAME_ )
 #define TEST_RUN_ALL()		jc_test_run_all_tests( &jc_test_global_state )
 
 
@@ -192,10 +202,10 @@ static void jc_test_report_time(double t) // Seconds
 void jc_test_run_test_fixture(jc_test_fixture* fixture)
 {
 	jc_test_global_state.current_fixture = fixture;
-	
+
 	fixture->stats.totaltime = 0;
 	double timestart = JC_TEST_TIMING_FUNC();
-	
+
 	JC_TEST_PRINTF("%s%s%s\n", JC_TEST_CLR_CYAN, fixture->name, JC_TEST_CLR_DEFAULT);
 	if(fixture->fixture_setup != 0)
 	{
@@ -209,10 +219,10 @@ void jc_test_run_test_fixture(jc_test_fixture* fixture)
 		fixture->fail = JC_TEST_PASS;
 
 		JC_TEST_PRINTF("    %s", test->name);
-		
+
 		double teststart = 0;
 		double testend = 0;
-		
+
 		jc_test_func fns[3] = {fixture->test_setup, test->test, fixture->test_teardown};
 		for( int i = 0; i < 3; ++i )
 		{
@@ -220,7 +230,7 @@ void jc_test_run_test_fixture(jc_test_fixture* fixture)
 			{
 				continue;
 			}
-			
+
 			if( i == 1 )
 			{
 				teststart = JC_TEST_TIMING_FUNC();
@@ -232,24 +242,24 @@ void jc_test_run_test_fixture(jc_test_fixture* fixture)
 			{
 				testend = JC_TEST_TIMING_FUNC();
 			}
-			
+
 			if( fixture->fail != JC_TEST_PASS )
 			{
 				break;
 			}
 		}
-		
+
 		JC_TEST_PRINTF("\r    %s %s (", test->name, fixture->fail == JC_TEST_PASS ? "\x1b[1;32mPASS\x1b[m" : "\x1b[1;31mFAIL\x1b[m");
 		jc_test_report_time(testend - teststart);
 		JC_TEST_PRINTF(")\n");
-		
+
 		if( fixture->fail == JC_TEST_PASS )
 			++fixture->stats.num_pass;
 		else
 			++fixture->stats.num_fail;
 		++fixture->stats.num_tests;
 
-		++count;	
+		++count;
 		test = &fixture->tests[count];
 	}
 
@@ -257,13 +267,13 @@ void jc_test_run_test_fixture(jc_test_fixture* fixture)
 	{
 		fixture->fixture_teardown(fixture->ctx);
 	}
-	
+
 	double timeend = JC_TEST_TIMING_FUNC();
 	fixture->stats.totaltime = timeend - timestart;
 	JC_TEST_PRINTF("%s took ", fixture->name);
 	jc_test_report_time(fixture->stats.totaltime);
 	JC_TEST_PRINTF("\n");
-	
+
 	jc_test_global_state.current_fixture = 0;
 }
 
@@ -275,7 +285,7 @@ void jc_test_run_all_tests(jc_test_state* state)
 		if( state->fixtures[i] )
 		{
 			jc_test_run_test_fixture( state->fixtures[i] );
-			
+
 			state->stats.num_assertions += state->fixtures[i]->stats.num_assertions;
 			state->stats.num_pass += state->fixtures[i]->stats.num_pass;
 			state->stats.num_fail += state->fixtures[i]->stats.num_fail;
@@ -283,7 +293,7 @@ void jc_test_run_all_tests(jc_test_state* state)
 			state->stats.totaltime += state->fixtures[i]->stats.totaltime;
 		}
 	}
-	
+
 	JC_TEST_PRINTF("Ran %d tests, with %d assertions in ", state->stats.num_tests, state->stats.num_assertions);
 	jc_test_report_time(state->stats.totaltime);
 	JC_TEST_PRINTF("\n");
