@@ -16,163 +16,163 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 <sub>
 ## <sub>Timings</sub> <sub>insert_sequential</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
-|-------:|--------------------|----------------------|-----------------|------------------------|---------------|
-| <sub>1000</sub> | <sub>0.0911</sub> <sub>ms</sub> | <sub>0.0914</sub> <sub>ms</sub> | <sub>0.0880</sub> <sub>ms</sub> | <sub>0.0269</sub> <sub>ms</sub> | <sub>0.0024</sub> <sub>ms</sub> |
-| <sub>5000</sub> | <sub>0.4313</sub> <sub>ms</sub> | <sub>0.3969</sub> <sub>ms</sub> | <sub>0.3359</sub> <sub>ms</sub> | <sub>0.1608</sub> <sub>ms</sub> | <sub>0.0119</sub> <sub>ms</sub> |
-| <sub>10000</sub> | <sub>0.8537</sub> <sub>ms</sub> | <sub>0.7948</sub> <sub>ms</sub> | <sub>0.6755</sub> <sub>ms</sub> | <sub>0.2752</sub> <sub>ms</sub> | <sub>0.0224</sub> <sub>ms</sub> |
-| <sub>20000</sub> | <sub>1.7101</sub> <sub>ms</sub> | <sub>1.6056</sub> <sub>ms</sub> | <sub>1.3563</sub> <sub>ms</sub> | <sub>0.5952</sub> <sub>ms</sub> | <sub>0.0489</sub> <sub>ms</sub> |
-| <sub>30000</sub> | <sub>2.7124</sub> <sub>ms</sub> | <sub>2.5198</sub> <sub>ms</sub> | <sub>1.8987</sub> <sub>ms</sub> | <sub>0.6962</sub> <sub>ms</sub> | <sub>0.0673</sub> <sub>ms</sub> |
-| <sub>40000</sub> | <sub>3.4682</sub> <sub>ms</sub> | <sub>3.2516</sub> <sub>ms</sub> | <sub>2.8356</sub> <sub>ms</sub> | <sub>1.1602</sub> <sub>ms</sub> | <sub>0.0977</sub> <sub>ms</sub> |
-| <sub>50000</sub> | <sub>4.2686</sub> <sub>ms</sub> | <sub>4.4724</sub> <sub>ms</sub> | <sub>3.3971</sub> <sub>ms</sub> | <sub>1.3210</sub> <sub>ms</sub> | <sub>0.1121</sub> <sub>ms</sub> |
-| <sub>60000</sub> | <sub>5.5923</sub> <sub>ms</sub> | <sub>5.1193</sub> <sub>ms</sub> | <sub>3.9619</sub> <sub>ms</sub> | <sub>1.4392</sub> <sub>ms</sub> | <sub>0.1345</sub> <sub>ms</sub> |
-| <sub>70000</sub> | <sub>6.3390</sub> <sub>ms</sub> | <sub>5.9599</sub> <sub>ms</sub> | <sub>5.2843</sub> <sub>ms</sub> | <sub>2.4889</sub> <sub>ms</sub> | <sub>0.1571</sub> <sub>ms</sub> |
-| <sub>80000</sub> | <sub>7.0612</sub> <sub>ms</sub> | <sub>6.7637</sub> <sub>ms</sub> | <sub>5.9741</sub> <sub>ms</sub> | <sub>2.6404</sub> <sub>ms</sub> | <sub>0.1794</sub> <sub>ms</sub> |
-| <sub>90000</sub> | <sub>7.9096</sub> <sub>ms</sub> | <sub>7.4041</sub> <sub>ms</sub> | <sub>6.4550</sub> <sub>ms</sub> | <sub>2.8086</sub> <sub>ms</sub> | <sub>0.2018</sub> <sub>ms</sub> |
-| <sub>100000</sub> | <sub>8.7586</sub> <sub>ms</sub> | <sub>9.2398</sub> <sub>ms</sub> | <sub>7.0148</sub> <sub>ms</sub> | <sub>2.9692</sub> <sub>ms</sub> | <sub>0.2245</sub> <sub>ms</sub> |
+| <sub>counts</sub> | <sub>std::map</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
+|-------:|------------|--------------------|----------------------|-----------------|------------------------|---------------|
+| <sub>1000</sub> | <sub>0.0802</sub> <sub>ms</sub> | <sub>0.0725</sub> <sub>ms</sub> | <sub>0.0691</sub> <sub>ms</sub> | <sub>0.0554</sub> <sub>ms</sub> | <sub>0.0240</sub> <sub>ms</sub> | <sub>0.0028</sub> <sub>ms</sub> |
+| <sub>5000</sub> | <sub>0.4258</sub> <sub>ms</sub> | <sub>0.3602</sub> <sub>ms</sub> | <sub>0.3419</sub> <sub>ms</sub> | <sub>0.2779</sub> <sub>ms</sub> | <sub>0.1362</sub> <sub>ms</sub> | <sub>0.0112</sub> <sub>ms</sub> |
+| <sub>10000</sub> | <sub>0.9642</sub> <sub>ms</sub> | <sub>0.7154</sub> <sub>ms</sub> | <sub>0.6834</sub> <sub>ms</sub> | <sub>0.5384</sub> <sub>ms</sub> | <sub>0.2709</sub> <sub>ms</sub> | <sub>0.0224</sub> <sub>ms</sub> |
+| <sub>20000</sub> | <sub>2.3658</sub> <sub>ms</sub> | <sub>1.4269</sub> <sub>ms</sub> | <sub>1.3671</sub> <sub>ms</sub> | <sub>1.1200</sub> <sub>ms</sub> | <sub>0.5878</sub> <sub>ms</sub> | <sub>0.0448</sub> <sub>ms</sub> |
+| <sub>30000</sub> | <sub>3.8692</sub> <sub>ms</sub> | <sub>2.1779</sub> <sub>ms</sub> | <sub>2.0989</sub> <sub>ms</sub> | <sub>1.6287</sub> <sub>ms</sub> | <sub>0.6823</sub> <sub>ms</sub> | <sub>0.0672</sub> <sub>ms</sub> |
+| <sub>40000</sub> | <sub>5.2461</sub> <sub>ms</sub> | <sub>2.9335</sub> <sub>ms</sub> | <sub>2.7702</sub> <sub>ms</sub> | <sub>2.2794</sub> <sub>ms</sub> | <sub>1.2308</sub> <sub>ms</sub> | <sub>0.0896</sub> <sub>ms</sub> |
+| <sub>50000</sub> | <sub>6.5149</sub> <sub>ms</sub> | <sub>3.6961</sub> <sub>ms</sub> | <sub>3.5981</sub> <sub>ms</sub> | <sub>2.8482</sub> <sub>ms</sub> | <sub>1.3850</sub> <sub>ms</sub> | <sub>0.1118</sub> <sub>ms</sub> |
+| <sub>60000</sub> | <sub>8.1726</sub> <sub>ms</sub> | <sub>4.4058</sub> <sub>ms</sub> | <sub>4.2694</sub> <sub>ms</sub> | <sub>3.3582</sub> <sub>ms</sub> | <sub>1.5424</sub> <sub>ms</sub> | <sub>0.1347</sub> <sub>ms</sub> |
+| <sub>70000</sub> | <sub>9.5657</sub> <sub>ms</sub> | <sub>5.2059</sub> <sub>ms</sub> | <sub>5.0046</sub> <sub>ms</sub> | <sub>4.0261</sub> <sub>ms</sub> | <sub>2.7523</sub> <sub>ms</sub> | <sub>0.1567</sub> <sub>ms</sub> |
+| <sub>80000</sub> | <sub>11.4113</sub> <sub>ms</sub> | <sub>6.0114</sub> <sub>ms</sub> | <sub>5.6983</sub> <sub>ms</sub> | <sub>5.0212</sub> <sub>ms</sub> | <sub>3.0386</sub> <sub>ms</sub> | <sub>0.1791</sub> <sub>ms</sub> |
+| <sub>90000</sub> | <sub>12.8696</sub> <sub>ms</sub> | <sub>6.7499</sub> <sub>ms</sub> | <sub>6.4219</sub> <sub>ms</sub> | <sub>5.1815</sub> <sub>ms</sub> | <sub>3.1889</sub> <sub>ms</sub> | <sub>0.2018</sub> <sub>ms</sub> |
+| <sub>100000</sub> | <sub>13.4134</sub> <sub>ms</sub> | <sub>7.9089</sub> <sub>ms</sub> | <sub>7.5581</sub> <sub>ms</sub> | <sub>5.9316</sub> <sub>ms</sub> | <sub>3.1635</sub> <sub>ms</sub> | <sub>0.2242</sub> <sub>ms</sub> |
 
 
 ## <sub>Timings</sub> <sub>insert_random</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
-|-------:|--------------------|----------------------|-----------------|------------------------|---------------|
-| <sub>1000</sub> | <sub>0.1226</sub> <sub>ms</sub> | <sub>0.1156</sub> <sub>ms</sub> | <sub>0.0944</sub> <sub>ms</sub> | <sub>0.0425</sub> <sub>ms</sub> | <sub>0.0101</sub> <sub>ms</sub> |
-| <sub>5000</sub> | <sub>0.6624</sub> <sub>ms</sub> | <sub>0.5227</sub> <sub>ms</sub> | <sub>0.4602</sub> <sub>ms</sub> | <sub>0.2523</sub> <sub>ms</sub> | <sub>0.0749</sub> <sub>ms</sub> |
-| <sub>10000</sub> | <sub>1.2309</sub> <sub>ms</sub> | <sub>1.0573</sub> <sub>ms</sub> | <sub>0.9358</sub> <sub>ms</sub> | <sub>0.5095</sub> <sub>ms</sub> | <sub>0.1505</sub> <sub>ms</sub> |
-| <sub>20000</sub> | <sub>2.5461</sub> <sub>ms</sub> | <sub>2.2666</sub> <sub>ms</sub> | <sub>1.9491</sub> <sub>ms</sub> | <sub>1.0327</sub> <sub>ms</sub> | <sub>0.3628</sub> <sub>ms</sub> |
-| <sub>30000</sub> | <sub>4.1463</sub> <sub>ms</sub> | <sub>3.6921</sub> <sub>ms</sub> | <sub>2.7542</sub> <sub>ms</sub> | <sub>1.3309</sub> <sub>ms</sub> | <sub>1.2404</sub> <sub>ms</sub> |
-| <sub>40000</sub> | <sub>5.3609</sub> <sub>ms</sub> | <sub>4.8067</sub> <sub>ms</sub> | <sub>4.1350</sub> <sub>ms</sub> | <sub>2.1969</sub> <sub>ms</sub> | <sub>0.7045</sub> <sub>ms</sub> |
-| <sub>50000</sub> | <sub>6.5768</sub> <sub>ms</sub> | <sub>6.7427</sub> <sub>ms</sub> | <sub>4.9438</sub> <sub>ms</sub> | <sub>2.5015</sub> <sub>ms</sub> | <sub>1.1614</sub> <sub>ms</sub> |
-| <sub>60000</sub> | <sub>9.1941</sub> <sub>ms</sub> | <sub>8.2169</sub> <sub>ms</sub> | <sub>5.7917</sub> <sub>ms</sub> | <sub>2.8805</sub> <sub>ms</sub> | <sub>2.5893</sub> <sub>ms</sub> |
-| <sub>70000</sub> | <sub>10.1365</sub> <sub>ms</sub> | <sub>8.8176</sub> <sub>ms</sub> | <sub>8.4188</sub> <sub>ms</sub> | <sub>5.2097</sub> <sub>ms</sub> | <sub>1.1229</sub> <sub>ms</sub> |
-| <sub>80000</sub> | <sub>12.1436</sub> <sub>ms</sub> | <sub>10.3555</sub> <sub>ms</sub> | <sub>9.4640</sub> <sub>ms</sub> | <sub>5.4117</sub> <sub>ms</sub> | <sub>1.4487</sub> <sub>ms</sub> |
-| <sub>90000</sub> | <sub>13.7588</sub> <sub>ms</sub> | <sub>12.3867</sub> <sub>ms</sub> | <sub>10.4999</sub> <sub>ms</sub> | <sub>5.9058</sub> <sub>ms</sub> | <sub>1.8458</sub> <sub>ms</sub> |
-| <sub>100000</sub> | <sub>14.5588</sub> <sub>ms</sub> | <sub>17.1879</sub> <sub>ms</sub> | <sub>11.4229</sub> <sub>ms</sub> | <sub>6.6065</sub> <sub>ms</sub> | <sub>2.3743</sub> <sub>ms</sub> |
+| <sub>counts</sub> | <sub>std::map</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
+|-------:|------------|--------------------|----------------------|-----------------|------------------------|---------------|
+| <sub>1000</sub> | <sub>0.1073</sub> <sub>ms</sub> | <sub>0.0853</sub> <sub>ms</sub> | <sub>0.0770</sub> <sub>ms</sub> | <sub>0.0623</sub> <sub>ms</sub> | <sub>0.0337</sub> <sub>ms</sub> | <sub>0.0065</sub> <sub>ms</sub> |
+| <sub>5000</sub> | <sub>0.6459</sub> <sub>ms</sub> | <sub>0.4472</sub> <sub>ms</sub> | <sub>0.3969</sub> <sub>ms</sub> | <sub>0.3170</sub> <sub>ms</sub> | <sub>0.2351</sub> <sub>ms</sub> | <sub>0.0605</sub> <sub>ms</sub> |
+| <sub>10000</sub> | <sub>1.4282</sub> <sub>ms</sub> | <sub>0.9095</sub> <sub>ms</sub> | <sub>0.8194</sub> <sub>ms</sub> | <sub>0.6378</sub> <sub>ms</sub> | <sub>0.4798</sub> <sub>ms</sub> | <sub>0.1271</sub> <sub>ms</sub> |
+| <sub>20000</sub> | <sub>3.1872</sub> <sub>ms</sub> | <sub>1.8859</sub> <sub>ms</sub> | <sub>1.6903</sub> <sub>ms</sub> | <sub>1.3735</sub> <sub>ms</sub> | <sub>0.9772</sub> <sub>ms</sub> | <sub>0.2768</sub> <sub>ms</sub> |
+| <sub>30000</sub> | <sub>5.2263</sub> <sub>ms</sub> | <sub>2.8771</sub> <sub>ms</sub> | <sub>2.5930</sub> <sub>ms</sub> | <sub>2.1931</sub> <sub>ms</sub> | <sub>1.2346</sub> <sub>ms</sub> | <sub>0.3219</sub> <sub>ms</sub> |
+| <sub>40000</sub> | <sub>7.8693</sub> <sub>ms</sub> | <sub>4.1313</sub> <sub>ms</sub> | <sub>3.6080</sub> <sub>ms</sub> | <sub>3.2183</sub> <sub>ms</sub> | <sub>2.1615</sub> <sub>ms</sub> | <sub>0.5854</sub> <sub>ms</sub> |
+| <sub>50000</sub> | <sub>10.2801</sub> <sub>ms</sub> | <sub>5.5513</sub> <sub>ms</sub> | <sub>4.3400</sub> <sub>ms</sub> | <sub>3.9166</sub> <sub>ms</sub> | <sub>2.4408</sub> <sub>ms</sub> | <sub>1.0116</sub> <sub>ms</sub> |
+| <sub>60000</sub> | <sub>12.0523</sub> <sub>ms</sub> | <sub>6.7824</sub> <sub>ms</sub> | <sub>5.3988</sub> <sub>ms</sub> | <sub>4.8589</sub> <sub>ms</sub> | <sub>2.8044</sub> <sub>ms</sub> | <sub>0.6870</sub> <sub>ms</sub> |
+| <sub>70000</sub> | <sub>16.5229</sub> <sub>ms</sub> | <sub>8.3509</sub> <sub>ms</sub> | <sub>6.6463</sub> <sub>ms</sub> | <sub>6.3820</sub> <sub>ms</sub> | <sub>4.8736</sub> <sub>ms</sub> | <sub>0.9140</sub> <sub>ms</sub> |
+| <sub>80000</sub> | <sub>17.5495</sub> <sub>ms</sub> | <sub>9.1927</sub> <sub>ms</sub> | <sub>7.7960</sub> <sub>ms</sub> | <sub>7.7430</sub> <sub>ms</sub> | <sub>5.1202</sub> <sub>ms</sub> | <sub>1.2110</sub> <sub>ms</sub> |
+| <sub>90000</sub> | <sub>22.3379</sub> <sub>ms</sub> | <sub>10.9646</sub> <sub>ms</sub> | <sub>9.0820</sub> <sub>ms</sub> | <sub>8.5420</sub> <sub>ms</sub> | <sub>6.0926</sub> <sub>ms</sub> | <sub>1.6460</sub> <sub>ms</sub> |
+| <sub>100000</sub> | <sub>27.5763</sub> <sub>ms</sub> | <sub>14.3785</sub> <sub>ms</sub> | <sub>11.6984</sub> <sub>ms</sub> | <sub>10.0405</sub> <sub>ms</sub> | <sub>7.2054</sub> <sub>ms</sub> | <sub>2.1542</sub> <sub>ms</sub> |
 
 
 ## <sub>Timings</sub> <sub>get_sequential</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
-|-------:|--------------------|----------------------|-----------------|------------------------|---------------|
-| <sub>1000</sub> | <sub>0.0174</sub> <sub>ms</sub> | <sub>0.0134</sub> <sub>ms</sub> | <sub>0.0122</sub> <sub>ms</sub> | <sub>0.0084</sub> <sub>ms</sub> | <sub>0.0013</sub> <sub>ms</sub> |
-| <sub>5000</sub> | <sub>0.0878</sub> <sub>ms</sub> | <sub>0.0615</sub> <sub>ms</sub> | <sub>0.0563</sub> <sub>ms</sub> | <sub>0.0392</sub> <sub>ms</sub> | <sub>0.0060</sub> <sub>ms</sub> |
-| <sub>10000</sub> | <sub>0.1747</sub> <sub>ms</sub> | <sub>0.1232</sub> <sub>ms</sub> | <sub>0.1127</sub> <sub>ms</sub> | <sub>0.1003</sub> <sub>ms</sub> | <sub>0.0130</sub> <sub>ms</sub> |
-| <sub>20000</sub> | <sub>0.3473</sub> <sub>ms</sub> | <sub>0.2462</sub> <sub>ms</sub> | <sub>0.2249</sub> <sub>ms</sub> | <sub>0.1615</sub> <sub>ms</sub> | <sub>0.0309</sub> <sub>ms</sub> |
-| <sub>30000</sub> | <sub>0.5270</sub> <sub>ms</sub> | <sub>0.3680</sub> <sub>ms</sub> | <sub>0.3400</sub> <sub>ms</sub> | <sub>0.2644</sub> <sub>ms</sub> | <sub>0.0372</sub> <sub>ms</sub> |
-| <sub>40000</sub> | <sub>0.7034</sub> <sub>ms</sub> | <sub>0.4933</sub> <sub>ms</sub> | <sub>0.4506</sub> <sub>ms</sub> | <sub>0.3236</sub> <sub>ms</sub> | <sub>0.0612</sub> <sub>ms</sub> |
-| <sub>50000</sub> | <sub>0.8788</sub> <sub>ms</sub> | <sub>0.6157</sub> <sub>ms</sub> | <sub>0.5655</sub> <sub>ms</sub> | <sub>0.4042</sub> <sub>ms</sub> | <sub>0.0615</sub> <sub>ms</sub> |
-| <sub>60000</sub> | <sub>1.0556</sub> <sub>ms</sub> | <sub>0.7394</sub> <sub>ms</sub> | <sub>0.6822</sub> <sub>ms</sub> | <sub>0.4695</sub> <sub>ms</sub> | <sub>0.0803</sub> <sub>ms</sub> |
-| <sub>70000</sub> | <sub>1.2259</sub> <sub>ms</sub> | <sub>0.8674</sub> <sub>ms</sub> | <sub>0.7901</sub> <sub>ms</sub> | <sub>0.5680</sub> <sub>ms</sub> | <sub>0.0863</sub> <sub>ms</sub> |
-| <sub>80000</sub> | <sub>1.4111</sub> <sub>ms</sub> | <sub>0.9915</sub> <sub>ms</sub> | <sub>0.9080</sub> <sub>ms</sub> | <sub>0.6272</sub> <sub>ms</sub> | <sub>0.0987</sub> <sub>ms</sub> |
-| <sub>90000</sub> | <sub>1.5936</sub> <sub>ms</sub> | <sub>1.1236</sub> <sub>ms</sub> | <sub>1.0259</sub> <sub>ms</sub> | <sub>0.7032</sub> <sub>ms</sub> | <sub>0.1113</sub> <sub>ms</sub> |
-| <sub>100000</sub> | <sub>1.7681</sub> <sub>ms</sub> | <sub>1.2458</sub> <sub>ms</sub> | <sub>1.1467</sub> <sub>ms</sub> | <sub>0.8092</sub> <sub>ms</sub> | <sub>0.1376</sub> <sub>ms</sub> |
+| <sub>counts</sub> | <sub>std::map</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
+|-------:|-----------|--------------------|----------------------|-----------------|------------------------|---------------|
+| <sub>1000</sub> | <sub>0.0323</sub> <sub>ms</sub> | <sub>0.0214</sub> <sub>ms</sub> | <sub>0.0127</sub> <sub>ms</sub> | <sub>0.0112</sub> <sub>ms</sub> | <sub>0.0083</sub> <sub>ms</sub> | <sub>0.0015</sub> <sub>ms</sub> |
+| <sub>5000</sub> | <sub>0.2085</sub> <sub>ms</sub> | <sub>0.0871</sub> <sub>ms</sub> | <sub>0.0631</sub> <sub>ms</sub> | <sub>0.0564</sub> <sub>ms</sub> | <sub>0.0636</sub> <sub>ms</sub> | <sub>0.0061</sub> <sub>ms</sub> |
+| <sub>10000</sub> | <sub>0.3953</sub> <sub>ms</sub> | <sub>0.1751</sub> <sub>ms</sub> | <sub>0.1259</sub> <sub>ms</sub> | <sub>0.1130</sub> <sub>ms</sub> | <sub>0.0810</sub> <sub>ms</sub> | <sub>0.0124</sub> <sub>ms</sub> |
+| <sub>20000</sub> | <sub>0.8248</sub> <sub>ms</sub> | <sub>0.3525</sub> <sub>ms</sub> | <sub>0.2536</sub> <sub>ms</sub> | <sub>0.2251</sub> <sub>ms</sub> | <sub>0.1671</sub> <sub>ms</sub> | <sub>0.0312</sub> <sub>ms</sub> |
+| <sub>30000</sub> | <sub>1.2751</sub> <sub>ms</sub> | <sub>0.5192</sub> <sub>ms</sub> | <sub>0.4029</sub> <sub>ms</sub> | <sub>0.3398</sub> <sub>ms</sub> | <sub>0.2506</sub> <sub>ms</sub> | <sub>0.0373</sub> <sub>ms</sub> |
+| <sub>40000</sub> | <sub>1.8561</sub> <sub>ms</sub> | <sub>0.6988</sub> <sub>ms</sub> | <sub>0.4972</sub> <sub>ms</sub> | <sub>0.4505</sub> <sub>ms</sub> | <sub>0.3346</sub> <sub>ms</sub> | <sub>0.0495</sub> <sub>ms</sub> |
+| <sub>50000</sub> | <sub>2.2344</sub> <sub>ms</sub> | <sub>0.8808</sub> <sub>ms</sub> | <sub>0.6345</sub> <sub>ms</sub> | <sub>0.5669</sub> <sub>ms</sub> | <sub>0.4182</sub> <sub>ms</sub> | <sub>0.0765</sub> <sub>ms</sub> |
+| <sub>60000</sub> | <sub>2.9878</sub> <sub>ms</sub> | <sub>1.0552</sub> <sub>ms</sub> | <sub>0.7617</sub> <sub>ms</sub> | <sub>0.6864</sub> <sub>ms</sub> | <sub>0.4974</sub> <sub>ms</sub> | <sub>0.0742</sub> <sub>ms</sub> |
+| <sub>70000</sub> | <sub>3.3442</sub> <sub>ms</sub> | <sub>1.2269</sub> <sub>ms</sub> | <sub>0.8899</sub> <sub>ms</sub> | <sub>0.7952</sub> <sub>ms</sub> | <sub>0.5869</sub> <sub>ms</sub> | <sub>0.0867</sub> <sub>ms</sub> |
+| <sub>80000</sub> | <sub>3.9225</sub> <sub>ms</sub> | <sub>1.4087</sub> <sub>ms</sub> | <sub>1.0217</sub> <sub>ms</sub> | <sub>0.9230</sub> <sub>ms</sub> | <sub>0.6480</sub> <sub>ms</sub> | <sub>0.0994</sub> <sub>ms</sub> |
+| <sub>90000</sub> | <sub>4.4290</sub> <sub>ms</sub> | <sub>1.5867</sub> <sub>ms</sub> | <sub>1.1506</sub> <sub>ms</sub> | <sub>1.0384</sub> <sub>ms</sub> | <sub>0.7883</sub> <sub>ms</sub> | <sub>0.1131</sub> <sub>ms</sub> |
+| <sub>100000</sub> | <sub>5.2623</sub> <sub>ms</sub> | <sub>1.8398</sub> <sub>ms</sub> | <sub>1.2809</sub> <sub>ms</sub> | <sub>1.2003</sub> <sub>ms</sub> | <sub>0.8396</sub> <sub>ms</sub> | <sub>0.1317</sub> <sub>ms</sub> |
 
 
 ## <sub>Timings</sub> <sub>get_random</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
-|-------:|--------------------|----------------------|-----------------|------------------------|---------------|
-| <sub>1000</sub> | <sub>0.0236</sub> <sub>ms</sub> | <sub>0.0195</sub> <sub>ms</sub> | <sub>0.0160</sub> <sub>ms</sub> | <sub>0.0124</sub> <sub>ms</sub> | <sub>0.0058</sub> <sub>ms</sub> |
-| <sub>5000</sub> | <sub>0.1376</sub> <sub>ms</sub> | <sub>0.1147</sub> <sub>ms</sub> | <sub>0.0881</sub> <sub>ms</sub> | <sub>0.0520</sub> <sub>ms</sub> | <sub>0.0416</sub> <sub>ms</sub> |
-| <sub>10000</sub> | <sub>0.3123</sub> <sub>ms</sub> | <sub>0.2636</sub> <sub>ms</sub> | <sub>0.1992</sub> <sub>ms</sub> | <sub>0.1330</sub> <sub>ms</sub> | <sub>0.0850</sub> <sub>ms</sub> |
-| <sub>20000</sub> | <sub>0.6780</sub> <sub>ms</sub> | <sub>0.5707</sub> <sub>ms</sub> | <sub>0.4108</sub> <sub>ms</sub> | <sub>0.2198</sub> <sub>ms</sub> | <sub>0.1865</sub> <sub>ms</sub> |
-| <sub>30000</sub> | <sub>0.9832</sub> <sub>ms</sub> | <sub>0.8007</sub> <sub>ms</sub> | <sub>0.7320</sub> <sub>ms</sub> | <sub>0.4012</sub> <sub>ms</sub> | <sub>0.5124</sub> <sub>ms</sub> |
-| <sub>40000</sub> | <sub>1.4257</sub> <sub>ms</sub> | <sub>1.1956</sub> <sub>ms</sub> | <sub>0.8668</sub> <sub>ms</sub> | <sub>0.5237</sub> <sub>ms</sub> | <sub>0.3870</sub> <sub>ms</sub> |
-| <sub>50000</sub> | <sub>1.9464</sub> <sub>ms</sub> | <sub>1.4823</sub> <sub>ms</sub> | <sub>1.2629</sub> <sub>ms</sub> | <sub>0.7642</sub> <sub>ms</sub> | <sub>0.7591</sub> <sub>ms</sub> |
-| <sub>60000</sub> | <sub>2.3951</sub> <sub>ms</sub> | <sub>2.0492</sub> <sub>ms</sub> | <sub>1.9207</sub> <sub>ms</sub> | <sub>0.9234</sub> <sub>ms</sub> | <sub>1.1135</sub> <sub>ms</sub> |
-| <sub>70000</sub> | <sub>3.3078</sub> <sub>ms</sub> | <sub>2.7856</sub> <sub>ms</sub> | <sub>2.6562</sub> <sub>ms</sub> | <sub>1.7146</sub> <sub>ms</sub> | <sub>0.5577</sub> <sub>ms</sub> |
-| <sub>80000</sub> | <sub>4.1680</sub> <sub>ms</sub> | <sub>3.6216</sub> <sub>ms</sub> | <sub>3.0702</sub> <sub>ms</sub> | <sub>1.9598</sub> <sub>ms</sub> | <sub>0.7960</sub> <sub>ms</sub> |
-| <sub>90000</sub> | <sub>5.5843</sub> <sub>ms</sub> | <sub>5.3055</sub> <sub>ms</sub> | <sub>4.2287</sub> <sub>ms</sub> | <sub>2.2099</sub> <sub>ms</sub> | <sub>1.1508</sub> <sub>ms</sub> |
-| <sub>100000</sub> | <sub>7.4481</sub> <sub>ms</sub> | <sub>5.7785</sub> <sub>ms</sub> | <sub>5.2061</sub> <sub>ms</sub> | <sub>2.6329</sub> <sub>ms</sub> | <sub>1.5942</sub> <sub>ms</sub> |
+| <sub>counts</sub> | <sub>std::map</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
+|-------:|------------|--------------------|----------------------|-----------------|------------------------|---------------|
+| <sub>1000</sub> | <sub>0.0492</sub> <sub>ms</sub> | <sub>0.0295</sub> <sub>ms</sub> | <sub>0.0194</sub> <sub>ms</sub> | <sub>0.0166</sub> <sub>ms</sub> | <sub>0.0119</sub> <sub>ms</sub> | <sub>0.0068</sub> <sub>ms</sub> |
+| <sub>5000</sub> | <sub>0.3374</sub> <sub>ms</sub> | <sub>0.1361</sub> <sub>ms</sub> | <sub>0.1164</sub> <sub>ms</sub> | <sub>0.0881</sub> <sub>ms</sub> | <sub>0.0650</sub> <sub>ms</sub> | <sub>0.0417</sub> <sub>ms</sub> |
+| <sub>10000</sub> | <sub>0.8408</sub> <sub>ms</sub> | <sub>0.3122</sub> <sub>ms</sub> | <sub>0.2637</sub> <sub>ms</sub> | <sub>0.1965</sub> <sub>ms</sub> | <sub>0.1090</sub> <sub>ms</sub> | <sub>0.0855</sub> <sub>ms</sub> |
+| <sub>20000</sub> | <sub>2.0404</sub> <sub>ms</sub> | <sub>0.6809</sub> <sub>ms</sub> | <sub>0.7154</sub> <sub>ms</sub> | <sub>0.4161</sub> <sub>ms</sub> | <sub>0.2242</sub> <sub>ms</sub> | <sub>0.1865</sub> <sub>ms</sub> |
+| <sub>30000</sub> | <sub>3.4944</sub> <sub>ms</sub> | <sub>0.9794</sub> <sub>ms</sub> | <sub>1.1968</sub> <sub>ms</sub> | <sub>0.7414</sub> <sub>ms</sub> | <sub>0.4089</sub> <sub>ms</sub> | <sub>0.1854</sub> <sub>ms</sub> |
+| <sub>40000</sub> | <sub>4.8786</sub> <sub>ms</sub> | <sub>1.4308</sub> <sub>ms</sub> | <sub>1.1993</sub> <sub>ms</sub> | <sub>0.9075</sub> <sub>ms</sub> | <sub>0.5580</sub> <sub>ms</sub> | <sub>0.3903</sub> <sub>ms</sub> |
+| <sub>50000</sub> | <sub>6.6268</sub> <sub>ms</sub> | <sub>1.9312</sub> <sub>ms</sub> | <sub>1.9079</sub> <sub>ms</sub> | <sub>1.2086</sub> <sub>ms</sub> | <sub>0.7999</sub> <sub>ms</sub> | <sub>0.7357</sub> <sub>ms</sub> |
+| <sub>60000</sub> | <sub>10.1931</sub> <sub>ms</sub> | <sub>2.3144</sub> <sub>ms</sub> | <sub>1.9836</sub> <sub>ms</sub> | <sub>1.8509</sub> <sub>ms</sub> | <sub>0.9393</sub> <sub>ms</sub> | <sub>0.3950</sub> <sub>ms</sub> |
+| <sub>70000</sub> | <sub>11.9803</sub> <sub>ms</sub> | <sub>3.7506</sub> <sub>ms</sub> | <sub>2.7302</sub> <sub>ms</sub> | <sub>2.5889</sub> <sub>ms</sub> | <sub>2.2786</sub> <sub>ms</sub> | <sub>0.7024</sub> <sub>ms</sub> |
+| <sub>80000</sub> | <sub>15.2888</sub> <sub>ms</sub> | <sub>4.2790</sub> <sub>ms</sub> | <sub>3.5255</sub> <sub>ms</sub> | <sub>3.6485</sub> <sub>ms</sub> | <sub>2.0166</sub> <sub>ms</sub> | <sub>0.8231</sub> <sub>ms</sub> |
+| <sub>90000</sub> | <sub>18.5509</sub> <sub>ms</sub> | <sub>5.5539</sub> <sub>ms</sub> | <sub>4.9869</sub> <sub>ms</sub> | <sub>4.2034</sub> <sub>ms</sub> | <sub>2.6062</sub> <sub>ms</sub> | <sub>1.2738</sub> <sub>ms</sub> |
+| <sub>100000</sub> | <sub>25.9249</sub> <sub>ms</sub> | <sub>9.1423</sub> <sub>ms</sub> | <sub>7.4140</sub> <sub>ms</sub> | <sub>6.1423</sub> <sub>ms</sub> | <sub>2.7957</sub> <sub>ms</sub> | <sub>1.6640</sub> <sub>ms</sub> |
 
 
 ## <sub>Timings</sub> <sub>erase_sequential</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
-|-------:|--------------------|----------------------|-----------------|------------------------|---------------|
-| <sub>1000</sub> | <sub>0.1122</sub> <sub>ms</sub> | <sub>0.0926</sub> <sub>ms</sub> | <sub>0.0712</sub> <sub>ms</sub> | <sub>0.0130</sub> <sub>ms</sub> | <sub>0.0077</sub> <sub>ms</sub> |
-| <sub>5000</sub> | <sub>0.5697</sub> <sub>ms</sub> | <sub>0.4856</sub> <sub>ms</sub> | <sub>0.4452</sub> <sub>ms</sub> | <sub>0.0569</sub> <sub>ms</sub> | <sub>0.0716</sub> <sub>ms</sub> |
-| <sub>10000</sub> | <sub>1.1702</sub> <sub>ms</sub> | <sub>0.9924</sub> <sub>ms</sub> | <sub>0.7436</sub> <sub>ms</sub> | <sub>0.1199</sub> <sub>ms</sub> | <sub>0.1565</sub> <sub>ms</sub> |
-| <sub>20000</sub> | <sub>2.4125</sub> <sub>ms</sub> | <sub>2.0546</sub> <sub>ms</sub> | <sub>1.5162</sub> <sub>ms</sub> | <sub>0.2473</sub> <sub>ms</sub> | <sub>0.3423</sub> <sub>ms</sub> |
-| <sub>30000</sub> | <sub>3.5992</sub> <sub>ms</sub> | <sub>3.0751</sub> <sub>ms</sub> | <sub>2.4073</sub> <sub>ms</sub> | <sub>0.4487</sub> <sub>ms</sub> | <sub>0.9524</sub> <sub>ms</sub> |
-| <sub>40000</sub> | <sub>5.4343</sub> <sub>ms</sub> | <sub>4.6499</sub> <sub>ms</sub> | <sub>3.6018</sub> <sub>ms</sub> | <sub>0.5973</sub> <sub>ms</sub> | <sub>0.7173</sub> <sub>ms</sub> |
-| <sub>50000</sub> | <sub>6.8324</sub> <sub>ms</sub> | <sub>5.9798</sub> <sub>ms</sub> | <sub>4.2246</sub> <sub>ms</sub> | <sub>0.7840</sub> <sub>ms</sub> | <sub>1.0936</sub> <sub>ms</sub> |
-| <sub>60000</sub> | <sub>8.5161</sub> <sub>ms</sub> | <sub>7.2317</sub> <sub>ms</sub> | <sub>5.5892</sub> <sub>ms</sub> | <sub>1.0377</sub> <sub>ms</sub> | <sub>1.9694</sub> <sub>ms</sub> |
-| <sub>70000</sub> | <sub>10.5874</sub> <sub>ms</sub> | <sub>8.2577</sub> <sub>ms</sub> | <sub>7.6498</sub> <sub>ms</sub> | <sub>2.1319</sub> <sub>ms</sub> | <sub>1.2071</sub> <sub>ms</sub> |
-| <sub>80000</sub> | <sub>11.8359</sub> <sub>ms</sub> | <sub>10.0899</sub> <sub>ms</sub> | <sub>8.1629</sub> <sub>ms</sub> | <sub>2.3336</sub> <sub>ms</sub> | <sub>1.4986</sub> <sub>ms</sub> |
-| <sub>90000</sub> | <sub>14.2806</sub> <sub>ms</sub> | <sub>13.1914</sub> <sub>ms</sub> | <sub>10.5865</sub> <sub>ms</sub> | <sub>2.7609</sub> <sub>ms</sub> | <sub>1.8171</sub> <sub>ms</sub> |
-| <sub>100000</sub> | <sub>17.9818</sub> <sub>ms</sub> | <sub>15.3503</sub> <sub>ms</sub> | <sub>11.9242</sub> <sub>ms</sub> | <sub>3.1052</sub> <sub>ms</sub> | <sub>2.3274</sub> <sub>ms</sub> |
+| <sub>counts</sub> | <sub>std::map</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
+|-------:|------------|--------------------|----------------------|-----------------|------------------------|---------------|
+| <sub>1000</sub> | <sub>0.1325</sub> <sub>ms</sub> | <sub>0.1396</sub> <sub>ms</sub> | <sub>0.0943</sub> <sub>ms</sub> | <sub>0.0892</sub> <sub>ms</sub> | <sub>0.0128</sub> <sub>ms</sub> | <sub>0.0102</sub> <sub>ms</sub> |
+| <sub>5000</sub> | <sub>0.7712</sub> <sub>ms</sub> | <sub>0.5743</sub> <sub>ms</sub> | <sub>0.4796</sub> <sub>ms</sub> | <sub>0.3643</sub> <sub>ms</sub> | <sub>0.0633</sub> <sub>ms</sub> | <sub>0.0746</sub> <sub>ms</sub> |
+| <sub>10000</sub> | <sub>1.6943</sub> <sub>ms</sub> | <sub>1.1755</sub> <sub>ms</sub> | <sub>0.9930</sub> <sub>ms</sub> | <sub>0.7503</sub> <sub>ms</sub> | <sub>0.1201</sub> <sub>ms</sub> | <sub>0.1572</sub> <sub>ms</sub> |
+| <sub>20000</sub> | <sub>3.8312</sub> <sub>ms</sub> | <sub>2.4067</sub> <sub>ms</sub> | <sub>2.2460</sub> <sub>ms</sub> | <sub>1.5221</sub> <sub>ms</sub> | <sub>0.2457</sub> <sub>ms</sub> | <sub>0.3431</sub> <sub>ms</sub> |
+| <sub>30000</sub> | <sub>6.5908</sub> <sub>ms</sub> | <sub>3.6517</sub> <sub>ms</sub> | <sub>3.7667</sub> <sub>ms</sub> | <sub>2.4438</sub> <sub>ms</sub> | <sub>0.4473</sub> <sub>ms</sub> | <sub>0.4746</sub> <sub>ms</sub> |
+| <sub>40000</sub> | <sub>9.8052</sub> <sub>ms</sub> | <sub>5.3849</sub> <sub>ms</sub> | <sub>4.2558</sub> <sub>ms</sub> | <sub>3.6027</sub> <sub>ms</sub> | <sub>0.6042</sub> <sub>ms</sub> | <sub>0.7185</sub> <sub>ms</sub> |
+| <sub>50000</sub> | <sub>12.7382</sub> <sub>ms</sub> | <sub>7.3999</sub> <sub>ms</sub> | <sub>5.3409</sub> <sub>ms</sub> | <sub>5.2301</sub> <sub>ms</sub> | <sub>0.8232</sub> <sub>ms</sub> | <sub>1.0964</sub> <sub>ms</sub> |
+| <sub>60000</sub> | <sub>16.2664</sub> <sub>ms</sub> | <sub>9.3226</sub> <sub>ms</sub> | <sub>7.9184</sub> <sub>ms</sub> | <sub>6.6272</sub> <sub>ms</sub> | <sub>1.0384</sub> <sub>ms</sub> | <sub>0.9303</sub> <sub>ms</sub> |
+| <sub>70000</sub> | <sub>20.4126</sub> <sub>ms</sub> | <sub>10.7017</sub> <sub>ms</sub> | <sub>8.5656</sub> <sub>ms</sub> | <sub>7.4440</sub> <sub>ms</sub> | <sub>2.7025</sub> <sub>ms</sub> | <sub>1.2143</sub> <sub>ms</sub> |
+| <sub>80000</sub> | <sub>23.0912</sub> <sub>ms</sub> | <sub>12.8798</sub> <sub>ms</sub> | <sub>10.9075</sub> <sub>ms</sub> | <sub>8.4963</sub> <sub>ms</sub> | <sub>2.5170</sub> <sub>ms</sub> | <sub>1.5707</sub> <sub>ms</sub> |
+| <sub>90000</sub> | <sub>30.0007</sub> <sub>ms</sub> | <sub>15.0499</sub> <sub>ms</sub> | <sub>12.5454</sub> <sub>ms</sub> | <sub>10.7494</sub> <sub>ms</sub> | <sub>3.1622</sub> <sub>ms</sub> | <sub>2.3072</sub> <sub>ms</sub> |
+| <sub>100000</sub> | <sub>36.5794</sub> <sub>ms</sub> | <sub>19.6268</sub> <sub>ms</sub> | <sub>17.4357</sub> <sub>ms</sub> | <sub>14.0138</sub> <sub>ms</sub> | <sub>3.6050</sub> <sub>ms</sub> | <sub>2.8170</sub> <sub>ms</sub> |
 
 
 ## <sub>Timings</sub> <sub>erase_random</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
-|-------:|--------------------|----------------------|-----------------|------------------------|---------------|
-| <sub>1000</sub> | <sub>0.1220</sub> <sub>ms</sub> | <sub>0.1033</sub> <sub>ms</sub> | <sub>0.0827</sub> <sub>ms</sub> | <sub>0.0134</sub> <sub>ms</sub> | <sub>0.0125</sub> <sub>ms</sub> |
-| <sub>5000</sub> | <sub>0.6152</sub> <sub>ms</sub> | <sub>0.5732</sub> <sub>ms</sub> | <sub>0.4123</sub> <sub>ms</sub> | <sub>0.0582</sub> <sub>ms</sub> | <sub>0.0771</sub> <sub>ms</sub> |
-| <sub>10000</sub> | <sub>1.3161</sub> <sub>ms</sub> | <sub>1.1204</sub> <sub>ms</sub> | <sub>0.8656</sub> <sub>ms</sub> | <sub>0.1205</sub> <sub>ms</sub> | <sub>0.1604</sub> <sub>ms</sub> |
-| <sub>20000</sub> | <sub>2.7473</sub> <sub>ms</sub> | <sub>2.3679</sub> <sub>ms</sub> | <sub>1.7900</sub> <sub>ms</sub> | <sub>0.2476</sub> <sub>ms</sub> | <sub>0.3437</sub> <sub>ms</sub> |
-| <sub>30000</sub> | <sub>4.2174</sub> <sub>ms</sub> | <sub>3.5594</sub> <sub>ms</sub> | <sub>2.8049</sub> <sub>ms</sub> | <sub>0.4474</sub> <sub>ms</sub> | <sub>0.9434</sub> <sub>ms</sub> |
-| <sub>40000</sub> | <sub>5.9897</sub> <sub>ms</sub> | <sub>4.9489</sub> <sub>ms</sub> | <sub>3.7988</sub> <sub>ms</sub> | <sub>0.5746</sub> <sub>ms</sub> | <sub>0.7137</sub> <sub>ms</sub> |
-| <sub>50000</sub> | <sub>7.5084</sub> <sub>ms</sub> | <sub>6.5011</sub> <sub>ms</sub> | <sub>5.6157</sub> <sub>ms</sub> | <sub>0.7775</sub> <sub>ms</sub> | <sub>1.0878</sub> <sub>ms</sub> |
-| <sub>60000</sub> | <sub>10.0182</sub> <sub>ms</sub> | <sub>8.9756</sub> <sub>ms</sub> | <sub>7.1233</sub> <sub>ms</sub> | <sub>1.0069</sub> <sub>ms</sub> | <sub>1.9498</sub> <sub>ms</sub> |
-| <sub>70000</sub> | <sub>13.0065</sub> <sub>ms</sub> | <sub>10.2430</sub> <sub>ms</sub> | <sub>8.8377</sub> <sub>ms</sub> | <sub>2.0786</sub> <sub>ms</sub> | <sub>1.1771</sub> <sub>ms</sub> |
-| <sub>80000</sub> | <sub>16.1498</sub> <sub>ms</sub> | <sub>13.2578</sub> <sub>ms</sub> | <sub>11.2337</sub> <sub>ms</sub> | <sub>2.2580</sub> <sub>ms</sub> | <sub>1.4762</sub> <sub>ms</sub> |
-| <sub>90000</sub> | <sub>19.8489</sub> <sub>ms</sub> | <sub>17.6300</sub> <sub>ms</sub> | <sub>13.8976</sub> <sub>ms</sub> | <sub>2.5950</sub> <sub>ms</sub> | <sub>1.8152</sub> <sub>ms</sub> |
-| <sub>100000</sub> | <sub>21.8800</sub> <sub>ms</sub> | <sub>23.1004</sub> <sub>ms</sub> | <sub>16.9499</sub> <sub>ms</sub> | <sub>2.8911</sub> <sub>ms</sub> | <sub>2.2601</sub> <sub>ms</sub> |
+| <sub>counts</sub> | <sub>std::map</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
+|-------:|------------|--------------------|----------------------|-----------------|------------------------|---------------|
+| <sub>1000</sub> | <sub>0.1415</sub> <sub>ms</sub> | <sub>0.1340</sub> <sub>ms</sub> | <sub>0.1035</sub> <sub>ms</sub> | <sub>0.1023</sub> <sub>ms</sub> | <sub>0.0133</sub> <sub>ms</sub> | <sub>0.0193</sub> <sub>ms</sub> |
+| <sub>5000</sub> | <sub>0.8225</sub> <sub>ms</sub> | <sub>0.6186</sub> <sub>ms</sub> | <sub>0.5265</sub> <sub>ms</sub> | <sub>0.4092</sub> <sub>ms</sub> | <sub>0.0573</sub> <sub>ms</sub> | <sub>0.0921</sub> <sub>ms</sub> |
+| <sub>10000</sub> | <sub>1.9088</sub> <sub>ms</sub> | <sub>1.3332</sub> <sub>ms</sub> | <sub>1.1226</sub> <sub>ms</sub> | <sub>0.8561</sub> <sub>ms</sub> | <sub>0.1197</sub> <sub>ms</sub> | <sub>0.1685</sub> <sub>ms</sub> |
+| <sub>20000</sub> | <sub>4.2745</sub> <sub>ms</sub> | <sub>2.7131</sub> <sub>ms</sub> | <sub>2.3717</sub> <sub>ms</sub> | <sub>1.7915</sub> <sub>ms</sub> | <sub>0.2446</sub> <sub>ms</sub> | <sub>0.3328</sub> <sub>ms</sub> |
+| <sub>30000</sub> | <sub>7.2227</sub> <sub>ms</sub> | <sub>4.2025</sub> <sub>ms</sub> | <sub>3.6643</sub> <sub>ms</sub> | <sub>2.8093</sub> <sub>ms</sub> | <sub>0.4428</sub> <sub>ms</sub> | <sub>0.4497</sub> <sub>ms</sub> |
+| <sub>40000</sub> | <sub>10.6729</sub> <sub>ms</sub> | <sub>6.6801</sub> <sub>ms</sub> | <sub>4.8988</sub> <sub>ms</sub> | <sub>4.1377</sub> <sub>ms</sub> | <sub>0.5954</sub> <sub>ms</sub> | <sub>0.6920</sub> <sub>ms</sub> |
+| <sub>50000</sub> | <sub>14.6532</sub> <sub>ms</sub> | <sub>7.9074</sub> <sub>ms</sub> | <sub>7.9514</sub> <sub>ms</sub> | <sub>5.2504</sub> <sub>ms</sub> | <sub>0.7684</sub> <sub>ms</sub> | <sub>1.0717</sub> <sub>ms</sub> |
+| <sub>60000</sub> | <sub>20.0346</sub> <sub>ms</sub> | <sub>10.0052</sub> <sub>ms</sub> | <sub>8.9568</sub> <sub>ms</sub> | <sub>6.2528</sub> <sub>ms</sub> | <sub>1.0144</sub> <sub>ms</sub> | <sub>0.8986</sub> <sub>ms</sub> |
+| <sub>70000</sub> | <sub>26.5509</sub> <sub>ms</sub> | <sub>12.9176</sub> <sub>ms</sub> | <sub>12.2195</sub> <sub>ms</sub> | <sub>9.4370</sub> <sub>ms</sub> | <sub>2.2912</sub> <sub>ms</sub> | <sub>1.4892</sub> <sub>ms</sub> |
+| <sub>80000</sub> | <sub>29.6929</sub> <sub>ms</sub> | <sub>14.9231</sub> <sub>ms</sub> | <sub>13.0560</sub> <sub>ms</sub> | <sub>12.3380</sub> <sub>ms</sub> | <sub>2.3744</sub> <sub>ms</sub> | <sub>1.4469</sub> <sub>ms</sub> |
+| <sub>90000</sub> | <sub>35.2480</sub> <sub>ms</sub> | <sub>18.9232</sub> <sub>ms</sub> | <sub>18.6434</sub> <sub>ms</sub> | <sub>14.9923</sub> <sub>ms</sub> | <sub>3.2399</sub> <sub>ms</sub> | <sub>2.0224</sub> <sub>ms</sub> |
+| <sub>100000</sub> | <sub>48.7126</sub> <sub>ms</sub> | <sub>26.6677</sub> <sub>ms</sub> | <sub>25.6908</sub> <sub>ms</sub> | <sub>19.6872</sub> <sub>ms</sub> | <sub>3.4337</sub> <sub>ms</sub> | <sub>2.5271</sub> <sub>ms</sub> |
 
 
 ## <sub>Timings</sub> <sub>iterator</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
-|-------:|--------------------|----------------------|-----------------|------------------------|---------------|
-| <sub>1000</sub> | <sub>0.0035</sub> <sub>ms</sub> | <sub>0.0022</sub> <sub>ms</sub> | <sub>0.0078</sub> <sub>ms</sub> | <sub>0.0074</sub> <sub>ms</sub> | <sub>0.0024</sub> <sub>ms</sub> |
-| <sub>5000</sub> | <sub>0.0201</sub> <sub>ms</sub> | <sub>0.0219</sub> <sub>ms</sub> | <sub>0.0429</sub> <sub>ms</sub> | <sub>0.0531</sub> <sub>ms</sub> | <sub>0.0215</sub> <sub>ms</sub> |
-| <sub>10000</sub> | <sub>0.0506</sub> <sub>ms</sub> | <sub>0.0570</sub> <sub>ms</sub> | <sub>0.0901</sub> <sub>ms</sub> | <sub>0.1059</sub> <sub>ms</sub> | <sub>0.0508</sub> <sub>ms</sub> |
-| <sub>20000</sub> | <sub>0.1322</sub> <sub>ms</sub> | <sub>0.1316</sub> <sub>ms</sub> | <sub>0.1901</sub> <sub>ms</sub> | <sub>0.2117</sub> <sub>ms</sub> | <sub>0.1058</sub> <sub>ms</sub> |
-| <sub>30000</sub> | <sub>0.2266</sub> <sub>ms</sub> | <sub>0.2246</sub> <sub>ms</sub> | <sub>0.2540</sub> <sub>ms</sub> | <sub>0.2592</sub> <sub>ms</sub> | <sub>0.0457</sub> <sub>ms</sub> |
-| <sub>40000</sub> | <sub>0.3033</sub> <sub>ms</sub> | <sub>0.2989</sub> <sub>ms</sub> | <sub>0.3876</sub> <sub>ms</sub> | <sub>0.4328</sub> <sub>ms</sub> | <sub>0.2125</sub> <sub>ms</sub> |
-| <sub>50000</sub> | <sub>0.3889</sub> <sub>ms</sub> | <sub>0.4170</sub> <sub>ms</sub> | <sub>0.4804</sub> <sub>ms</sub> | <sub>0.4921</sub> <sub>ms</sub> | <sub>0.1596</sub> <sub>ms</sub> |
-| <sub>60000</sub> | <sub>0.5358</sub> <sub>ms</sub> | <sub>0.5290</sub> <sub>ms</sub> | <sub>0.6169</sub> <sub>ms</sub> | <sub>0.5276</sub> <sub>ms</sub> | <sub>0.0940</sub> <sub>ms</sub> |
-| <sub>70000</sub> | <sub>0.7319</sub> <sub>ms</sub> | <sub>0.7092</sub> <sub>ms</sub> | <sub>0.8605</sub> <sub>ms</sub> | <sub>0.8764</sub> <sub>ms</sub> | <sub>0.4561</sub> <sub>ms</sub> |
-| <sub>80000</sub> | <sub>1.0046</sub> <sub>ms</sub> | <sub>1.0206</sub> <sub>ms</sub> | <sub>0.9907</sub> <sub>ms</sub> | <sub>0.9436</sub> <sub>ms</sub> | <sub>0.4289</sub> <sub>ms</sub> |
-| <sub>90000</sub> | <sub>1.4750</sub> <sub>ms</sub> | <sub>1.4875</sub> <sub>ms</sub> | <sub>1.1981</sub> <sub>ms</sub> | <sub>1.0073</sub> <sub>ms</sub> | <sub>0.3869</sub> <sub>ms</sub> |
-| <sub>100000</sub> | <sub>1.8040</sub> <sub>ms</sub> | <sub>2.3138</sub> <sub>ms</sub> | <sub>1.4043</sub> <sub>ms</sub> | <sub>1.0595</sub> <sub>ms</sub> | <sub>0.3429</sub> <sub>ms</sub> |
+| <sub>counts</sub> | <sub>std::map</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
+|-------:|-----------|--------------------|----------------------|-----------------|------------------------|---------------|
+| <sub>1000</sub> | <sub>0.0070</sub> <sub>ms</sub> | <sub>0.0029</sub> <sub>ms</sub> | <sub>0.0027</sub> <sub>ms</sub> | <sub>0.0076</sub> <sub>ms</sub> | <sub>0.0076</sub> <sub>ms</sub> | <sub>0.0055</sub> <sub>ms</sub> |
+| <sub>5000</sub> | <sub>0.0458</sub> <sub>ms</sub> | <sub>0.0196</sub> <sub>ms</sub> | <sub>0.0206</sub> <sub>ms</sub> | <sub>0.0416</sub> <sub>ms</sub> | <sub>0.0518</sub> <sub>ms</sub> | <sub>0.0255</sub> <sub>ms</sub> |
+| <sub>10000</sub> | <sub>0.1235</sub> <sub>ms</sub> | <sub>0.0501</sub> <sub>ms</sub> | <sub>0.0511</sub> <sub>ms</sub> | <sub>0.0884</sub> <sub>ms</sub> | <sub>0.1034</sub> <sub>ms</sub> | <sub>0.0507</sub> <sub>ms</sub> |
+| <sub>20000</sub> | <sub>0.2750</sub> <sub>ms</sub> | <sub>0.1361</sub> <sub>ms</sub> | <sub>0.1350</sub> <sub>ms</sub> | <sub>0.1844</sub> <sub>ms</sub> | <sub>0.2070</sub> <sub>ms</sub> | <sub>0.1085</sub> <sub>ms</sub> |
+| <sub>30000</sub> | <sub>0.4379</sub> <sub>ms</sub> | <sub>0.2264</sub> <sub>ms</sub> | <sub>0.2260</sub> <sub>ms</sub> | <sub>0.2466</sub> <sub>ms</sub> | <sub>0.2544</sub> <sub>ms</sub> | <sub>0.2437</sub> <sub>ms</sub> |
+| <sub>40000</sub> | <sub>0.6536</sub> <sub>ms</sub> | <sub>0.3023</sub> <sub>ms</sub> | <sub>0.2997</sub> <sub>ms</sub> | <sub>0.3819</sub> <sub>ms</sub> | <sub>0.4248</sub> <sub>ms</sub> | <sub>0.2154</sub> <sub>ms</sub> |
+| <sub>50000</sub> | <sub>0.9235</sub> <sub>ms</sub> | <sub>0.3913</sub> <sub>ms</sub> | <sub>0.4248</sub> <sub>ms</sub> | <sub>0.4623</sub> <sub>ms</sub> | <sub>0.4825</sub> <sub>ms</sub> | <sub>0.1684</sub> <sub>ms</sub> |
+| <sub>60000</sub> | <sub>1.8568</sub> <sub>ms</sub> | <sub>0.5533</sub> <sub>ms</sub> | <sub>0.5267</sub> <sub>ms</sub> | <sub>0.5474</sub> <sub>ms</sub> | <sub>0.5213</sub> <sub>ms</sub> | <sub>0.4679</sub> <sub>ms</sub> |
+| <sub>70000</sub> | <sub>2.3600</sub> <sub>ms</sub> | <sub>0.8922</sub> <sub>ms</sub> | <sub>0.8824</sub> <sub>ms</sub> | <sub>0.8541</sub> <sub>ms</sub> | <sub>0.8709</sub> <sub>ms</sub> | <sub>0.5124</sub> <sub>ms</sub> |
+| <sub>80000</sub> | <sub>2.7463</sub> <sub>ms</sub> | <sub>1.0714</sub> <sub>ms</sub> | <sub>1.1593</sub> <sub>ms</sub> | <sub>1.0115</sub> <sub>ms</sub> | <sub>0.9414</sub> <sub>ms</sub> | <sub>0.4316</sub> <sub>ms</sub> |
+| <sub>90000</sub> | <sub>3.6761</sub> <sub>ms</sub> | <sub>1.5040</sub> <sub>ms</sub> | <sub>1.5717</sub> <sub>ms</sub> | <sub>1.1598</sub> <sub>ms</sub> | <sub>1.0108</sub> <sub>ms</sub> | <sub>0.4188</sub> <sub>ms</sub> |
+| <sub>100000</sub> | <sub>5.8521</sub> <sub>ms</sub> | <sub>2.3041</sub> <sub>ms</sub> | <sub>2.8964</sub> <sub>ms</sub> | <sub>1.4298</sub> <sub>ms</sub> | <sub>1.0803</sub> <sub>ms</sub> | <sub>0.3429</sub> <sub>ms</sub> |
 
 
 ## <sub>Timings</sub> <sub>create_insert_sum</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
-|-------:|--------------------|----------------------|-----------------|------------------------|---------------|
-| <sub>1000</sub> | <sub>0.1780</sub> <sub>ms</sub> | <sub>0.1351</sub> <sub>ms</sub> | <sub>0.1331</sub> <sub>ms</sub> | <sub>0.0198</sub> <sub>ms</sub> | <sub>0.0143</sub> <sub>ms</sub> |
-| <sub>5000</sub> | <sub>0.6929</sub> <sub>ms</sub> | <sub>0.6569</sub> <sub>ms</sub> | <sub>0.7850</sub> <sub>ms</sub> | <sub>0.1077</sub> <sub>ms</sub> | <sub>0.0697</sub> <sub>ms</sub> |
-| <sub>10000</sub> | <sub>1.3739</sub> <sub>ms</sub> | <sub>1.3106</sub> <sub>ms</sub> | <sub>1.2829</sub> <sub>ms</sub> | <sub>0.2143</sub> <sub>ms</sub> | <sub>0.1259</sub> <sub>ms</sub> |
-| <sub>20000</sub> | <sub>2.8851</sub> <sub>ms</sub> | <sub>2.6351</sub> <sub>ms</sub> | <sub>2.5324</sub> <sub>ms</sub> | <sub>0.5309</sub> <sub>ms</sub> | <sub>0.2607</sub> <sub>ms</sub> |
-| <sub>30000</sub> | <sub>4.2589</sub> <sub>ms</sub> | <sub>4.1533</sub> <sub>ms</sub> | <sub>3.7252</sub> <sub>ms</sub> | <sub>0.7280</sub> <sub>ms</sub> | <sub>0.3440</sub> <sub>ms</sub> |
-| <sub>40000</sub> | <sub>5.6199</sub> <sub>ms</sub> | <sub>5.5101</sub> <sub>ms</sub> | <sub>5.3512</sub> <sub>ms</sub> | <sub>1.0612</sub> <sub>ms</sub> | <sub>0.6157</sub> <sub>ms</sub> |
-| <sub>50000</sub> | <sub>6.9681</sub> <sub>ms</sub> | <sub>7.0093</sub> <sub>ms</sub> | <sub>6.9447</sub> <sub>ms</sub> | <sub>1.0156</sub> <sub>ms</sub> | <sub>0.5423</sub> <sub>ms</sub> |
-| <sub>60000</sub> | <sub>8.7625</sub> <sub>ms</sub> | <sub>8.3725</sub> <sub>ms</sub> | <sub>8.2368</sub> <sub>ms</sub> | <sub>1.4560</sub> <sub>ms</sub> | <sub>0.6983</sub> <sub>ms</sub> |
-| <sub>70000</sub> | <sub>10.2582</sub> <sub>ms</sub> | <sub>9.8201</sub> <sub>ms</sub> | <sub>10.1586</sub> <sub>ms</sub> | <sub>1.6024</sub> <sub>ms</sub> | <sub>1.0374</sub> <sub>ms</sub> |
-| <sub>80000</sub> | <sub>11.6925</sub> <sub>ms</sub> | <sub>10.9191</sub> <sub>ms</sub> | <sub>10.9802</sub> <sub>ms</sub> | <sub>1.7938</sub> <sub>ms</sub> | <sub>1.0596</sub> <sub>ms</sub> |
-| <sub>90000</sub> | <sub>12.9285</sub> <sub>ms</sub> | <sub>12.4082</sub> <sub>ms</sub> | <sub>13.0875</sub> <sub>ms</sub> | <sub>1.9500</sub> <sub>ms</sub> | <sub>1.0929</sub> <sub>ms</sub> |
-| <sub>100000</sub> | <sub>15.0190</sub> <sub>ms</sub> | <sub>15.0586</sub> <sub>ms</sub> | <sub>16.1472</sub> <sub>ms</sub> | <sub>2.0991</sub> <sub>ms</sub> | <sub>1.1236</sub> <sub>ms</sub> |
+| <sub>counts</sub> | <sub>std::map</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
+|-------:|------------|--------------------|----------------------|-----------------|------------------------|---------------|
+| <sub>1000</sub> | <sub>0.1490</sub> <sub>ms</sub> | <sub>0.1432</sub> <sub>ms</sub> | <sub>0.1763</sub> <sub>ms</sub> | <sub>0.1435</sub> <sub>ms</sub> | <sub>0.0201</sub> <sub>ms</sub> | <sub>0.0230</sub> <sub>ms</sub> |
+| <sub>5000</sub> | <sub>0.7830</sub> <sub>ms</sub> | <sub>0.6947</sub> <sub>ms</sub> | <sub>0.7175</sub> <sub>ms</sub> | <sub>0.6330</sub> <sub>ms</sub> | <sub>0.1092</sub> <sub>ms</sub> | <sub>0.0639</sub> <sub>ms</sub> |
+| <sub>10000</sub> | <sub>1.7164</sub> <sub>ms</sub> | <sub>1.5098</sub> <sub>ms</sub> | <sub>1.3239</sub> <sub>ms</sub> | <sub>1.2730</sub> <sub>ms</sub> | <sub>0.2695</sub> <sub>ms</sub> | <sub>0.1288</sub> <sub>ms</sub> |
+| <sub>20000</sub> | <sub>3.6492</sub> <sub>ms</sub> | <sub>2.8043</sub> <sub>ms</sub> | <sub>2.6340</sub> <sub>ms</sub> | <sub>2.5545</sub> <sub>ms</sub> | <sub>0.4330</sub> <sub>ms</sub> | <sub>0.2948</sub> <sub>ms</sub> |
+| <sub>30000</sub> | <sub>6.0834</sub> <sub>ms</sub> | <sub>4.2661</sub> <sub>ms</sub> | <sub>4.2103</sub> <sub>ms</sub> | <sub>3.6886</sub> <sub>ms</sub> | <sub>0.5949</sub> <sub>ms</sub> | <sub>0.6459</sub> <sub>ms</sub> |
+| <sub>40000</sub> | <sub>8.5289</sub> <sub>ms</sub> | <sub>5.7223</sub> <sub>ms</sub> | <sub>5.4592</sub> <sub>ms</sub> | <sub>5.6890</sub> <sub>ms</sub> | <sub>0.8656</sub> <sub>ms</sub> | <sub>0.5315</sub> <sub>ms</sub> |
+| <sub>50000</sub> | <sub>11.1490</sub> <sub>ms</sub> | <sub>7.0736</sub> <sub>ms</sub> | <sub>7.3121</sub> <sub>ms</sub> | <sub>6.3317</sub> <sub>ms</sub> | <sub>1.0270</sub> <sub>ms</sub> | <sub>0.5614</sub> <sub>ms</sub> |
+| <sub>60000</sub> | <sub>13.5473</sub> <sub>ms</sub> | <sub>8.9647</sub> <sub>ms</sub> | <sub>8.4581</sub> <sub>ms</sub> | <sub>8.1964</sub> <sub>ms</sub> | <sub>1.1892</sub> <sub>ms</sub> | <sub>0.9881</sub> <sub>ms</sub> |
+| <sub>70000</sub> | <sub>16.0433</sub> <sub>ms</sub> | <sub>10.5416</sub> <sub>ms</sub> | <sub>9.8002</sub> <sub>ms</sub> | <sub>10.3466</sub> <sub>ms</sub> | <sub>1.6437</sub> <sub>ms</sub> | <sub>1.5676</sub> <sub>ms</sub> |
+| <sub>80000</sub> | <sub>19.7443</sub> <sub>ms</sub> | <sub>11.6952</sub> <sub>ms</sub> | <sub>11.2100</sub> <sub>ms</sub> | <sub>11.1506</sub> <sub>ms</sub> | <sub>1.8042</sub> <sub>ms</sub> | <sub>1.3084</sub> <sub>ms</sub> |
+| <sub>90000</sub> | <sub>22.4604</sub> <sub>ms</sub> | <sub>13.0518</sub> <sub>ms</sub> | <sub>12.5109</sub> <sub>ms</sub> | <sub>12.4837</sub> <sub>ms</sub> | <sub>2.0461</sub> <sub>ms</sub> | <sub>1.1504</sub> <sub>ms</sub> |
+| <sub>100000</sub> | <sub>23.9775</sub> <sub>ms</sub> | <sub>15.1889</sub> <sub>ms</sub> | <sub>15.6737</sub> <sub>ms</sub> | <sub>14.6995</sub> <sub>ms</sub> | <sub>2.2220</sub> <sub>ms</sub> | <sub>1.1425</sub> <sub>ms</sub> |
 
 
 ## <sub>Timings</sub> <sub>adds_and_removes</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
-|-------:|--------------------|----------------------|-----------------|------------------------|---------------|
-| <sub>1000</sub> | <sub>1.1109</sub> <sub>ms</sub> | <sub>0.8341</sub> <sub>ms</sub> | <sub>0.8623</sub> <sub>ms</sub> | <sub>0.4252</sub> <sub>ms</sub> | <sub>0.3391</sub> <sub>ms</sub> |
-| <sub>5000</sub> | <sub>4.3537</sub> <sub>ms</sub> | <sub>3.7974</sub> <sub>ms</sub> | <sub>3.0792</sub> <sub>ms</sub> | <sub>2.1627</sub> <sub>ms</sub> | <sub>1.6298</sub> <sub>ms</sub> |
-| <sub>10000</sub> | <sub>9.4555</sub> <sub>ms</sub> | <sub>8.4022</sub> <sub>ms</sub> | <sub>6.7460</sub> <sub>ms</sub> | <sub>4.5051</sub> <sub>ms</sub> | <sub>3.4718</sub> <sub>ms</sub> |
-| <sub>20000</sub> | <sub>23.3557</sub> <sub>ms</sub> | <sub>21.0842</sub> <sub>ms</sub> | <sub>16.3146</sub> <sub>ms</sub> | <sub>10.9390</sub> <sub>ms</sub> | <sub>8.9433</sub> <sub>ms</sub> |
-| <sub>30000</sub> | <sub>36.3281</sub> <sub>ms</sub> | <sub>30.4519</sub> <sub>ms</sub> | <sub>26.0673</sub> <sub>ms</sub> | <sub>14.1808</sub> <sub>ms</sub> | <sub>16.3180</sub> <sub>ms</sub> |
-| <sub>40000</sub> | <sub>52.5394</sub> <sub>ms</sub> | <sub>48.2025</sub> <sub>ms</sub> | <sub>36.9924</sub> <sub>ms</sub> | <sub>23.9023</sub> <sub>ms</sub> | <sub>19.4952</sub> <sub>ms</sub> |
-| <sub>50000</sub> | <sub>71.7170</sub> <sub>ms</sub> | <sub>54.7715</sub> <sub>ms</sub> | <sub>47.6627</sub> <sub>ms</sub> | <sub>30.8231</sub> <sub>ms</sub> | <sub>27.4913</sub> <sub>ms</sub> |
-| <sub>60000</sub> | <sub>78.1762</sub> <sub>ms</sub> | <sub>75.0088</sub> <sub>ms</sub> | <sub>60.7514</sub> <sub>ms</sub> | <sub>31.6031</sub> <sub>ms</sub> | <sub>36.5947</sub> <sub>ms</sub> |
-| <sub>70000</sub> | <sub>106.6616</sub> <sub>ms</sub> | <sub>93.6189</sub> <sub>ms</sub> | <sub>75.8708</sub> <sub>ms</sub> | <sub>42.8003</sub> <sub>ms</sub> | <sub>32.5700</sub> <sub>ms</sub> |
-| <sub>80000</sub> | <sub>159.6786</sub> <sub>ms</sub> | <sub>133.7742</sub> <sub>ms</sub> | <sub>114.7344</sub> <sub>ms</sub> | <sub>71.6712</sub> <sub>ms</sub> | <sub>42.7955</sub> <sub>ms</sub> |
-| <sub>90000</sub> | <sub>161.1460</sub> <sub>ms</sub> | <sub>141.6574</sub> <sub>ms</sub> | <sub>113.6505</sub> <sub>ms</sub> | <sub>81.9605</sub> <sub>ms</sub> | <sub>45.4730</sub> <sub>ms</sub> |
-| <sub>100000</sub> | <sub>229.5011</sub> <sub>ms</sub> | <sub>218.5141</sub> <sub>ms</sub> | <sub>159.0008</sub> <sub>ms</sub> | <sub>93.2573</sub> <sub>ms</sub> | <sub>59.1703</sub> <sub>ms</sub> |
+| <sub>counts</sub> | <sub>std::map</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |
+|-------:|-------------|--------------------|----------------------|-----------------|------------------------|---------------|
+| <sub>1000</sub> | <sub>1.1713</sub> <sub>ms</sub> | <sub>0.9456</sub> <sub>ms</sub> | <sub>0.9826</sub> <sub>ms</sub> | <sub>0.6992</sub> <sub>ms</sub> | <sub>0.4200</sub> <sub>ms</sub> | <sub>0.4148</sub> <sub>ms</sub> |
+| <sub>5000</sub> | <sub>6.1745</sub> <sub>ms</sub> | <sub>4.3015</sub> <sub>ms</sub> | <sub>3.8090</sub> <sub>ms</sub> | <sub>3.1138</sub> <sub>ms</sub> | <sub>2.1556</sub> <sub>ms</sub> | <sub>1.5921</sub> <sub>ms</sub> |
+| <sub>10000</sub> | <sub>14.8754</sub> <sub>ms</sub> | <sub>9.4371</sub> <sub>ms</sub> | <sub>8.4725</sub> <sub>ms</sub> | <sub>6.7312</sub> <sub>ms</sub> | <sub>4.4914</sub> <sub>ms</sub> | <sub>3.4028</sub> <sub>ms</sub> |
+| <sub>20000</sub> | <sub>39.9953</sub> <sub>ms</sub> | <sub>23.3505</sub> <sub>ms</sub> | <sub>21.3940</sub> <sub>ms</sub> | <sub>17.9572</sub> <sub>ms</sub> | <sub>11.0717</sub> <sub>ms</sub> | <sub>8.6558</sub> <sub>ms</sub> |
+| <sub>30000</sub> | <sub>61.8252</sub> <sub>ms</sub> | <sub>35.6864</sub> <sub>ms</sub> | <sub>32.5105</sub> <sub>ms</sub> | <sub>25.2157</sub> <sub>ms</sub> | <sub>14.1257</sub> <sub>ms</sub> | <sub>11.8649</sub> <sub>ms</sub> |
+| <sub>40000</sub> | <sub>105.2262</sub> <sub>ms</sub> | <sub>52.3959</sub> <sub>ms</sub> | <sub>47.5121</sub> <sub>ms</sub> | <sub>39.4516</sub> <sub>ms</sub> | <sub>24.4584</sub> <sub>ms</sub> | <sub>20.1923</sub> <sub>ms</sub> |
+| <sub>50000</sub> | <sub>149.9382</sub> <sub>ms</sub> | <sub>75.9952</sub> <sub>ms</sub> | <sub>69.1855</sub> <sub>ms</sub> | <sub>52.9549</sub> <sub>ms</sub> | <sub>32.5811</sub> <sub>ms</sub> | <sub>28.0107</sub> <sub>ms</sub> |
+| <sub>60000</sub> | <sub>195.9146</sub> <sub>ms</sub> | <sub>100.6947</sub> <sub>ms</sub> | <sub>88.9579</sub> <sub>ms</sub> | <sub>68.8032</sub> <sub>ms</sub> | <sub>36.6249</sub> <sub>ms</sub> | <sub>28.5445</sub> <sub>ms</sub> |
+| <sub>70000</sub> | <sub>237.0496</sub> <sub>ms</sub> | <sub>109.4840</sub> <sub>ms</sub> | <sub>109.6852</sub> <sub>ms</sub> | <sub>81.5113</sub> <sub>ms</sub> | <sub>45.4683</sub> <sub>ms</sub> | <sub>30.7278</sub> <sub>ms</sub> |
+| <sub>80000</sub> | <sub>305.6468</sub> <sub>ms</sub> | <sub>150.8465</sub> <sub>ms</sub> | <sub>146.8488</sub> <sub>ms</sub> | <sub>108.2369</sub> <sub>ms</sub> | <sub>69.6179</sub> <sub>ms</sub> | <sub>42.1046</sub> <sub>ms</sub> |
+| <sub>90000</sub> | <sub>314.1027</sub> <sub>ms</sub> | <sub>167.0097</sub> <sub>ms</sub> | <sub>164.7762</sub> <sub>ms</sub> | <sub>120.9485</sub> <sub>ms</sub> | <sub>81.4235</sub> <sub>ms</sub> | <sub>47.0265</sub> <sub>ms</sub> |
+| <sub>100000</sub> | <sub>465.3704</sub> <sub>ms</sub> | <sub>253.8640</sub> <sub>ms</sub> | <sub>245.5511</sub> <sub>ms</sub> | <sub>167.9563</sub> <sub>ms</sub> | <sub>98.5670</sub> <sub>ms</sub> | <sub>65.4415</sub> <sub>ms</sub> |
 
 

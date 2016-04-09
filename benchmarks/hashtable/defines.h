@@ -5,7 +5,7 @@
 typedef uint64_t 	keey_t;	// because iostream defines a key_t
 typedef uint64_t 	value_t;
 
-const uint32_t		MAX_LOAD_FACTOR = 95;  // percent
+const uint32_t		MAX_LOAD_FACTOR = 85;  // percent
 
 #if defined(IMPL_STL_MAP) || defined(IMPL_STL_UNORDERED_MAP)
 	#ifdef IMPL_STL_UNORDERED_MAP

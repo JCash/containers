@@ -87,8 +87,6 @@ USAGE:
 namespace jc
 {
 
-#pragma pack(push, 1)
-
 template <typename KEY, typename VALUE>
 class HashTable
 {
@@ -291,11 +289,11 @@ private:
 		VALUE   m_Value;
 	};
 
+    Entry*      m_Entries;
+    KEY         m_EmptyKey; // A key that is guaranteed by the user to not be inserted
 	uint32_t    m_Capacity;
 	uint32_t    m_CapacityMask;
 	uint32_t    m_Size;
-	KEY         m_EmptyKey;	// A key that is guaranteed by the user to not be inserted
-	Entry*      m_Entries;
 	
 	inline const VALUE* GetInternal(const KEY& key) const
 	{

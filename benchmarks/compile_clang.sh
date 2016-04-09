@@ -24,5 +24,5 @@ clang++ -o build/ht_stl_unordered_map -DIMPL_STL_UNORDERED_MAP -DIMPL_ALLOCATOR_
 #clang++ -o build/ht_dm_hashtable -DIMPL_DM_HASHTABLE -DIMPL_ALLOCATOR_NEW -I../../external/dmhashtable $ARGS
 
 echo jc hashtable
-clang++ -o build/ht_jc_hashtable -DIMPL_JC_HASHTABLE_RH -DIMPL_ALLOCATOR_NEW $ARGS
+clang++ -o build/ht_jc_hashtable -DIMPL_JC_HASHTABLE -DIMPL_ALLOCATOR_NEW $ARGS
 

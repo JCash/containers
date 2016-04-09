@@ -193,7 +193,7 @@ def make_table_report(data):
 if __name__ == '__main__':
     timestart = time.time()
     
-    tests = [   #'./build/ht_stl_map',
+    tests = [   './build/ht_stl_map',
                 './build/ht_stl_unordered_map',
                 './build/ht_boost_unordered_map',
                 './build/ht_eastl_hash_map',
