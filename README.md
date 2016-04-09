@@ -24,7 +24,7 @@ A fast and small C++ implementation of a hash table
 
 [Benchmarks Hashtable](benchmarks/benchmarks_ht.md)
 
-## Performance examples for jc::HashTable. See benchmark page for more stats.
+Performance examples for jc::HashTable. See benchmark page for more stats.
 <img src="./images/timings_get_random.png" alt="Timings get_random" width="350">
 <img src="./images/timings_insert_random.png" alt="Timings insert_random" width="350">
 
