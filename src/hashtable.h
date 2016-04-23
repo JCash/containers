@@ -9,7 +9,8 @@ ABOUT:
 	- Supports values with = operator
 
 VERSION:
-	1.0 - Initial add
+    1.01 - (2016-04-23) Fixed two iterator issues
+	1.00 - (2016-03-08) Initial add
 
 LICENSE:
 
