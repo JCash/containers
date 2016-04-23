@@ -153,6 +153,17 @@ static void hashtable_iterate(SCtx* ctx)
 		ASSERT_EQ( compit->second, *value );
 	}
 	
+	ht2.Clear();
+	
+	int numelements = 0;
+    it = ht2.Begin();
+    itend = ht2.End();
+    for( ; it != itend; ++it )
+    {
+        ++numelements;
+    }
+    ASSERT_EQ( 0, numelements );
+	
 	free(memory);
 }
 
@@ -216,11 +227,47 @@ static void hashtable_stress(SCtx* ctx)
 	free(memory);
 }
 
+static void hashtable_create_small(SCtx* ctx)
+{
+    for( uint32_t i = 0; i < ctx->count; ++i )
+    {
+        TestHT64 ht(i, EMPTY_KEY, ctx->memory);
+        
+        ASSERT_TRUE( ht.Empty() );
+        
+        for( uint32_t j = 0; j < i; ++j )
+        {
+            SPod pod = { static_cast<int>(j), static_cast<int>(j*2+10) };
+            ht.Put(j, pod);
+        }
+        
+        ASSERT_EQ( i, ht.Size() );
+
+        for( uint32_t j = 0; j < i; ++j )
+        {
+            ht.Erase(j);
+        }
+
+        ASSERT_EQ( 0, ht.Size() );
+        
+        uint32_t numelements = 0;
+        
+        TestHT64::Iterator testit = ht.Begin();
+        TestHT64::Iterator testitend = ht.End();
+        for( ; testit != testitend; ++testit )
+        {
+            ++numelements;
+        }
+
+        ASSERT_EQ( 0, numelements );
+    }
+}
 
 TEST_BEGIN(hashtable_test, hashtable_main_setup, hashtable_main_teardown, test_setup, test_teardown)
     TEST(hashtable_create)
     TEST(hashtable_insert_remove)
     TEST(hashtable_iterate)
     TEST(hashtable_stress)
+    TEST(hashtable_create_small)
 TEST_END(hashtable_test)
 

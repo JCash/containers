@@ -78,7 +78,7 @@ typedef struct jc_test_fixture
 	jc_test_func			test_teardown;
 	jc_test_stats			stats;
 	int						fail;
-#if __x86_64__
+#ifdef __x86_64__
 	int _pad;
 #endif
 	jc_test_entry	tests[256];
@@ -110,7 +110,7 @@ extern jc_test_state jc_test_global_state;
     static void jc_test_global_init_##_NAME_(void)
 #endif
 
-#if __x86_64__
+#ifdef __x86_64__
 #define TEST_BEGIN(_NAME_, _FIXTURESETUP_, _FIXTURETEARDOWN_, _TESTSETUP_, _TESTTEARDOWN_)	\
 	static jc_test_fixture __jc_test_fixture_##_NAME_ = { #_NAME_, 0, \
 			JC_TEST_CAST(jc_fixture_setup_func, (_FIXTURESETUP_)), JC_TEST_CAST(jc_test_func, (_FIXTURETEARDOWN_)), \

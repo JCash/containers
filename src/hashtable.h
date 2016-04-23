@@ -209,7 +209,7 @@ public:
 
 		uint32_t previndex = index;
 		uint32_t swapindex;
-		for(uint32_t n = 1; n < m_Capacity; ++n)
+		for(uint32_t n = 1; n <= m_Capacity; ++n)
 		{
 			previndex = (index + n - 1) & m_CapacityMask;
 			swapindex = (index + n) & m_CapacityMask;
@@ -238,6 +238,10 @@ public:
 	{
 		const HashTable<KEY, VALUE>* m_HashTable;
 		uint32_t m_EntryIndex;
+#ifdef __x86_64__
+		uint32_t _pad; // to remove compiler warnings
+#endif
+    
 	public:
 		Iterator(const HashTable<KEY, VALUE>* ht, bool begin) : m_HashTable(ht)
 		{
@@ -252,10 +256,7 @@ public:
 					}
 				}
 			}
-			else
-			{
-				m_EntryIndex = 0xffffffff;
-			}
+			m_EntryIndex = 0xffffffff;
 		}
 		
 		const KEY*      GetKey() const		{ return &m_HashTable->m_Entries[m_EntryIndex].m_Key; }
@@ -294,6 +295,9 @@ private:
 	uint32_t    m_Capacity;
 	uint32_t    m_CapacityMask;
 	uint32_t    m_Size;
+#ifdef __x86_64__
+	uint32_t    _pad; // to remove compiler warnings
+#endif
 	
 	inline const VALUE* GetInternal(const KEY& key) const
 	{

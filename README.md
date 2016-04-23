@@ -1,4 +1,4 @@
-# containers
+# Containers
 
 A collection of containers that I use
 
@@ -11,7 +11,7 @@ This software is supplied "AS IS" without any warranties and support
 [The MIT license](http://choosealicense.com/licenses/mit/)
 
 
-## jc::hashtable
+## jc::HashTable
 
 A fast and small C++ implementation of a hash table
 
@@ -19,6 +19,13 @@ A fast and small C++ implementation of a hash table
 * Robin Hood collision resloving
 * Backward shift deletion
 * On par with (or slightly faster than) Google's dense_hash_map
+
+### Notes on usage
+
+* Since the Get() functions return a pointer to the table, you musn't store these.
+It it especially important if you add/remove items while holding the pointers.
+
+* Capacity is rounded up to the nearest power of two.
 
 # Benchmarks
 
@@ -30,7 +37,7 @@ Performance examples for jc::HashTable. See benchmark page for more stats.
 
 # Usage
 
-## jc::hashtable
+## jc::HashTable
 
     struct SPod
     {
