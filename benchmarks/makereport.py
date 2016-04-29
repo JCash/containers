@@ -5,8 +5,6 @@ import sys
 import time
 import subprocess
 from collections import OrderedDict
-import plotly.plotly as py
-from plotly.graph_objs import Data, Figure, XAxis, YAxis, Bar, Layout, Font, Legend
 
 
 def find_time_unit(t):
@@ -193,14 +191,14 @@ def make_table_report(data):
 if __name__ == '__main__':
     timestart = time.time()
     
-    tests = [   './build/ht_stl_map',
+    tests = [   #'./build/ht_stl_map',
                 './build/ht_stl_unordered_map',
                 './build/ht_boost_unordered_map',
                 './build/ht_eastl_hash_map',
                 #'./build/ht_boost_flat_map',
                 './build/ht_google_dense_hash_map',
                 #'./build/ht_google_sparse_hash_map',
-                #'./build/ht_dm_hashtable',
+                './build/ht_dm_hashtable',
                 #'./build/ht_jc_hashtable_ch',
                 #'./build/ht_jc_hashtable_rh',
                 './build/ht_jc_hashtable',]
@@ -216,6 +214,7 @@ if __name__ == '__main__':
     
     iterations = 10
     counts = [1000, 5000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000]
+    #counts = [1000, 5000, 10000, 20000, 30000]
     #counts = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000]
     #counts = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 10000, 20000, 30000, 40000]
     #counts = [1000, 2000, 3000, 4000, 5000, 6000]

@@ -3,7 +3,50 @@
 #include "../allocator.h"
 
 typedef uint64_t 	keey_t;	// because iostream defines a key_t
+
+#define BIG_VALUE
+
+#ifdef BIG_VALUE
+
+
+/*
+typedef struct SValue
+{
+	uint64_t value;
+
+	SValue() {}
+	SValue(uint64_t v) : value(v) {}
+} value_t;
+*/
+
+typedef struct SValue
+{
+	int i1;
+	int i2;
+	int i3;
+	float f1;
+	float f2;
+	float f3;
+	char* charp;
+
+	float rect[4];
+
+	int* intp;
+	float position[2];
+
+	int blob[20];
+	uint64_t value;
+
+	SValue() {}
+	SValue(uint64_t v) : value(v) {}
+} value_t;
+
+#else
+
 typedef uint64_t 	value_t;
+
+#endif
+
 
 const uint32_t		MAX_LOAD_FACTOR = 85;  // percent
 
@@ -11,11 +54,13 @@ const uint32_t		MAX_LOAD_FACTOR = 85;  // percent
 	#ifdef IMPL_STL_UNORDERED_MAP
 		#include <unordered_map>
 		#define CONTAINERNAME "std::unordered_map"
-		typedef std::unordered_map<keey_t, value_t, std::hash<keey_t>, std::equal_to<keey_t>, Allocator<std::pair<const keey_t, value_t>>> hashtable_t;
+		//typedef std::unordered_map<keey_t, value_t, std::hash<keey_t>, std::equal_to<keey_t>, Allocator<std::pair<const keey_t, value_t>>> hashtable_t;
+		typedef std::unordered_map<keey_t, value_t> hashtable_t;
 	#else
 		#include <map>
 		#define CONTAINERNAME "std::map"
-		typedef std::map<keey_t, value_t, std::less<keey_t>, Allocator<std::pair<const keey_t, value_t>>> hashtable_t;
+		//typedef std::map<keey_t, value_t, std::less<keey_t>, Allocator<std::pair<const keey_t, value_t>>> hashtable_t;
+		typedef std::map<keey_t, value_t> hashtable_t;
 	#endif
 	typedef hashtable_t::const_iterator iterator_t;
 	#define STL_LIKE_CONTAINER 1
@@ -67,8 +112,13 @@ const uint32_t		MAX_LOAD_FACTOR = 85;  // percent
 		#include "../../src/hashtable_oa.h"
 		#define CONTAINERNAME "jc::hashtable_oa"
 	#else
-		#include "../../src/hashtable.h"
-		#define CONTAINERNAME "jc::hashtable"
+		#ifdef BIG_VALUE
+			#include "../../src/hashtable_array.h"
+			#define CONTAINERNAME "jc::hashtable_pod"
+		#else
+			#include "../../src/hashtable.h"
+			#define CONTAINERNAME "jc::hashtable"
+		#endif
 	#endif
 
 	typedef jc::HashTable<keey_t, value_t> hashtable_t;
@@ -103,9 +153,13 @@ const uint32_t		MAX_LOAD_FACTOR = 85;  // percent
 	{
 		ht.Put( key, value );
 	}
-	inline value_t Get( hashtable_t& ht, keey_t key)
+	inline const uint64_t& Get( hashtable_t& ht, keey_t key)
 	{
-		return *ht.Get( key );
+		#ifdef BIG_VALUE
+			return ht.Get( key )->value;
+		#else
+			return *ht.Get( key );
+		#endif
 	}
     inline bool Exists(hashtable_t& ht, keey_t key)
     {
@@ -123,13 +177,17 @@ const uint32_t		MAX_LOAD_FACTOR = 85;  // percent
 	{
 		return ht.End();
 	}
-	inline keey_t IteratorGetKey(hashtable_t&, iterator_t& it)
+	inline const keey_t& IteratorGetKey(hashtable_t&, iterator_t& it)
 	{
 		return *it.GetKey();
 	}
-	inline value_t IteratorGetValue(hashtable_t&, iterator_t& it)
+	inline const uint64_t& IteratorGetValue(hashtable_t&, iterator_t& it)
 	{
-		return *it.GetValue();
+		#ifdef BIG_VALUE
+			return it.GetValue()->value;
+		#else
+			return *it.GetValue();
+		#endif
 	}
 	inline void IteratorNext(hashtable_t&, iterator_t& it)
 	{
@@ -163,9 +221,13 @@ const uint32_t		MAX_LOAD_FACTOR = 85;  // percent
 	{
 		ht.Put( key, value );
 	}
-	inline value_t Get( hashtable_t& ht, keey_t key)
+	inline const uint64_t& Get( hashtable_t& ht, keey_t key)
 	{
-		return *ht.Get( key );
+		#ifdef BIG_VALUE
+			return ht.Get( key )->value;
+		#else
+			return *ht.Get( key );
+		#endif
 	}
     inline bool Exists(hashtable_t& ht, keey_t key)
     {
@@ -207,9 +269,13 @@ const uint32_t		MAX_LOAD_FACTOR = 85;  // percent
 	{
 		ht[key] = value;
 	}
-	inline value_t Get( hashtable_t& ht, keey_t key)
+	inline const uint64_t& Get( hashtable_t& ht, keey_t key)
 	{
-		return ht[key];
+		#ifdef BIG_VALUE
+			return ht[key].value;
+		#else
+			return ht[key];
+		#endif
 	}
     inline bool Exists(hashtable_t& ht, keey_t key)
     {
@@ -227,13 +293,17 @@ const uint32_t		MAX_LOAD_FACTOR = 85;  // percent
 	{
 		return ht.end();
 	}
-	inline keey_t IteratorGetKey(hashtable_t&, iterator_t& it)
+	inline const keey_t& IteratorGetKey(hashtable_t&, iterator_t& it)
 	{
 		return it->first;
 	}
-	inline value_t IteratorGetValue(hashtable_t&, iterator_t& it)
+	inline const uint64_t& IteratorGetValue(hashtable_t&, iterator_t& it)
 	{
-		return it->second;
+		#ifdef BIG_VALUE
+			return it->second.value;
+		#else
+			return it->second;
+		#endif
 	}
 	inline void IteratorNext(hashtable_t&, iterator_t& it)
 	{
@@ -268,9 +338,13 @@ const uint32_t		MAX_LOAD_FACTOR = 85;  // percent
 	{
 		ht[key] = value;
 	}
-	inline value_t Get( hashtable_t& ht, keey_t key)
+	inline const uint64_t& Get( hashtable_t& ht, keey_t key)
 	{
-		return ht[key];
+		#ifdef BIG_VALUE
+			return ht[key].value;
+		#else
+			return ht[key];
+		#endif
 	}
     inline bool Exists(hashtable_t& ht, keey_t key)
     {
@@ -288,13 +362,17 @@ const uint32_t		MAX_LOAD_FACTOR = 85;  // percent
 	{
 		return ht.cend();
 	}
-	inline keey_t IteratorGetKey(hashtable_t&, iterator_t& it)
+	inline const keey_t& IteratorGetKey(hashtable_t&, iterator_t& it)
 	{
 		return it->first;
 	}
-	inline value_t IteratorGetValue(hashtable_t&, iterator_t& it)
+	inline const uint64_t& IteratorGetValue(hashtable_t&, iterator_t& it)
 	{
-		return it->second;
+		#ifdef BIG_VALUE
+			return it->second.value;
+		#else
+			return it->second;
+		#endif
 	}
 	inline void IteratorNext(hashtable_t&, iterator_t& it)
 	{
