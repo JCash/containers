@@ -32,8 +32,11 @@ It it especially important if you add/remove items while holding the pointers.
 [Benchmarks Hashtable](benchmarks/benchmarks_ht.md)
 
 Performance examples for jc::HashTable. See benchmark page for more stats.
-<img src="./images/timings_get_random.png" alt="Timings get_random" width="350">
-<img src="./images/timings_insert_random.png" alt="Timings insert_random" width="350">
+<img src="./images/timings_insert_random_sizeof(value)==8.png" alt="Timings insert_random size=8" width="350">
+<img src="./images/timings_insert_random_sizeof(value)==152.png" alt="Timings insert_random size=152" width="350">
+
+<img src="./images/timings_get_random_sizeof(value)==8.png" alt="Timings get_random size=8" width="350">
+<img src="./images/timings_get_random_sizeof(value)==152.png" alt="Timings get_random size=152" width="350">
 
 # Usage
 
