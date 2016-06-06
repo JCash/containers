@@ -22,9 +22,6 @@ A fast and small C++ implementation of a hash table
 
 ### Notes on usage
 
-* Since the Get() functions return a pointer to the table, you musn't store these.
-It it especially important if you add/remove items while holding the pointers.
-
 * Capacity is rounded up to the nearest power of two.
 
 # Benchmarks
