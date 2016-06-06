@@ -54,12 +54,10 @@ Performance examples for jc::HashTable. See benchmark page for more stats.
     uint32_t tablesize      = uint32_t(numelements / (load_factor/100.0f)); 
     uint32_t sizeneeded     = hashtable_t::CalcSize(tablesize);
     
-    hashtable_t::key_type emptykey = 0xBAADC0D3;
-     
     void* mem = malloc(sizeneeded);
     
     hashtable_t ht;
-    ht.Create(numelements, emptykey, mem);
+    ht.Create(numelements, mem);
     
     SPod value = { 1, 2.0f };
     ht.Put(17, value);
