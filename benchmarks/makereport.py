@@ -198,11 +198,10 @@ if __name__ == '__main__':
                 #'./build/ht_boost_flat_map',
                 './build/ht_google_dense_hash_map',
                 #'./build/ht_google_sparse_hash_map',
-                './build/ht_dm_hashtable',
+                #'./build/ht_dm_hashtable',
                 #'./build/ht_jc_hashtable_ch',
                 #'./build/ht_jc_hashtable_rh',
-                './build/ht_jc_hashtable',
-                './build/ht_jc_hashtable2',]
+                './build/ht_jc_hashtable',]
                 
     testsx = [   './build/ht_boost_flat_map',
                 #'./build/ht_dm_hashtable',
@@ -213,7 +212,7 @@ if __name__ == '__main__':
                 './build/ht_jc_hashtable_oa',
                 './build/ht_jc_hashtable_rh']
 
-    bigtest = False
+    bigtest = True
     if bigtest:
         tests = [x + "_big" for x in tests]
     

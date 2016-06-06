@@ -3,8 +3,8 @@ mkdir -p build
 
 SUFFIX=
 DEFINES=
-#SUFFIX=_big
-#DEFINES=-DBIG_VALUE
+SUFFIX=_big
+DEFINES=-DBIG_VALUE
 
 ARGS="$DEFINES -g -O3 -m64 -std=c++11 -Wall -Ihashtable -I. allocator.cpp helpers.cpp report.cpp hashtable/test_hashtable.cpp testmain.cpp"
 
@@ -32,6 +32,3 @@ clang++ -o build/ht_dm_hashtable$SUFFIX -DIMPL_DM_HASHTABLE -DIMPL_ALLOCATOR_NEW
 
 echo jc hashtable $SUFFIX
 clang++ -o build/ht_jc_hashtable$SUFFIX -DIMPL_JC_HASHTABLE -DIMPL_ALLOCATOR_NEW $ARGS
-
-echo jc hashtable 2 $SUFFIX
-clang++ -o build/ht_jc_hashtable2$SUFFIX -DIMPL_JC_HASHTABLE_BIG -DIMPL_ALLOCATOR_NEW $ARGS

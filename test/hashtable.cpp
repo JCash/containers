@@ -1,5 +1,5 @@
 #include "jc_test.h"
-#include "hashtable_array.h"
+#include "hashtable.h"
 
 #include <stdlib.h>
 
@@ -327,17 +327,17 @@ static void hashtable_add_remove_add(SCtx*)
     free(memory);
 }
 
-void hashtable_add_remove_add_2()
+static void hashtable_add_remove_add_2(SCtx*)
 {
-	const int N = 20;
+	const uint32_t N = 20;
 
 	uint32_t memorysize = jc::HashTable<uint32_t, uint32_t>::CalcSize(N*3);
 
 	void* memory = malloc( memorysize );
 
-    for (int count = 1; count < N; ++count)
+    for (uint32_t count = 1; count < N; ++count)
     {
-        for (int table_size = 1; table_size <= 2*N; ++table_size)
+        for (uint32_t table_size = 1; table_size <= 2*N; ++table_size)
         {
        		memset(memory, 0xcd, memorysize);
        		
@@ -347,7 +347,7 @@ void hashtable_add_remove_add_2()
             const uint32_t grow_shrink_iter_count = 20;
             for (uint32_t grow_shrink_iter = 0; grow_shrink_iter < grow_shrink_iter_count; ++grow_shrink_iter)
             {
-                uint32_t target_size = uint32_t(rand() % (count + 1));
+                uint32_t target_size = uint32_t(rand()) % (count + 1);
 
                 if (grow_shrink_iter == grow_shrink_iter_count/2)
                 {
@@ -359,8 +359,8 @@ void hashtable_add_remove_add_2()
                 {
                     if (map.size() < target_size)
                     {
-                        uint32_t key = rand() & 0x3ff; // keys up to 1023...
-                        uint32_t val = rand();
+                        uint32_t key = uint32_t(rand() & 0x3ff); // keys up to 1023...
+                        uint32_t val = uint32_t(rand());
 
                         map[key] = val;
                         ht.Put(key, val);
@@ -385,7 +385,7 @@ void hashtable_add_remove_add_2()
             for( iter = map.begin(); iter != map.end(); ++iter)
             {
                 uint32_t key = iter->first;
-                ASSERT_NE((void*) 0, ht.Get(key));
+                ASSERT_NE(uintptr_t(0), uintptr_t(ht.Get(key)));
                 ASSERT_EQ(iter->second, *ht.Get(key));
             }
         }
@@ -395,7 +395,7 @@ void hashtable_add_remove_add_2()
 }
 
 
-void hashtable_bug_erase()
+static void hashtable_bug_erase(SCtx*)
 {
 	uint32_t memorysize = jc::HashTable<uint32_t, uint32_t>::CalcSize(16);
 	void* memory = malloc( memorysize );
