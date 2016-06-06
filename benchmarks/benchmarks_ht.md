@@ -36,7 +36,6 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 <sub>
 ## <sub>Timings</sub> <sub>insert_sequential</sub> <sub>sizeof(value)==8</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>dmHashTable</sub> | <sub>jc::hashtable</sub> | <sub>jc::hashtable2</sub> |
 |-------:|--------------------|-----------------|------------------------|-------------|---------------|----------------|
 | <sub>1000</sub> | <sub>0.0723</sub> <sub>ms</sub> | <sub>0.0582</sub> <sub>ms</sub> | <sub>0.0257</sub> <sub>ms</sub> | <sub>0.0256</sub> <sub>ms</sub> | <sub>0.0023</sub> <sub>ms</sub> | <sub>0.0033</sub> <sub>ms</sub> |
 | <sub>5000</sub> | <sub>0.3615</sub> <sub>ms</sub> | <sub>0.2742</sub> <sub>ms</sub> | <sub>0.1704</sub> <sub>ms</sub> | <sub>0.1038</sub> <sub>ms</sub> | <sub>0.0119</sub> <sub>ms</sub> | <sub>0.0163</sub> <sub>ms</sub> |
@@ -54,7 +53,6 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 
 ## <sub>Timings</sub> <sub>insert_random</sub> <sub>sizeof(value)==8</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>dmHashTable</sub> | <sub>jc::hashtable</sub> | <sub>jc::hashtable2</sub> |
 |-------:|--------------------|-----------------|------------------------|-------------|---------------|----------------|
 | <sub>1000</sub> | <sub>0.0850</sub> <sub>ms</sub> | <sub>0.0610</sub> <sub>ms</sub> | <sub>0.0361</sub> <sub>ms</sub> | <sub>0.0302</sub> <sub>ms</sub> | <sub>0.0059</sub> <sub>ms</sub> | <sub>0.0062</sub> <sub>ms</sub> |
 | <sub>5000</sub> | <sub>0.4455</sub> <sub>ms</sub> | <sub>0.3123</sub> <sub>ms</sub> | <sub>0.2542</sub> <sub>ms</sub> | <sub>0.1291</sub> <sub>ms</sub> | <sub>0.0603</sub> <sub>ms</sub> | <sub>0.0585</sub> <sub>ms</sub> |
@@ -72,7 +70,6 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 
 ## <sub>Timings</sub> <sub>get_sequential</sub> <sub>sizeof(value)==8</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>dmHashTable</sub> | <sub>jc::hashtable</sub> | <sub>jc::hashtable2</sub> |
 |-------:|--------------------|-----------------|------------------------|-------------|---------------|----------------|
 | <sub>1000</sub> | <sub>0.0197</sub> <sub>ms</sub> | <sub>0.0115</sub> <sub>ms</sub> | <sub>0.0080</sub> <sub>ms</sub> | <sub>0.0108</sub> <sub>ms</sub> | <sub>0.0012</sub> <sub>ms</sub> | <sub>0.0016</sub> <sub>ms</sub> |
 | <sub>5000</sub> | <sub>0.0926</sub> <sub>ms</sub> | <sub>0.0629</sub> <sub>ms</sub> | <sub>0.0410</sub> <sub>ms</sub> | <sub>0.0433</sub> <sub>ms</sub> | <sub>0.0061</sub> <sub>ms</sub> | <sub>0.0077</sub> <sub>ms</sub> |
@@ -90,7 +87,6 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 
 ## <sub>Timings</sub> <sub>get_random</sub> <sub>sizeof(value)==8</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>dmHashTable</sub> | <sub>jc::hashtable</sub> | <sub>jc::hashtable2</sub> |
 |-------:|--------------------|-----------------|------------------------|-------------|---------------|----------------|
 | <sub>1000</sub> | <sub>0.0258</sub> <sub>ms</sub> | <sub>0.0160</sub> <sub>ms</sub> | <sub>0.0122</sub> <sub>ms</sub> | <sub>0.0166</sub> <sub>ms</sub> | <sub>0.0055</sub> <sub>ms</sub> | <sub>0.0056</sub> <sub>ms</sub> |
 | <sub>5000</sub> | <sub>0.1402</sub> <sub>ms</sub> | <sub>0.0876</sub> <sub>ms</sub> | <sub>0.0493</sub> <sub>ms</sub> | <sub>0.0751</sub> <sub>ms</sub> | <sub>0.0418</sub> <sub>ms</sub> | <sub>0.0432</sub> <sub>ms</sub> |
@@ -108,7 +104,6 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 
 ## <sub>Timings</sub> <sub>erase_sequential</sub> <sub>sizeof(value)==8</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>dmHashTable</sub> | <sub>jc::hashtable</sub> | <sub>jc::hashtable2</sub> |
 |-------:|--------------------|-----------------|------------------------|-------------|---------------|----------------|
 | <sub>1000</sub> | <sub>0.0946</sub> <sub>ms</sub> | <sub>0.0675</sub> <sub>ms</sub> | <sub>0.0087</sub> <sub>ms</sub> | <sub>0.0135</sub> <sub>ms</sub> | <sub>0.0048</sub> <sub>ms</sub> | <sub>0.0062</sub> <sub>ms</sub> |
 | <sub>5000</sub> | <sub>0.4696</sub> <sub>ms</sub> | <sub>0.3377</sub> <sub>ms</sub> | <sub>0.0432</sub> <sub>ms</sub> | <sub>0.0549</sub> <sub>ms</sub> | <sub>0.0236</sub> <sub>ms</sub> | <sub>0.0307</sub> <sub>ms</sub> |
@@ -126,7 +121,6 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 
 ## <sub>Timings</sub> <sub>erase_random</sub> <sub>sizeof(value)==8</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>dmHashTable</sub> | <sub>jc::hashtable</sub> | <sub>jc::hashtable2</sub> |
 |-------:|--------------------|-----------------|------------------------|-------------|---------------|----------------|
 | <sub>1000</sub> | <sub>0.1233</sub> <sub>ms</sub> | <sub>0.0822</sub> <sub>ms</sub> | <sub>0.0130</sub> <sub>ms</sub> | <sub>0.0149</sub> <sub>ms</sub> | <sub>0.0117</sub> <sub>ms</sub> | <sub>0.0137</sub> <sub>ms</sub> |
 | <sub>5000</sub> | <sub>0.6252</sub> <sub>ms</sub> | <sub>0.4517</sub> <sub>ms</sub> | <sub>0.0556</sub> <sub>ms</sub> | <sub>0.0744</sub> <sub>ms</sub> | <sub>0.0742</sub> <sub>ms</sub> | <sub>0.1055</sub> <sub>ms</sub> |
@@ -144,7 +138,6 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 
 ## <sub>Timings</sub> <sub>iterator</sub> <sub>sizeof(value)==8</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>dmHashTable</sub> | <sub>jc::hashtable</sub> | <sub>jc::hashtable2</sub> |
 |-------:|--------------------|-----------------|------------------------|-------------|---------------|----------------|
 | <sub>1000</sub> | <sub>0.0022</sub> <sub>ms</sub> | <sub>0.0080</sub> <sub>ms</sub> | <sub>0.0072</sub> <sub>ms</sub> | <sub>0.0052</sub> <sub>ms</sub> | <sub>0.0027</sub> <sub>ms</sub> | <sub>0.0023</sub> <sub>ms</sub> |
 | <sub>5000</sub> | <sub>0.0225</sub> <sub>ms</sub> | <sub>0.0423</sub> <sub>ms</sub> | <sub>0.0554</sub> <sub>ms</sub> | <sub>0.0422</sub> <sub>ms</sub> | <sub>0.0250</sub> <sub>ms</sub> | <sub>0.0279</sub> <sub>ms</sub> |
@@ -162,7 +155,6 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 
 ## <sub>Timings</sub> <sub>create_insert_sum</sub> <sub>sizeof(value)==8</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>dmHashTable</sub> | <sub>jc::hashtable</sub> | <sub>jc::hashtable2</sub> |
 |-------:|--------------------|-----------------|------------------------|-------------|---------------|----------------|
 | <sub>1000</sub> | <sub>0.1430</sub> <sub>ms</sub> | <sub>0.1323</sub> <sub>ms</sub> | <sub>0.0198</sub> <sub>ms</sub> | <sub>0.0240</sub> <sub>ms</sub> | <sub>0.0150</sub> <sub>ms</sub> | <sub>0.0228</sub> <sub>ms</sub> |
 | <sub>5000</sub> | <sub>0.8568</sub> <sub>ms</sub> | <sub>0.7102</sub> <sub>ms</sub> | <sub>0.1077</sub> <sub>ms</sub> | <sub>0.1166</sub> <sub>ms</sub> | <sub>0.0656</sub> <sub>ms</sub> | <sub>0.1095</sub> <sub>ms</sub> |
@@ -180,7 +172,6 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 
 ## <sub>Timings</sub> <sub>adds_and_removes</sub> <sub>sizeof(value)==8</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>dmHashTable</sub> | <sub>jc::hashtable</sub> | <sub>jc::hashtable2</sub> |
 |-------:|--------------------|-----------------|------------------------|-------------|---------------|----------------|
 | <sub>1000</sub> | <sub>0.9463</sub> <sub>ms</sub> | <sub>0.6998</sub> <sub>ms</sub> | <sub>0.4236</sub> <sub>ms</sub> | <sub>0.4049</sub> <sub>ms</sub> | <sub>0.3439</sub> <sub>ms</sub> | <sub>0.3474</sub> <sub>ms</sub> |
 | <sub>5000</sub> | <sub>4.3219</sub> <sub>ms</sub> | <sub>3.0940</sub> <sub>ms</sub> | <sub>2.1588</sub> <sub>ms</sub> | <sub>1.7971</sub> <sub>ms</sub> | <sub>1.6287</sub> <sub>ms</sub> | <sub>1.6735</sub> <sub>ms</sub> |
@@ -201,7 +192,6 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 <sub>
 ## <sub>Timings</sub> <sub>insert_sequential</sub> <sub>sizeof(value)==152</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>dmHashTable</sub> | <sub>jc::hashtable</sub> | <sub>jc::hashtable2</sub> |
 |-------:|--------------------|-----------------|------------------------|-------------|---------------|----------------|
 | <sub>1000</sub> | <sub>0.0810</sub> <sub>ms</sub> | <sub>0.0638</sub> <sub>ms</sub> | <sub>0.0878</sub> <sub>ms</sub> | <sub>0.0307</sub> <sub>ms</sub> | <sub>0.0158</sub> <sub>ms</sub> | <sub>0.0190</sub> <sub>ms</sub> |
 | <sub>5000</sub> | <sub>0.4089</sub> <sub>ms</sub> | <sub>0.3216</sub> <sub>ms</sub> | <sub>0.7457</sub> <sub>ms</sub> | <sub>0.1449</sub> <sub>ms</sub> | <sub>0.0793</sub> <sub>ms</sub> | <sub>0.1085</sub> <sub>ms</sub> |
@@ -219,7 +209,6 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 
 ## <sub>Timings</sub> <sub>insert_random</sub> <sub>sizeof(value)==152</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>dmHashTable</sub> | <sub>jc::hashtable</sub> | <sub>jc::hashtable2</sub> |
 |-------:|--------------------|-----------------|------------------------|-------------|---------------|----------------|
 | <sub>1000</sub> | <sub>0.0930</sub> <sub>ms</sub> | <sub>0.0708</sub> <sub>ms</sub> | <sub>0.1020</sub> <sub>ms</sub> | <sub>0.0361</sub> <sub>ms</sub> | <sub>0.0225</sub> <sub>ms</sub> | <sub>0.0281</sub> <sub>ms</sub> |
 | <sub>5000</sub> | <sub>0.5122</sub> <sub>ms</sub> | <sub>0.4078</sub> <sub>ms</sub> | <sub>0.9340</sub> <sub>ms</sub> | <sub>0.1815</sub> <sub>ms</sub> | <sub>0.1770</sub> <sub>ms</sub> | <sub>0.1364</sub> <sub>ms</sub> |
@@ -237,7 +226,6 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 
 ## <sub>Timings</sub> <sub>get_sequential</sub> <sub>sizeof(value)==152</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>dmHashTable</sub> | <sub>jc::hashtable</sub> | <sub>jc::hashtable2</sub> |
 |-------:|--------------------|-----------------|------------------------|-------------|---------------|----------------|
 | <sub>1000</sub> | <sub>0.0179</sub> <sub>ms</sub> | <sub>0.0112</sub> <sub>ms</sub> | <sub>0.0076</sub> <sub>ms</sub> | <sub>0.0097</sub> <sub>ms</sub> | <sub>0.0018</sub> <sub>ms</sub> | <sub>0.0033</sub> <sub>ms</sub> |
 | <sub>5000</sub> | <sub>0.0900</sub> <sub>ms</sub> | <sub>0.0562</sub> <sub>ms</sub> | <sub>0.0470</sub> <sub>ms</sub> | <sub>0.0465</sub> <sub>ms</sub> | <sub>0.0137</sub> <sub>ms</sub> | <sub>0.0151</sub> <sub>ms</sub> |
@@ -255,7 +243,6 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 
 ## <sub>Timings</sub> <sub>get_random</sub> <sub>sizeof(value)==152</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>dmHashTable</sub> | <sub>jc::hashtable</sub> | <sub>jc::hashtable2</sub> |
 |-------:|--------------------|-----------------|------------------------|-------------|---------------|----------------|
 | <sub>1000</sub> | <sub>0.0271</sub> <sub>ms</sub> | <sub>0.0166</sub> <sub>ms</sub> | <sub>0.0124</sub> <sub>ms</sub> | <sub>0.0149</sub> <sub>ms</sub> | <sub>0.0068</sub> <sub>ms</sub> | <sub>0.0074</sub> <sub>ms</sub> |
 | <sub>5000</sub> | <sub>0.1652</sub> <sub>ms</sub> | <sub>0.1227</sub> <sub>ms</sub> | <sub>0.0635</sub> <sub>ms</sub> | <sub>0.0886</sub> <sub>ms</sub> | <sub>0.0591</sub> <sub>ms</sub> | <sub>0.0611</sub> <sub>ms</sub> |
@@ -273,7 +260,6 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 
 ## <sub>Timings</sub> <sub>erase_sequential</sub> <sub>sizeof(value)==152</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>dmHashTable</sub> | <sub>jc::hashtable</sub> | <sub>jc::hashtable2</sub> |
 |-------:|--------------------|-----------------|------------------------|-------------|---------------|----------------|
 | <sub>1000</sub> | <sub>0.1172</sub> <sub>ms</sub> | <sub>0.0842</sub> <sub>ms</sub> | <sub>0.0087</sub> <sub>ms</sub> | <sub>0.0109</sub> <sub>ms</sub> | <sub>0.0054</sub> <sub>ms</sub> | <sub>0.0096</sub> <sub>ms</sub> |
 | <sub>5000</sub> | <sub>0.4724</sub> <sub>ms</sub> | <sub>0.3407</sub> <sub>ms</sub> | <sub>0.0434</sub> <sub>ms</sub> | <sub>0.0549</sub> <sub>ms</sub> | <sub>0.0317</sub> <sub>ms</sub> | <sub>0.0447</sub> <sub>ms</sub> |
@@ -291,7 +277,6 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 
 ## <sub>Timings</sub> <sub>erase_random</sub> <sub>sizeof(value)==152</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>dmHashTable</sub> | <sub>jc::hashtable</sub> | <sub>jc::hashtable2</sub> |
 |-------:|--------------------|-----------------|------------------------|-------------|---------------|----------------|
 | <sub>1000</sub> | <sub>0.1536</sub> <sub>ms</sub> | <sub>0.1014</sub> <sub>ms</sub> | <sub>0.0135</sub> <sub>ms</sub> | <sub>0.0140</sub> <sub>ms</sub> | <sub>0.0157</sub> <sub>ms</sub> | <sub>0.0155</sub> <sub>ms</sub> |
 | <sub>5000</sub> | <sub>0.6778</sub> <sub>ms</sub> | <sub>0.4410</sub> <sub>ms</sub> | <sub>0.0777</sub> <sub>ms</sub> | <sub>0.0801</sub> <sub>ms</sub> | <sub>0.1162</sub> <sub>ms</sub> | <sub>0.0897</sub> <sub>ms</sub> |
@@ -309,7 +294,6 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 
 ## <sub>Timings</sub> <sub>iterator</sub> <sub>sizeof(value)==152</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>dmHashTable</sub> | <sub>jc::hashtable</sub> | <sub>jc::hashtable2</sub> |
 |-------:|--------------------|-----------------|------------------------|-------------|---------------|----------------|
 | <sub>1000</sub> | <sub>0.0042</sub> <sub>ms</sub> | <sub>0.0077</sub> <sub>ms</sub> | <sub>0.0088</sub> <sub>ms</sub> | <sub>0.0067</sub> <sub>ms</sub> | <sub>0.0041</sub> <sub>ms</sub> | <sub>0.0035</sub> <sub>ms</sub> |
 | <sub>5000</sub> | <sub>0.0428</sub> <sub>ms</sub> | <sub>0.0491</sub> <sub>ms</sub> | <sub>0.0684</sub> <sub>ms</sub> | <sub>0.0469</sub> <sub>ms</sub> | <sub>0.0374</sub> <sub>ms</sub> | <sub>0.0382</sub> <sub>ms</sub> |
@@ -327,7 +311,6 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 
 ## <sub>Timings</sub> <sub>create_insert_sum</sub> <sub>sizeof(value)==152</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>dmHashTable</sub> | <sub>jc::hashtable</sub> | <sub>jc::hashtable2</sub> |
 |-------:|--------------------|-----------------|------------------------|-------------|---------------|----------------|
 | <sub>1000</sub> | <sub>0.1694</sub> <sub>ms</sub> | <sub>0.1588</sub> <sub>ms</sub> | <sub>0.0544</sub> <sub>ms</sub> | <sub>0.0318</sub> <sub>ms</sub> | <sub>0.1213</sub> <sub>ms</sub> | <sub>0.0824</sub> <sub>ms</sub> |
 | <sub>5000</sub> | <sub>0.7904</sub> <sub>ms</sub> | <sub>0.7249</sub> <sub>ms</sub> | <sub>0.3590</sub> <sub>ms</sub> | <sub>0.1597</sub> <sub>ms</sub> | <sub>0.5369</sub> <sub>ms</sub> | <sub>0.4208</sub> <sub>ms</sub> |
@@ -345,7 +328,6 @@ Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 
 ## <sub>Timings</sub> <sub>adds_and_removes</sub> <sub>sizeof(value)==152</sub>
 
-| <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>dmHashTable</sub> | <sub>jc::hashtable</sub> | <sub>jc::hashtable2</sub> |
 |-------:|--------------------|-----------------|------------------------|-------------|---------------|----------------|
 | <sub>1000</sub> | <sub>1.0369</sub> <sub>ms</sub> | <sub>0.7884</sub> <sub>ms</sub> | <sub>0.5574</sub> <sub>ms</sub> | <sub>0.5173</sub> <sub>ms</sub> | <sub>0.4666</sub> <sub>ms</sub> | <sub>0.5207</sub> <sub>ms</sub> |
 | <sub>5000</sub> | <sub>5.0466</sub> <sub>ms</sub> | <sub>3.7531</sub> <sub>ms</sub> | <sub>3.6713</sub> <sub>ms</sub> | <sub>2.3867</sub> <sub>ms</sub> | <sub>2.3970</sub> <sub>ms</sub> | <sub>2.3553</sub> <sub>ms</sub> |

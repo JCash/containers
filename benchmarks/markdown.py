@@ -56,6 +56,8 @@ if __name__ == '__main__':
     tests1 = get_tests(lines1)
     tests2 = get_tests(lines2)
     for test1, test2 in zip(tests1,tests2):
+        if ('dmHashTable' in test1) or ('dmHashTable' in test2):
+            continue
         print '<img src="%s" alt="%s" width="350">' % (get_path_from_test_name(test1), test1)
         print '<img src="%s" alt="%s" width="350">' % (get_path_from_test_name(test2), test2)
         print '<br/>'
@@ -66,6 +68,8 @@ if __name__ == '__main__':
     print "### %s" % log1
     print "<sub>"
     for line in lines1:
+        if 'dmHashTable' in line:
+            continue
         tokens = line.split()
         tokens = map(sub, tokens)
         print " ".join(tokens)
@@ -74,6 +78,8 @@ if __name__ == '__main__':
     print "### %s" % log2
     print "<sub>"
     for line in lines2:
+        if 'dmHashTable' in line:
+            continue
         tokens = line.split()
         tokens = map(sub, tokens)
         print " ".join(tokens)

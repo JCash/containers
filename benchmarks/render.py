@@ -156,7 +156,7 @@ def render_matplotlib(test):
                      #color=random_color(),
                      label=name)
         """
-        if "std::map" in name:
+        if name in ("std::map", "dmHashTable"):
             continue
         plt.plot(test['counts'], values, label=name, color=random_color(), marker=markers[i % len(markers)])
         offset += bar_width
