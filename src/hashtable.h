@@ -10,8 +10,8 @@ ABOUT:
     - Supports values with = operator
 
 VERSION:
-    1.02 - (2016-06-04) - Changed to two arrays: entries & values
-                        - Removed empty key
+    2.00 - (2016-06-04) - Changed to two arrays: entries & values
+                        - Removed empty key (API change)
                         - Optimised the Create function
                         - Bug fixes
     1.01 - (2016-04-23) Fixed two iterator issues
