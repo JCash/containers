@@ -1,15 +1,19 @@
 /*
 ABOUT:
     A small and fast hash table implementing open addressing using the robin hood scheme with backward shift deletion
+    Implementation uses two separate arrays in order to separate seeking and storing, for cache friendliness
 
     - The memory must be allocated by the user
     - It cannot grow
     - It asserts when putting an item into a full table
-    - Supports keys with % and == operators
+    - Supports keys with & and == operators
     - Supports values with = operator
 
 VERSION:
-    1.02 - (2016-06-04) Changed to two arrays: entries & values. Removed empty key, need. Bug fixes
+    1.02 - (2016-06-04) - Changed to two arrays: entries & values
+                        - Removed empty key
+                        - Optimised the Create function
+                        - Bug fixes
     1.01 - (2016-04-23) Fixed two iterator issues
     1.00 - (2016-03-08) Initial add
 
@@ -126,9 +130,9 @@ public:
     void Create(uint32_t capacity, void* mem)
     {
         m_Capacity      = NextPow2(capacity);
+        m_CapacityMask  = m_Capacity - 1;
         m_Entries       = reinterpret_cast<Entry*>(mem);
         m_Values        = reinterpret_cast<Value*>(m_Entries + m_Capacity);
-        m_CapacityMask  = m_Capacity - 1;
         Clear();
     }
     
@@ -243,60 +247,6 @@ public:
         --m_Size;
     }
 
-    void printtable() const
-    {
-        printf("  table:\n");
-
-        for( int i = 0; i < m_Capacity; ++i)
-        {
-            if( !IsFree(i) )
-            {
-                printf("  %d:  %llu = %llu   vi: %d   dist: %d\n", i, (uint64_t)m_Entries[i].m_Key, (uint64_t)m_Values[m_Entries[i].m_Index].m_Value, m_Entries[i].m_Index, Distance(i));
-            }
-            else
-            {
-                printf("  %d:  %llu = %llu   vi: %d   dist: %d\n", i, (uint64_t)m_Entries[i].m_Key, (uint64_t)(m_Entries[i].m_Index != 0xFFFFFFFF ? m_Values[m_Entries[i].m_Index].m_Value : 0), m_Entries[i].m_Index, Distance(i));
-                //printf("  %d:\n", i);
-            }
-        }
-        printf("\n");
-    }
-
-    void printfree() const
-    {
-        printf("freelist: ");
-
-        uint32_t i = 0;
-        uint32_t index = m_FreeList;
-        while(index != 0xFFFFFFFF && i++ < m_Capacity)
-        {
-            printf("%u, ", index);
-            index = m_Values[index].m_Next;
-        }
-
-        printf("\n");
-    }
-
-    void printvalues() const
-    {
-        printf("valuelist: ");
-
-        for( int i = 0; i < m_Capacity; ++i)
-        {
-            printf("%llu, ", (uint64_t)m_Values[i].m_Value);
-        }
-
-        printf("\n");
-    }
-
-    void DebugPrint() const
-    {
-        printf("Size: %u  Capacity: %u\n", m_Size, m_Capacity);
-        printtable();
-        printfree();
-        printvalues();
-    }
-    
     inline bool Empty() const
     {
         return m_Size == 0;
@@ -311,10 +261,7 @@ public:
     {
         const HashTable<KEY, VALUE>* m_HashTable;
         uint32_t m_EntryIndex;
-//#ifdef __x86_64__
-//        uint32_t _pad; // to remove compiler warnings. pack doesn't work properly on android :/
-//#endif
-    
+
     public:
         Iterator(const HashTable<KEY, VALUE>* ht, bool begin) : m_HashTable(ht)
         {

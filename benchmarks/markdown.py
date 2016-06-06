@@ -39,28 +39,44 @@ def sub(x):
         
 if __name__ == '__main__':
 
-    log     = sys.argv[1]
-    title   = sys.argv[2]
+    log1    = sys.argv[1]
+    log2    = sys.argv[2]
+    title   = sys.argv[3]
     
     print "# %s benchmarks" % title
     print ""
     print "Benchmarks run on a:", get_machine(), " ", get_cpu() 
     print ""
 
-    lines = get_log(log)
+    lines1 = get_log(log1)
+    lines2 = get_log(log2)
 
     print "# Images"
 
-    tests = get_tests(lines)
-    for test in tests:
-        print '<img src="%s" alt="%s" width="350">' % (get_path_from_test_name(test), test)
+    tests1 = get_tests(lines1)
+    tests2 = get_tests(lines2)
+    for test1, test2 in zip(tests1,tests2):
+        print '<img src="%s" alt="%s" width="350">' % (get_path_from_test_name(test1), test1)
+        print '<img src="%s" alt="%s" width="350">' % (get_path_from_test_name(test2), test2)
+        print '<br/>'
 
     print "# Tables"
-    
+
+    print ""
+    print "### %s" % log1
     print "<sub>"
-    for line in lines:
+    for line in lines1:
         tokens = line.split()
         tokens = map(sub, tokens)
         print " ".join(tokens)
+
+    print ""
+    print "### %s" % log2
+    print "<sub>"
+    for line in lines2:
+        tokens = line.split()
+        tokens = map(sub, tokens)
+        print " ".join(tokens)
+
     
     
