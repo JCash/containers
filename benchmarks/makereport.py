@@ -5,8 +5,6 @@ import sys
 import time
 import subprocess
 from collections import OrderedDict
-import plotly.plotly as py
-from plotly.graph_objs import Data, Figure, XAxis, YAxis, Bar, Layout, Font, Legend
 
 
 def find_time_unit(t):
@@ -115,7 +113,7 @@ def collect_table_data(counts, report, tabledata):
                 tabledata[category][testname][name].extend(values)
             
 
-def make_table_report(data):
+def make_table_report(data, bigtest):
     usediff = False
 
     for category, tests in data.iteritems():
@@ -158,7 +156,7 @@ def make_table_report(data):
                 else:
                     headersunderline.append( '-' * (length + 2) )
                     
-            print "## " + title + " " + testname
+            print "## " + title + " " + testname + (" sizeof(value)==152" if bigtest else " sizeof(value)==8")
             print ""
             print '|' + '|'.join(headers) + '|'
             print '|' + '|'.join(headersunderline) + '|'
@@ -193,9 +191,9 @@ def make_table_report(data):
 if __name__ == '__main__':
     timestart = time.time()
     
-    tests = [   './build/ht_stl_map',
+    tests = [   #'./build/ht_stl_map',
                 './build/ht_stl_unordered_map',
-                './build/ht_boost_unordered_map',
+                #'./build/ht_boost_unordered_map',
                 './build/ht_eastl_hash_map',
                 #'./build/ht_boost_flat_map',
                 './build/ht_google_dense_hash_map',
@@ -213,9 +211,14 @@ if __name__ == '__main__':
                 './build/ht_jc_hashtable_ch',
                 './build/ht_jc_hashtable_oa',
                 './build/ht_jc_hashtable_rh']
+
+    bigtest = True
+    if bigtest:
+        tests = [x + "_big" for x in tests]
     
     iterations = 10
     counts = [1000, 5000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000]
+    #counts = [1000, 5000, 10000, 20000, 30000]
     #counts = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000]
     #counts = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 10000, 20000, 30000, 40000]
     #counts = [1000, 2000, 3000, 4000, 5000, 6000]
@@ -249,6 +252,8 @@ if __name__ == '__main__':
 
     if './build/ht_boost_flat_map' in tests:
         tests.remove('./build/ht_boost_flat_map')
+    if './build/ht_boost_flat_map_big' in tests:
+        tests.remove('./build/ht_boost_flat_map_big')
 
     if False:
         iterations = 2
@@ -290,7 +295,7 @@ if __name__ == '__main__':
     
     del tabledata['memory']
     del tabledata['allocations']
-    make_table_report(tabledata)
+    make_table_report(tabledata, bigtest)
     
     timeend = time.time()
     print "# Report made in %f seconds" % (timeend - timestart)

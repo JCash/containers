@@ -4,6 +4,10 @@
 
 #include <assert.h>
 #include <stdlib.h>     // srand, rand
+#include <chrono>
+
+//#define ASSERT(_X_)		assert(_X_)
+#define ASSERT(_X_)
 
 struct SCtx
 {
@@ -12,7 +16,7 @@ struct SCtx
 	std::vector<keey_t> keys;			// for using when accessing elements in the test container
 	std::vector<keey_t> randomkeys;		// for using when accessing elements in the test container
 	std::vector<bool> 	exists;			// for using when accessing elements in the test container
-	value_t				sum; 			// sum of all products key*value
+	uint64_t			sum; 			// sum of all products key*value
 	hashtable_t			ht;
 };
 
@@ -25,6 +29,7 @@ uint64_t nostuff(SCtx& ctx)
 {
     return 0;
 }
+
 
 void setup_random(SCtx& ctx)
 {
@@ -44,18 +49,17 @@ void setup_random(SCtx& ctx)
         {
             key = rand();
         }
-        Put(ctx.ht, key, value_t( i+1 ) );
+        Put(ctx.ht, key, value_t(i+1) );
         ctx.keys[i] = key;
         ctx.randomkeys[i] = key;
         ctx.exists[i] = true;
-        ctx.sum += key * value_t( i+1 );
+        ctx.sum += key * (i+1);
     }
 }
 
 void create_sequential_table(SCtx& ctx)
 {
 	Init( ctx.ht, ctx.num_elements );
-	Clear( ctx.ht );
 
 	ctx.sum = 0;
 	ctx.keys.clear();
@@ -72,21 +76,20 @@ void create_sequential_table(SCtx& ctx)
 		ctx.keys[i] = key;
 		ctx.randomkeys[i] = key;
 		ctx.exists[i] = true;
-		ctx.sum += key * value_t( i+1 );
+		ctx.sum += key * (i+1);
 	}
 
-	assert( Size(ctx.ht) == ctx.num_elements );
+	ASSERT( Size(ctx.ht) == ctx.num_elements );
 }
 
 
 void create_random_table(SCtx& ctx)
 {
 	Init( ctx.ht, ctx.num_elements );
-	Clear( ctx.ht );
 
 	setup_random(ctx);
 
-	assert( Size(ctx.ht) == ctx.num_elements );
+	ASSERT( Size(ctx.ht) == ctx.num_elements );
 
 	std::random_shuffle( ctx.randomkeys.begin(), ctx.randomkeys.end() );
 }
@@ -103,24 +106,26 @@ void clear(SCtx& ctx)
 
 
 #if defined(IMPL_DM_HASHTABLE)
-static inline void sum_callback(value_t* context, const keey_t* key, value_t* value )
+static inline void sum_callback(uint64_t* context, const keey_t* key, value_t* value )
 {
 	(void)key;
-	*context += *value;
+	#ifdef BIG_VALUE
+		*context += value->value;
+	#else
+		*context += *value;
+	#endif
 }
 #endif
+
 
 uint64_t create_insert_and_sum(SCtx& ctx)
 {
 	hashtable_t ht;
 	Init(ht, ctx.num_elements);
-
 	for( size_t i = 0; i < ctx.num_elements; ++i )
 		Put(ht, keey_t( i ), value_t( i ) );
 
-	assert( Size(ht) == ctx.num_elements );
-
-	value_t sum = 0;
+	uint64_t sum = 0;
 #if defined(IMPL_DM_HASHTABLE)
 	ht.Iterate(sum_callback, &sum);
 #else
@@ -129,7 +134,37 @@ uint64_t create_insert_and_sum(SCtx& ctx)
 	for( ; it != itend; IteratorNext(ht, it) )
 		sum += IteratorGetValue(ht, it);
 #endif
-	return (size_t)sum;
+	return sum;
+}
+
+void create_insert(SCtx& ctx)
+{
+	Init(ctx.ht, ctx.num_elements);
+
+	for( size_t i = 0; i < ctx.num_elements; ++i )
+		Put(ctx.ht, keey_t( i ), value_t( i ) );
+}
+
+uint64_t sum(SCtx& ctx)
+{
+	uint64_t sum = 0;
+#if defined(IMPL_DM_HASHTABLE)
+	ctx.ht.Iterate(sum_callback, &sum);
+#else
+	auto it = IteratorBegin(ctx.ht);
+	auto itend = IteratorEnd(ctx.ht);
+	for( ; it != itend; IteratorNext(ctx.ht, it) )
+		sum += IteratorGetValue(ctx.ht, it);
+#endif
+	return sum;
+}
+
+
+uint64_t create_table(SCtx& ctx)
+{
+	hashtable_t ht;
+	Init(ht, ctx.num_elements);
+	return Size(ht);
 }
 
 uint64_t insert_sequential(SCtx& ctx)
@@ -137,7 +172,7 @@ uint64_t insert_sequential(SCtx& ctx)
 	for( size_t i = 0; i < ctx.num_elements; ++i )
 		Put(ctx.ht, keey_t( i ), value_t( i ) );
 
-	assert( Size(ctx.ht) == ctx.num_elements );
+	ASSERT( Size(ctx.ht) == ctx.num_elements );
 	return 0;
 }
 
@@ -147,14 +182,14 @@ uint64_t insert_random(SCtx& ctx)
 	for( size_t i = 0; i < ctx.num_elements; ++i )
 		Put(ctx.ht, ctx.randomkeys[i], value_t( i ) );
 
-	assert( Size(ctx.ht) == ctx.num_elements );
+	ASSERT( Size(ctx.ht) == ctx.num_elements );
 	return 0;
 }
 
 uint64_t iterator_prefix(SCtx& ctx)
 {
-	assert( Size(ctx.ht) == ctx.num_elements );
-	value_t sum = 0;
+	ASSERT( Size(ctx.ht) == ctx.num_elements );
+	uint64_t sum = 0;
 #if defined(IMPL_DM_HASHTABLE)
 	ctx.ht.Iterate(sum_callback, &sum);
 #else
@@ -162,84 +197,56 @@ uint64_t iterator_prefix(SCtx& ctx)
 	iterator_t itend = IteratorEnd(ctx.ht);
 	for( ; it != itend; IteratorNext(ctx.ht, it) )
 		sum += IteratorGetValue(ctx.ht, it);
-
-	//ht.Dump();
 #endif
-	//printf("# %s  nelems %lu  sum  %f\n", CONTAINERNAME, num_elements, sum);
-	return (size_t)sum;
+	return sum;
 }
 
 uint64_t get_sequential(SCtx& ctx)
 {
-	value_t sum = 0;
+	uint64_t sum = 0;
 	for( size_t i = 0; i < ctx.num_elements; ++i )
 	{
 		keey_t key = keey_t( ctx.keys[i] );
 		sum += key * Get( ctx.ht, key );
 	}
 
-	assert( Size(ctx.ht) == ctx.num_elements );
-
-	//printf("Expected sum: %f\n", ctx.sum);
-	//printf("got sum     : %f\n", sum);
-	assert( sum == ctx.sum );
-
+	ASSERT( Size(ctx.ht) == ctx.num_elements );
+	ASSERT( sum == ctx.sum );
 	return (size_t)sum;
 }
 
 
 uint64_t get_random(SCtx& ctx)
 {
-	value_t sum = 0;
+	uint64_t sum = 0;
 	for( size_t i = 0; i < ctx.num_elements; ++i )
 	{
 		keey_t key = ctx.randomkeys[i];
 		sum += key * Get( ctx.ht, key );
 	}
 
-	//ctx.ht.Dump();
-
-	assert( Size(ctx.ht) == ctx.num_elements );
-
-	//printf("Expected sum: %f\n", ctx.sum);
-	//printf("got sum     : %f\n", sum);
-	assert( sum == ctx.sum );
-
-	return (size_t)sum;
+	ASSERT( Size(ctx.ht) == ctx.num_elements );
+	ASSERT( sum == ctx.sum );
+	return sum;
 }
 
 uint64_t erase_sequential(SCtx& ctx)
 {
-	//printf("\n\n");
-	//printf("erase_sequential\n");
-
-	assert( Size(ctx.ht) == ctx.num_elements );
-	//ctx.ht.Dump();
-	//printf("\n");
-
+	ASSERT( Size(ctx.ht) == ctx.num_elements );
 	for( size_t i = 0; i < ctx.num_elements; ++i )
 	{
-		//printf("--------------------------------------------\n");
-		//printf("before erase:\n");
-		//ctx.ht.Dump();
-		//printf("\nerase key: %llu\n", ctx.keys[i]);
-
 		Erase(ctx.ht, ctx.keys[i] );
-
-		//printf("after erase:\n");
-		//ctx.ht.Dump();
-		//printf("\n");
 	}
-	assert( Empty(ctx.ht) );
+	ASSERT( Empty(ctx.ht) );
 	return 0;
 }
 
 uint64_t erase_random(SCtx& ctx)
 {
-	assert( Size(ctx.ht) == ctx.num_elements );
+	ASSERT( Size(ctx.ht) == ctx.num_elements );
 	for( size_t i = 0; i < ctx.num_elements; ++i )
 		Erase(ctx.ht, ctx.randomkeys[i] );
-	assert( Empty(ctx.ht) );
+	ASSERT( Empty(ctx.ht) );
 	return 0;
 }
 
@@ -328,11 +335,12 @@ void test(size_t reportformat, size_t num_iterations, size_t num_elements, repor
 
 	results.containername = CONTAINERNAME;
 
+
 	TEST( "insert_sequential", clear, insert_sequential );
 	TEST( "insert_random", clear, insert_random );
 	TEST( "get_sequential", create_sequential_table, get_sequential );
 	TEST( "get_random", create_random_table, get_random );
-	TEST( "erase_sequential", create_random_table, erase_sequential );
+	TEST( "erase_sequential", create_sequential_table, erase_sequential );
 	TEST( "erase_random", create_random_table, erase_random );
 	TEST( "iterator", create_random_table, iterator_prefix );
 	TEST( "create_insert_sum", nop, create_insert_and_sum );

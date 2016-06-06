@@ -10,16 +10,15 @@
 #define USE_CHRONO 1
 #if defined(USE_CHRONO)
 #include <chrono>
-#else
-#include <sys/time.h>
+#endif
 
+#include <sys/time.h>
 inline double get_time_usec()
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);
     return (double)tv.tv_sec * 1000000.0 + (double)tv.tv_usec;
 }
-#endif
 
 /*
 //  Windows
@@ -129,7 +128,7 @@ public:
 		m_Count = count;
 
 #if defined(USE_CHRONO)
-		std::vector<std::chrono::duration<double>> times;
+		std::vector<std::chrono::duration<double> > times;
 #else
 		std::vector<double> times;
 #endif
@@ -253,7 +252,7 @@ private:
 	
 
 #if defined(USE_CHRONO)
-	void calc_times(std::vector<std::chrono::duration<double>>& times)
+	void calc_times(std::vector<std::chrono::duration<double> >& times)
 	{
 		std::sort( times.begin(), times.end() );
 
