@@ -9,6 +9,7 @@ ABOUT:
     - Supports values with = operator
 
 VERSION:
+    1.02 - (2016-06-04) Changed to two arrays: entries & values. Removed empty key, need. Bug fixes
     1.01 - (2016-04-23) Fixed two iterator issues
     1.00 - (2016-03-08) Initial add
 
@@ -117,12 +118,12 @@ public:
     {
     }
     
-    HashTable(uint32_t capacity, KEY emptykey, void* mem)
+    HashTable(uint32_t capacity, void* mem)
     {
-        Create(capacity, emptykey, mem);
+        Create(capacity, mem);
     }
     
-    void Create(uint32_t capacity, KEY, void* mem)
+    void Create(uint32_t capacity, void* mem)
     {
         m_Capacity      = NextPow2(capacity);
         m_Entries       = reinterpret_cast<Entry*>(mem);
@@ -134,14 +135,9 @@ public:
     inline void Clear()
     {
         m_Size = 0;
-        for( uint32_t i = 0; i < m_Capacity; ++i )
-        {
-            m_Values[i].m_Next = i+1;
-            m_Entries[i].m_Index = 0xFFFFFFFF;
-        }
-        m_FreeList = 0;
-        if( m_Capacity )
-            m_Values[m_Capacity-1].m_Next = 0xFFFFFFFF;
+        m_FreeList = 0xFFFFFFFF;
+        m_InitialFreeList = 0;
+        memset(m_Entries, 0xFF, sizeof(Entry) * m_Capacity);
     }
     
     inline VALUE* Get(const KEY& key)
@@ -159,8 +155,16 @@ public:
         assert(m_Size < m_Capacity);
 
         // Get a free value slot to put the value in
-        uint32_t valueindex = m_FreeList;
-        m_FreeList = m_Values[valueindex].m_Next;
+        uint32_t valueindex;
+        if(m_InitialFreeList < m_Capacity)
+        {
+            valueindex = m_InitialFreeList++;
+        }
+        else
+        {
+            valueindex = m_FreeList;
+            m_FreeList = m_Values[valueindex].m_Next;
+        }
         m_Values[valueindex].m_Value = value;
         
         uint32_t current_dist = 0;
@@ -178,6 +182,9 @@ public:
             else if(m_Entries[i].m_Key == key)
             {
                 m_Values[m_Entries[i].m_Index].m_Value = value;
+                // since we removed a new node prematurely, we put it back
+                m_Values[valueindex].m_Next = m_FreeList;
+                m_FreeList = valueindex;
                 return;
             }
             else
@@ -197,7 +204,7 @@ public:
             ++current_dist;
         }
     }
-    
+
     inline void Erase(const KEY& key)
     {
         uint32_t indexinit = key & m_CapacityMask;
@@ -215,6 +222,10 @@ public:
             }
         }
 
+        m_Values[m_Entries[index].m_Index].m_Next = m_FreeList;
+        m_FreeList = m_Entries[index].m_Index;
+        assert( m_FreeList != 0xFFFFFFFF );
+
         uint32_t previndex = index;
         uint32_t swapindex;
         for(uint32_t n = 1; n <= m_Capacity; ++n)
@@ -224,14 +235,66 @@ public:
             
             if( IsFree(swapindex) || Distance(swapindex) == 0 )
             {
-                m_Values[m_Entries[previndex].m_Index].m_Next = m_FreeList;
-                m_FreeList = m_Entries[previndex].m_Index;
                 m_Entries[previndex].m_Index = 0xFFFFFFFF;
                 break;
             }
             m_Entries[previndex] = m_Entries[swapindex];
         }
         --m_Size;
+    }
+
+    void printtable() const
+    {
+        printf("  table:\n");
+
+        for( int i = 0; i < m_Capacity; ++i)
+        {
+            if( !IsFree(i) )
+            {
+                printf("  %d:  %llu = %llu   vi: %d   dist: %d\n", i, (uint64_t)m_Entries[i].m_Key, (uint64_t)m_Values[m_Entries[i].m_Index].m_Value, m_Entries[i].m_Index, Distance(i));
+            }
+            else
+            {
+                printf("  %d:  %llu = %llu   vi: %d   dist: %d\n", i, (uint64_t)m_Entries[i].m_Key, (uint64_t)(m_Entries[i].m_Index != 0xFFFFFFFF ? m_Values[m_Entries[i].m_Index].m_Value : 0), m_Entries[i].m_Index, Distance(i));
+                //printf("  %d:\n", i);
+            }
+        }
+        printf("\n");
+    }
+
+    void printfree() const
+    {
+        printf("freelist: ");
+
+        uint32_t i = 0;
+        uint32_t index = m_FreeList;
+        while(index != 0xFFFFFFFF && i++ < m_Capacity)
+        {
+            printf("%u, ", index);
+            index = m_Values[index].m_Next;
+        }
+
+        printf("\n");
+    }
+
+    void printvalues() const
+    {
+        printf("valuelist: ");
+
+        for( int i = 0; i < m_Capacity; ++i)
+        {
+            printf("%llu, ", (uint64_t)m_Values[i].m_Value);
+        }
+
+        printf("\n");
+    }
+
+    void DebugPrint() const
+    {
+        printf("Size: %u  Capacity: %u\n", m_Size, m_Capacity);
+        printtable();
+        printfree();
+        printvalues();
     }
     
     inline bool Empty() const
@@ -248,9 +311,9 @@ public:
     {
         const HashTable<KEY, VALUE>* m_HashTable;
         uint32_t m_EntryIndex;
-#ifdef __x86_64__
-        uint32_t _pad; // to remove compiler warnings
-#endif
+//#ifdef __x86_64__
+//        uint32_t _pad; // to remove compiler warnings. pack doesn't work properly on android :/
+//#endif
     
     public:
         Iterator(const HashTable<KEY, VALUE>* ht, bool begin) : m_HashTable(ht)
@@ -308,15 +371,12 @@ private:
 
     Entry*      m_Entries;
     Value*      m_Values;
+    uint32_t    m_InitialFreeList; // while <capacity, points to the next free value node
     uint32_t    m_FreeList; // A list of free value nodes
-
     uint32_t    m_Capacity;
     uint32_t    m_CapacityMask;
     uint32_t    m_Size;
-#ifdef __x86_64__
-    uint32_t    _pad; // to remove compiler warnings
-#endif
-    
+
     inline const VALUE* GetInternal(const KEY& key) const
     {
         uint32_t dist = 0;

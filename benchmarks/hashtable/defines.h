@@ -1,23 +1,11 @@
 #pragma once
 
 #include "../allocator.h"
+#include "timeit.h"
 
 typedef uint64_t 	keey_t;	// because iostream defines a key_t
 
-#define BIG_VALUE
-
 #ifdef BIG_VALUE
-
-
-/*
-typedef struct SValue
-{
-	uint64_t value;
-
-	SValue() {}
-	SValue(uint64_t v) : value(v) {}
-} value_t;
-*/
 
 typedef struct SValue
 {
@@ -104,21 +92,19 @@ const uint32_t		MAX_LOAD_FACTOR = 85;  // percent
 	typedef hashtable_t::const_iterator iterator_t;
 	#define GOOGLE_LIKE_CONTAINER 1
 
-#elif defined(IMPL_JC_HASHTABLE_CH) || defined(IMPL_JC_HASHTABLE_OA) || defined(IMPL_JC_HASHTABLE)
+#elif defined(IMPL_JC_HASHTABLE_CH) || defined(IMPL_JC_HASHTABLE_OA) || defined(IMPL_JC_HASHTABLE) || defined(IMPL_JC_HASHTABLE_BIG)
 	#if defined(IMPL_JC_HASHTABLE_CH)
 		#include "../../src/hashtable_ch.h"
 		#define CONTAINERNAME "jc::hashtable_ch"
 	#elif defined(IMPL_JC_HASHTABLE_OA)
 		#include "../../src/hashtable_oa.h"
 		#define CONTAINERNAME "jc::hashtable_oa"
+	#elif defined(IMPL_JC_HASHTABLE_BIG)
+		#include "../../src/hashtable_array.h"
+		#define CONTAINERNAME "jc::hashtable2"
 	#else
-		#ifdef BIG_VALUE
-			#include "../../src/hashtable_array.h"
-			#define CONTAINERNAME "jc::hashtable_pod"
-		#else
-			#include "../../src/hashtable.h"
-			#define CONTAINERNAME "jc::hashtable"
-		#endif
+		#include "../../src/hashtable.h"
+		#define CONTAINERNAME "jc::hashtable"
 	#endif
 
 	typedef jc::HashTable<keey_t, value_t> hashtable_t;
@@ -132,6 +118,21 @@ const uint32_t		MAX_LOAD_FACTOR = 85;  // percent
 #if defined(IMPL_JC_HASHTABLE_CH)
 		void* mem = new uint8_t[ hashtable_t::CalcSize( tablesize, numelements ) ];
 		ht.Create(tablesize, numelements, mem);
+#elif defined(IMPL_JC_HASHTABLE_BIG)
+
+		//double start = get_time_usec();
+
+		void* mem = new uint8_t[ hashtable_t::CalcSize( tablesize ) ];
+
+		//double middle = get_time_usec();
+
+		ht.Create(tablesize, mem);
+
+		/*double end = get_time_usec();
+
+		printf("# timings: init: alloc %f\n", (middle-start)/1000.0);
+		printf("# timings: init: create %f\n", (end-middle)/1000.0);
+		printf("# timings: init:  total %f\n", (end-start)/1000.0);*/
 #else
 		void* mem = new uint8_t[ hashtable_t::CalcSize( tablesize ) ];
 		ht.Create(tablesize, 0xBAADC0DEF00DF17E, mem);

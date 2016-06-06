@@ -162,14 +162,25 @@ extern double jc_test_get_time();
 		return; \
 	}
 
+#define TEST_ASSERT_BASE_NE( _FILE, _LINE, _STMT, _A, _B, _MSG) \
+	++jc_test_global_state.current_fixture->stats.num_assertions; \
+	if( ((_A) == (_B)) ) \
+	{ \
+		JC_TEST_PRINTF("\n\t" JC_TEST_FMT "\t%s( %s, %s )\n", (_FILE), (_LINE), (_MSG), #_STMT, #_A, #_B ); \
+		jc_test_global_state.current_fixture->fail = JC_TEST_FAIL; \
+		return; \
+	}
+
 #define TEST_ASSERT_TRUE( _COND )	TEST_ASSERT_BASE( __FILE__, __LINE__, TEST_ASSERT, _COND, "" );
 #define TEST_ASSERT_EQ( _A, _B)		TEST_ASSERT_BASE_EQ( __FILE__, __LINE__, TEST_ASSERT_EQ, _A, _B, "" );
+#define TEST_ASSERT_NE( _A, _B)		TEST_ASSERT_BASE_NE( __FILE__, __LINE__, TEST_ASSERT_NE, _A, _B, "" );
 
 #ifndef JC_UNDEF_SHORT_NAMES
 #define RUN			TEST_RUN
 #define RUN_ALL		TEST_RUN_ALL
 #define ASSERT_TRUE	TEST_ASSERT_TRUE
 #define ASSERT_EQ	TEST_ASSERT_EQ
+#define ASSERT_NE	TEST_ASSERT_NE
 #endif
 
 
