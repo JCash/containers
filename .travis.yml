@@ -1,0 +1,7 @@
+language: cpp
+compiler:
+  - clang
+
+script:
+  - ./compile_clang.sh
+  - ./build/test
