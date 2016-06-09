@@ -5,3 +5,4 @@ compiler:
 script:
   - ./compile_clang.sh
   - ./build/test
+  
