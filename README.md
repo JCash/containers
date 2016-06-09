@@ -27,6 +27,13 @@ It it especially important if you add/remove items while holding the pointers.
 
 * Capacity is rounded up to the nearest power of two.
 
+## Build Status
+
+|Branch      |Status   |
+|------------|---------|
+|master      | [![Build Status](https://travis-ci.org/JCash/containers.svg?branch=master)](https://travis-ci.org/JCash/containers?branch=master) |
+|dev         | [![Build Status](https://travis-ci.org/JCash/containers.svg?branch=dev)](https://travis-ci.org/JCash/containers?branch=dev) |
+
 # Benchmarks
 
 [Benchmarks Hashtable](benchmarks/benchmarks_ht.md)
