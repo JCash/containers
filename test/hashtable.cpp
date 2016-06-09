@@ -397,7 +397,7 @@ static void hashtable_add_remove_add_2(SCtx*)
 
 static void hashtable_bug_erase(SCtx*)
 {
-	uint32_t memorysize = jc::HashTable<uint32_t, uint32_t>::CalcSize(16);
+	uint32_t memorysize = jc::HashTable<uint64_t, uint64_t>::CalcSize(16);
 	void* memory = malloc( memorysize );
 	memset(memory, 0xcd, memorysize);
     
