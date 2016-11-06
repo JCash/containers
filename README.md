@@ -21,10 +21,11 @@ This software is supplied "AS IS" without any warranties and support
 
 A fast and small C++ implementation of a hash table
 
+* ~260 lines of code
 * Open addressing
 * Robin Hood collision resolving
 * Backward shift deletion
-* On par with (or slightly faster than) Google's dense_hash_map
+* On par with Google's dense_hash_map
 
 # Benchmarks
 

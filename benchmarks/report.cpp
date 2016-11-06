@@ -38,7 +38,7 @@ static void Report(size_t reportformat,
 {
 	if( reportformat == 0 )
 	{
-		printf("%s\t%s\tused %lu bytes in %lu allocations\n", container, title, memory_size, memory_allocations);
+		printf("%s\t%s\tused %zu bytes in %zu allocations\n", container, title, memory_size, memory_allocations);
 				
 		std::cout << std::fixed << std::setprecision(4);
 		std::cout << container << "\t" << title << "\titerations: " << num_iterations;
