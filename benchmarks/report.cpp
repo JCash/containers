@@ -33,12 +33,12 @@ static void report_time(std::ostream& stream, float t, float multiplier)
 static void Report(size_t reportformat,
 						const char* title, const char* container,
 						double timemin, double timemax, double timemedian, double timeavg,
-						const SMemoryStats& memstats,
+						size_t memory_allocations, size_t memory_size,
 						size_t num_iterations, size_t num_elements, float multiplier)
 {
 	if( reportformat == 0 )
 	{
-		printf("%s\t%s\tused %lu bytes in %lu allocations\n", container, title, memstats.peak_alloc_size, memstats.peak_num_allocs);
+		printf("%s\t%s\tused %lu bytes in %lu allocations\n", container, title, memory_size, memory_allocations);
 				
 		std::cout << std::fixed << std::setprecision(4);
 		std::cout << container << "\t" << title << "\titerations: " << num_iterations;
@@ -58,8 +58,8 @@ static void Report(size_t reportformat,
 		std::cout << "\t\t\"time_mean\": " << timemedian << "," << std::endl;
 		std::cout << "\t\t\"time_min\": " << timemin << "," << std::endl;
 		std::cout << "\t\t\"time_max\": " << timemax << "" << std::endl;
-		std::cout << "\t\t\"memory_peak_num\": " << memstats.peak_num_allocs << "" << std::endl;
-		std::cout << "\t\t\"memory_peak_size\": " << memstats.peak_alloc_size << "" << std::endl;
+		std::cout << "\t\t\"memory_peak_num\": " << memory_allocations << "" << std::endl;
+		std::cout << "\t\t\"memory_peak_size\": " << memory_size << "" << std::endl;
 		std::cout << "\t}, " << std::endl;
 	}
 }
@@ -72,7 +72,7 @@ void report(int reportformat, const report_t& results, int verbose)
 		Report(reportformat,
 				test.testname.c_str(), results.containername.c_str(),
 				test.timemin, test.timemax, test.timemedian, test.timeavg,
-				test.memory,
+				test.memory_allocations, test.memory_size,
 				test.iterations, test.elements, 1000.0f);
 	}
 	

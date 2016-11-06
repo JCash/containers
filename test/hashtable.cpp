@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 const uint32_t STRESS_COUNT = 2000000;
-const uint32_t PERCENT = 90;
+const uint32_t PERCENT = 85;
 
 #include <map>
 

@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "../timeit.h"
 #include "../report.h"
+#include "../memory.h"
 
 #include <assert.h>
 #include <stdlib.h>     // srand, rand
@@ -308,8 +309,6 @@ static void do_test(const char* name, size_t num_iterations, size_t num_elements
 	if( verbose )
 		printf("# %s -> %llu\n", name, result);
 
-	SMemoryStats memstats;
-	CalcMemory( memstats, setupfn, testfn, ctx );
 	STestReport testresult;
 	testresult.testname = name;
 	testresult.iterations = num_iterations;
@@ -318,8 +317,16 @@ static void do_test(const char* name, size_t num_iterations, size_t num_elements
 	testresult.timemax = timeit.longest();
 	testresult.timemedian = timeit.median();
 	testresult.timeavg = timeit.average();
-	testresult.memory = memstats;
+
+    ResetMemoryStats();
+
+    timeit.run<uint64_t>( 1, setupfn, testfn, ctx );
+
+	GetMemoryStats(testresult.memory_allocations, testresult.memory_size);
+
 	results.tests.push_back( testresult );
+
+	printf("# ht size: %zu\n", Size(ctx.ht));
 }
 
 void test(size_t reportformat, size_t num_iterations, size_t num_elements, report_t& results, int verbose)
@@ -335,6 +342,7 @@ void test(size_t reportformat, size_t num_iterations, size_t num_elements, repor
 
 	results.containername = CONTAINERNAME;
 
+	InitMemoryHooks();
 
 	TEST( "insert_sequential", clear, insert_sequential );
 	TEST( "insert_random", clear, insert_random );

@@ -45,6 +45,9 @@ Performance examples for jc::HashTable. See benchmark page for more stats.
 <img src="./images/timings_get_random_sizeof(value)==8.png" alt="Timings get_random size=8" width="350">
 <img src="./images/timings_get_random_sizeof(value)==152.png" alt="Timings get_random size=152" width="350">
 
+<img src="./images/memory_get_random_sizeof(value)==8.png" alt="Memory get_random size=8" width="350">
+<img src="./images/memory_get_random_sizeof(value)==152.png" alt="Memory get_random size=152" width="350">
+
 # Usage
 
 ## jc::HashTable

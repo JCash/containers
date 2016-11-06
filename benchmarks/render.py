@@ -56,7 +56,7 @@ def parse_log(path):
             for i, header in enumerate(headers):
                 timingtokens = tokens[i+1].split()
                 time        = float(timingtokens[0])
-                unit        = timingtokens[1]
+                unit        = timingtokens[1] if (len(timingtokens) > 1 ) else '#'
                 time        = convert_time(time, unit)
                 test['headers'][header].append( time )
                 test['unit'] = unit
@@ -93,6 +93,7 @@ def render(test):
     outpath = get_path_from_test_name(test['name'])
     py.image.save_as(fig, outpath)
     
+    fig.close()
     print "Wrote", outpath
     
 def get_path_from_test_name(name):
@@ -130,8 +131,10 @@ def render_matplotlib(test):
 
     unit = test['unit']
     scale = 1.0
-    if unit in ('ms', 'kb'):
+    if unit == 'ms':
         scale = 1000.0
+    elif unit == 'kb':
+        scale = 1
     elif unit == '\xc2\xb5s':
         scale = 1000000.0
     
@@ -170,6 +173,7 @@ def render_matplotlib(test):
     
     outpath = '../images/%s.png' % test['name'].lower().replace(' ', '_')
     plt.savefig(outpath)
+    plt.close()
 
     print "Wrote", outpath
             

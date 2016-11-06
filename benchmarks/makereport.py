@@ -193,11 +193,11 @@ if __name__ == '__main__':
     
     tests = [   #'./build/ht_stl_map',
                 './build/ht_stl_unordered_map',
-                #'./build/ht_boost_unordered_map',
+                './build/ht_boost_unordered_map',
                 './build/ht_eastl_hash_map',
                 #'./build/ht_boost_flat_map',
-                './build/ht_google_dense_hash_map',
-                #'./build/ht_google_sparse_hash_map',
+                #'./build/ht_google_dense_hash_map',
+                './build/ht_google_sparse_hash_map',
                 #'./build/ht_dm_hashtable',
                 #'./build/ht_jc_hashtable_ch',
                 #'./build/ht_jc_hashtable_rh',
@@ -212,13 +212,13 @@ if __name__ == '__main__':
                 './build/ht_jc_hashtable_oa',
                 './build/ht_jc_hashtable_rh']
 
-    bigtest = True
+    bigtest = False
     if bigtest:
         tests = [x + "_big" for x in tests]
     
     iterations = 10
     counts = [1000, 5000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000]
-    #counts = [1000, 5000, 10000, 20000, 30000]
+    #counts = [1000, 5000, 10000, 20000]
     #counts = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000]
     #counts = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 10000, 20000, 30000, 40000]
     #counts = [1000, 2000, 3000, 4000, 5000, 6000]
@@ -239,9 +239,9 @@ if __name__ == '__main__':
     report['timings']['scale'] = 1000000.0
     report['timings']['unit']  = 'us'
     report['memory']['title'] = 'Memory (kb)'
-    report['memory']['scale'] = 1 / 1024.0
-    report['memory']['unit']  = 'kb'
-    report['allocations']['title'] = '# Allocations'
+    report['memory']['scale'] = 1 / (1024.0 * 1024.0)
+    report['memory']['unit']  = 'mb'
+    report['allocations']['title'] = 'Num Allocations'
     report['allocations']['scale'] = 1
     report['allocations']['unit']  = ''
         
@@ -272,7 +272,7 @@ if __name__ == '__main__':
         report['memory']['title'] = 'Memory (kb)'
         report['memory']['scale'] = 1 / 1024.0
         report['memory']['unit']  = 'kb'
-        report['allocations']['title'] = '# Allocations'
+        report['allocations']['title'] = 'Num Allocations'
         report['allocations']['scale'] = 1
         report['allocations']['unit']  = ''
             
@@ -289,12 +289,10 @@ if __name__ == '__main__':
     tabledata['memory']['title'] = 'Memory'
     tabledata['memory']['scale'] = 1 / 1024.0
     tabledata['memory']['formatter']  = lambda x: '%d kb' % x
-    tabledata['allocations']['title'] = '# Allocations'
+    tabledata['allocations']['title'] = 'Num Allocations'
     tabledata['allocations']['scale'] = 1
     tabledata['allocations']['formatter'] = lambda x: str(x)
     
-    del tabledata['memory']
-    del tabledata['allocations']
     make_table_report(tabledata, bigtest)
     
     timeend = time.time()

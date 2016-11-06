@@ -10,6 +10,7 @@ ABOUT:
     - Supports values with = operator
 
 VERSION:
+    1.03 - (2016-11-06) - Removed requirement of allocating memory at power of 2 sizes
     1.02 - (2016-06-04) - Changed to two arrays: entries & values
                         - Removed empty key
                         - Optimised the Create function
@@ -102,9 +103,9 @@ public:
     // Calculate the size of the memory needed
     static uint32_t CalcSize(uint32_t capacity)
     {
-        capacity = NextPow2(capacity);
         return static_cast<uint32_t>( (sizeof(Entry) + sizeof(Value)) * capacity);
     }
+
     static uint32_t NextPow2(uint32_t capacity)
     {
         --capacity;
@@ -127,8 +128,7 @@ public:
     
     void Create(uint32_t capacity, void* mem)
     {
-        m_Capacity      = NextPow2(capacity);
-        m_CapacityMask  = m_Capacity - 1;
+        m_Capacity      = capacity;
         m_Entries       = reinterpret_cast<Entry*>(mem);
         m_Values        = reinterpret_cast<Value*>(m_Entries + m_Capacity);
         Clear();
@@ -170,10 +170,12 @@ public:
         m_Values[valueindex].m_Value = value;
         
         uint32_t current_dist = 0;
-        uint32_t indexinit = key & m_CapacityMask;
-        for(uint32_t n = 0; n < m_Capacity; ++n)
+        uint32_t indexinit = key % m_Capacity;
+        for(uint32_t n = 0; n < m_Capacity; ++n, ++indexinit)
         {
-            uint32_t i = (indexinit + n) & m_CapacityMask;
+            if( indexinit >= m_Capacity )
+                indexinit = 0;
+            uint32_t i = indexinit;
             if( IsFree(i) )
             {
                 m_Entries[i].m_Key = key;
@@ -209,11 +211,11 @@ public:
 
     inline void Erase(const KEY& key)
     {
-        uint32_t indexinit = key & m_CapacityMask;
+        uint32_t indexinit = key % m_Capacity;
         uint32_t index = 0;
         for(uint32_t n = 0; n < m_Capacity; ++n)
         {
-            index = (indexinit + n) & m_CapacityMask;
+            index = (indexinit + n) % m_Capacity;
             if( IsFree(index) || n > Distance(index) )
             {
                 return;
@@ -232,8 +234,8 @@ public:
         uint32_t swapindex;
         for(uint32_t n = 1; n <= m_Capacity; ++n)
         {
-            previndex = (index + n - 1) & m_CapacityMask;
-            swapindex = (index + n) & m_CapacityMask;
+            previndex = (index + n - 1) % m_Capacity;
+            swapindex = (index + n) % m_Capacity;
             
             if( IsFree(swapindex) || Distance(swapindex) == 0 )
             {
@@ -319,17 +321,16 @@ private:
     uint32_t    m_InitialFreeList; // while <capacity, points to the next free value node
     uint32_t    m_FreeList; // A list of free value nodes
     uint32_t    m_Capacity;
-    uint32_t    m_CapacityMask;
     uint32_t    m_Size;
 
     inline const VALUE* GetInternal(const KEY& key) const
     {
         uint32_t dist = 0;
-        uint32_t indexinit = key & m_CapacityMask;
+        uint32_t indexinit = key % m_Capacity;
         uint32_t i;
         for(uint32_t n = 0; n < m_Capacity; ++n)
         {
-            i = (indexinit + n) & m_CapacityMask;
+            i = (indexinit + n) % m_Capacity;
             if( IsFree(i) || dist > Distance(i) )
             {
                 return 0;
@@ -350,7 +351,7 @@ private:
     
     inline uint32_t Distance(uint32_t index_stored) const
     {
-        uint32_t index_init = m_Entries[index_stored].m_Key & m_CapacityMask;
+        uint32_t index_init = m_Entries[index_stored].m_Key % m_Capacity;
         return index_stored - index_init + (index_init <= index_stored ? 0u : m_Capacity);
     }   
 };
