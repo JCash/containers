@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include "timeit.h"
-#include "allocator.h"
 
 struct STestReport
 {
@@ -15,7 +14,9 @@ struct STestReport
 	double	timemax;
 	double	timemedian;
 	double	timeavg;
-	SMemoryStats memory;
+	
+    size_t  memory_size;
+    size_t  memory_allocations;
 };
 
 struct SReport

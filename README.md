@@ -1,3 +1,9 @@
+|Branch      |Status   |
+|------------|---------|
+|master      | [![Build Status](https://travis-ci.org/JCash/containers.svg?branch=master)](https://travis-ci.org/JCash/containers?branch=master) |
+|dev         | [![Build Status](https://travis-ci.org/JCash/containers.svg?branch=dev)](https://travis-ci.org/JCash/containers?branch=dev) |
+
+
 # Containers
 
 A collection of containers that I use
@@ -16,13 +22,9 @@ This software is supplied "AS IS" without any warranties and support
 A fast and small C++ implementation of a hash table
 
 * Open addressing
-* Robin Hood collision resloving
+* Robin Hood collision resolving
 * Backward shift deletion
 * On par with (or slightly faster than) Google's dense_hash_map
-
-### Notes on usage
-
-* Capacity is rounded up to the nearest power of two.
 
 # Benchmarks
 
@@ -34,6 +36,9 @@ Performance examples for jc::HashTable. See benchmark page for more stats.
 
 <img src="./images/timings_get_random_sizeof(value)==8.png" alt="Timings get_random size=8" width="350">
 <img src="./images/timings_get_random_sizeof(value)==152.png" alt="Timings get_random size=152" width="350">
+
+<img src="./images/memory_get_random_sizeof(value)==8.png" alt="Memory get_random size=8" width="350">
+<img src="./images/memory_get_random_sizeof(value)==152.png" alt="Memory get_random size=152" width="350">
 
 # Usage
 

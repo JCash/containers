@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../allocator.h"
 #include "timeit.h"
 
 typedef uint64_t 	keey_t;	// because iostream defines a key_t
