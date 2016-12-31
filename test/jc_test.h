@@ -1,4 +1,4 @@
-/* jc_test.h	v0.1	Copyright 2016- Mathias Westerdahl
+/* jc_test.h	Copyright 2016- Mathias Westerdahl
  *
  * https://github.com/JCash
  *
@@ -9,7 +9,8 @@
  *
  * HISTORY:
  *
- * 		0.1		Initial version
+ *		0.2		2016-12-29 	Added stdbool.h. Some C99 compile warnings
+ * 		0.1					Initial version
  *
  * USAGE:
  *
@@ -20,6 +21,8 @@
 #define JC_TEST_H
 
 #include <stdlib.h>
+#include <stdbool.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 #define JC_TEST_CAST(_TYPE_, _EXPR_)			reinterpret_cast< _TYPE_ >( _EXPR_ )
@@ -43,8 +46,12 @@
 
 
 #ifndef JC_TEST_TIMING_FUNC
-#include <sys/time.h>
-#define JC_TEST_TIMING_FUNC jc_test_get_time
+	#if defined(_MSC_VER)
+		#include <Windows.h>
+	#else
+		#include <sys/time.h>
+	#endif
+#define JC_TEST_TIMING_FUNC 		jc_test_get_time // returns micro seconds
 #endif
 
 typedef void (*jc_test_func)(void* ctx);
@@ -65,7 +72,7 @@ typedef struct jc_test_stats
 	int num_fail;
 	int num_assertions;
 	int num_tests;
-	double totaltime;
+	uint64_t totaltime;
 } jc_test_stats;
 
 typedef struct jc_test_fixture
@@ -100,6 +107,7 @@ extern jc_test_state jc_test_global_state;
 #endif
 
 #if defined(_MSC_VER)
+  #pragma section(".CRT$XCU",read)
   #define JC_TEST_INITIALIZER(_NAME_) \
     static void __cdecl jc_test_global_init_##_NAME_(void); \
     __declspec(allocate(".CRT$XCU")) void (__cdecl* jc_test_global_init_##_NAME_##_)(void) = jc_test_global_init_##_NAME_; \
@@ -138,7 +146,7 @@ extern jc_test_state jc_test_global_state;
 extern void jc_test_run_test_fixture(jc_test_fixture* fixture);
 extern void jc_test_run_all_tests(jc_test_state* state);
 extern void jc_test_assert(jc_test_fixture* fixture, bool cond, const char* msg);
-extern double jc_test_get_time();
+extern uint64_t jc_test_get_time(void);
 
 #define TEST_RUN(_NAME_)	jc_test_run_test_fixture( & __jc_test_fixture_##_NAME_ )
 #define TEST_RUN_ALL()		jc_test_run_all_tests( &jc_test_global_state )
@@ -189,25 +197,40 @@ extern double jc_test_get_time();
 #ifdef JC_TEST_IMPLEMENTATION
 #undef JC_TEST_IMPLEMENTATION
 
-#define JC_TEST_CLR_DEFAULT "\x1B[0m"
-#define JC_TEST_CLR_RED  	"\x1B[31m"
-#define JC_TEST_CLR_GREEN  	"\x1B[32m"
-#define JC_TEST_CLR_YELLOW  "\x1B[33m"
-#define JC_TEST_CLR_BLUE  	"\x1B[34m"
-#define JC_TEST_CLR_MAGENTA "\x1B[35m"
-#define JC_TEST_CLR_CYAN  	"\x1B[36m"
-#define JC_TEST_CLR_WHITE  	"\x1B[37m"
+#ifdef JC_TEST_NO_COLORS
+	#define JC_TEST_CLR_DEFAULT ""
+	#define JC_TEST_CLR_RED  	""
+	#define JC_TEST_CLR_GREEN  	""
+	#define JC_TEST_CLR_YELLOW  ""
+	#define JC_TEST_CLR_BLUE  	""
+	#define JC_TEST_CLR_MAGENTA ""
+	#define JC_TEST_CLR_CYAN  	""
+	#define JC_TEST_CLR_WHITE  	""
+#else
+	#define JC_TEST_CLR_DEFAULT "\x1B[0m"
+	#define JC_TEST_CLR_RED  	"\x1B[31m"
+	#define JC_TEST_CLR_GREEN  	"\x1B[32m"
+	#define JC_TEST_CLR_YELLOW  "\x1B[33m"
+	#define JC_TEST_CLR_BLUE  	"\x1B[34m"
+	#define JC_TEST_CLR_MAGENTA "\x1B[35m"
+	#define JC_TEST_CLR_CYAN  	"\x1B[36m"
+	#define JC_TEST_CLR_WHITE  	"\x1B[37m"
+#endif
 
-static void jc_test_report_time(double t) // Seconds
+static void jc_test_report_time(uint64_t t) // Micro seconds
 {
-	if( t < 0.000001 )
-		JC_TEST_PRINTF("%f %s", t * 1000000000.0, "ns");
-	else if( t < 0.001 )
-		JC_TEST_PRINTF("%f %s", t * 1000000.0, "\u00b5s");
-	else if( t < 0.1 )
-		JC_TEST_PRINTF("%f %s", t * 1000.0, "ms");
+#ifdef _MSC_VER
+	#define JC_TEST_MICROSECONDS_STR "us"
+#else
+	#define JC_TEST_MICROSECONDS_STR "\u00b5s"
+#endif
+
+	if( t < 5000 )
+		JC_TEST_PRINTF("%g %s", JC_TEST_STATIC_CAST(double, t), JC_TEST_MICROSECONDS_STR);
+	else if( t < 500000 )
+		JC_TEST_PRINTF("%g %s", t / 1000.0, "ms");
 	else
-		JC_TEST_PRINTF("%f %s", t, "s");
+		JC_TEST_PRINTF("%g %s", t / 1000000.0, "s");
 }
 
 void jc_test_run_test_fixture(jc_test_fixture* fixture)
@@ -215,7 +238,7 @@ void jc_test_run_test_fixture(jc_test_fixture* fixture)
 	jc_test_global_state.current_fixture = fixture;
 
 	fixture->stats.totaltime = 0;
-	double timestart = JC_TEST_TIMING_FUNC();
+	uint64_t timestart = JC_TEST_TIMING_FUNC();
 
 	JC_TEST_PRINTF("%s%s%s\n", JC_TEST_CLR_CYAN, fixture->name, JC_TEST_CLR_DEFAULT);
 	if(fixture->fixture_setup != 0)
@@ -231,10 +254,13 @@ void jc_test_run_test_fixture(jc_test_fixture* fixture)
 
 		JC_TEST_PRINTF("    %s", test->name);
 
-		double teststart = 0;
-		double testend = 0;
+		uint64_t teststart = 0;
+		uint64_t testend = 0;
 
-		jc_test_func fns[3] = {fixture->test_setup, test->test, fixture->test_teardown};
+		jc_test_func fns[3];
+		fns[0] = fixture->test_setup;
+		fns[1] = test->test;
+		fns[2] = fixture->test_teardown;
 		for( int i = 0; i < 3; ++i )
 		{
 			if( !fns[i] )
@@ -260,7 +286,7 @@ void jc_test_run_test_fixture(jc_test_fixture* fixture)
 			}
 		}
 
-		JC_TEST_PRINTF("\r    %s %s (", test->name, fixture->fail == JC_TEST_PASS ? "\x1b[1;32mPASS\x1b[m" : "\x1b[1;31mFAIL\x1b[m");
+		JC_TEST_PRINTF("\r    %s %s (", test->name, fixture->fail == JC_TEST_PASS ? (JC_TEST_CLR_GREEN "PASS" JC_TEST_CLR_DEFAULT) : (JC_TEST_CLR_RED "FAIL" JC_TEST_CLR_DEFAULT) );
 		jc_test_report_time(testend - teststart);
 		JC_TEST_PRINTF(")\n");
 
@@ -279,7 +305,7 @@ void jc_test_run_test_fixture(jc_test_fixture* fixture)
 		fixture->fixture_teardown(fixture->ctx);
 	}
 
-	double timeend = JC_TEST_TIMING_FUNC();
+	uint64_t timeend = JC_TEST_TIMING_FUNC();
 	fixture->stats.totaltime = timeend - timestart;
 	JC_TEST_PRINTF("%s took ", fixture->name);
 	jc_test_report_time(fixture->stats.totaltime);
@@ -314,12 +340,26 @@ void jc_test_run_all_tests(jc_test_state* state)
 		JC_TEST_PRINTF("%d tests %sPASSED%s\n", state->stats.num_pass, JC_TEST_CLR_GREEN, JC_TEST_CLR_DEFAULT);
 }
 
-double jc_test_get_time()
+#if defined(_MSC_VER)
+
+uint64_t jc_test_get_time(void)
+{
+	LARGE_INTEGER tickPerSecond;
+	LARGE_INTEGER tick;
+	QueryPerformanceFrequency(&tickPerSecond);
+	QueryPerformanceCounter(&tick);
+	return tick.QuadPart / (tickPerSecond.QuadPart / 1000000);
+}
+
+#else
+
+uint64_t jc_test_get_time(void)
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);
-    return JC_TEST_STATIC_CAST(double, tv.tv_sec) + JC_TEST_STATIC_CAST(double, tv.tv_usec) / 1000000.0;
+    return JC_TEST_STATIC_CAST(uint64_t, tv.tv_sec) * 1000000U + JC_TEST_STATIC_CAST(uint64_t, tv.tv_usec);
 }
 
+#endif
 
 #endif

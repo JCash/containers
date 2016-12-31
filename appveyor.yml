@@ -1,0 +1,10 @@
+platform:
+  - x64
+
+install:
+
+build_script:
+  - compile_cl.bat
+
+test_script:
+  - build\test.exe
