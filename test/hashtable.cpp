@@ -2,6 +2,7 @@
 #include "hashtable.h"
 
 #include <stdlib.h>
+#include <algorithm> // std::max
 
 const uint32_t STRESS_COUNT = 2000000;
 const uint32_t PERCENT = 85;
