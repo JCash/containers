@@ -2,7 +2,6 @@
 #include "hashtable.h"
 
 #include <stdlib.h>
-#include <algorithm> // std::max
 
 const uint32_t STRESS_COUNT = 2000000;
 const uint32_t PERCENT = 85;
@@ -128,7 +127,7 @@ static void hashtable_iterate(SCtx* ctx)
 	// insert
 	for( uint32_t i = 0; i < count; ++i )
 	{
-		uint64_t key = static_cast<uint64_t>( rand() );
+		uint64_t key = count - i;
 		int v1 = rand();
 		int v2 = rand();
 		SPod pod = {v1, v2};
@@ -342,7 +341,7 @@ static void hashtable_add_remove_add_2(SCtx*)
        		memset(memory, 0xcd, memorysize);
        		
             std::map<uint32_t, uint32_t> map;
-            jc::HashTable<uint32_t, uint32_t> ht( std::max(table_size, count), memory );
+            jc::HashTable<uint32_t, uint32_t> ht( table_size > count ? table_size : count, memory );
 
             const uint32_t grow_shrink_iter_count = 20;
             for (uint32_t grow_shrink_iter = 0; grow_shrink_iter < grow_shrink_iter_count; ++grow_shrink_iter)
@@ -370,8 +369,6 @@ static void hashtable_add_remove_add_2(SCtx*)
                         uint32_t key = map.begin()->first;
                         map.erase(map.begin());
                         ht.Erase(key);
-
-                        //printf("erase %u\n\n", key);
                     }
 
                     ASSERT_EQ(map.size(), ht.Size());
