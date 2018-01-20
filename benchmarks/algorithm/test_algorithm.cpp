@@ -180,8 +180,8 @@ void test(size_t reportformat, size_t num_iterations, size_t num_elements, repor
 
     InitMemoryHooks();
 
-    // TEST( "lower_bound", create, lower_bound );
-    // TEST( "upper_bound", create, upper_bound );
+    TEST( "lower_bound", create, lower_bound );
+    TEST( "upper_bound", create, upper_bound );
     TEST( "sort 32", setup_sort, sort32 );
     TEST( "sort 64", setup_sort, sort64 );
     TEST( "stable_sort 32", setup_sort, stable_sort32 );

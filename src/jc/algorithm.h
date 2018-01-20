@@ -16,9 +16,6 @@ namespace jc
 
     template<typename T> size_t lower_bound_offset(T* first, size_t size, const T& val);
     template<typename T> size_t upper_bound_offset(T* first, size_t size, const T& val);
-
-    template<typename T, typename Value>
-    void find_ranges(T* first, size_t size, Value (*getval)(T*), void (*callback)(void* ctx, Value value, size_t start, size_t count), void* ctx );
 }
 
 #if defined(JC_ALGORITHM_IMPLEMENTATION)
@@ -151,71 +148,6 @@ T* lower_bound(T* first, T* last, const VAL& val, Compare& comp)
         }
     }
     return first;
-}
-
-
-template<typename T, typename Value>
-struct FindRangeComparator
-{
-    Value (*getval)(T*);
-
-    bool operator() (T& a, const Value& b) const
-    {
-        return getval(&a) < b;
-    }
-    bool operator() (const Value& a, T& b) const
-    {
-        return a < getval(&b);
-    }
-
-};
-
-template<typename T, typename Value>
-static void find_ranges_internal(T* first, size_t offset, size_t size, FindRangeComparator<T, Value>& comp, void (*callback)(void* ctx, Value value, size_t start, size_t count), void* ctx )
-{
-    if (size == 0)
-        return;
-    size_t half = size >> 1;
-    T* low = first + offset;
-    T* high = low + size;
-    T* middle = low + half;
-    Value val = comp.getval(middle);
-    low = lower_bound(low, middle, val, comp);
-    high = upper_bound(middle, high, val, comp);
-    callback(ctx, val, low - first, high - low);
-
-    T* rangefirst = first + offset;
-    find_ranges_internal(first, offset, low - rangefirst, comp, callback, ctx);
-    find_ranges_internal(first, high - first, size - (high - rangefirst), comp, callback, ctx);
-}
-
-template<typename T, typename Value>
-void find_ranges(T* first, size_t size, Value (*getval)(T*), void (*callback)(void* ctx, Value value, size_t start, size_t count), void* ctx )
-{
-    FindRangeComparator<T, Value> comp;
-    comp.getval = getval;
-    find_ranges_internal(first, 0, size, comp, callback, ctx);
-}
-
-
-template<typename T, typename Value>
-void find_ranges2(T* first, size_t size, Value (*getval)(T*), void (*callback)(void* ctx, Value value, size_t start, size_t count), void* ctx )
-{
-    FindRangeComparator<T, Value> comp;
-    comp.getval = getval;
-
-    T* end = first + size;
-    size_t offset = 0;
-    while(offset < size)
-    {
-        T* p = first + offset;
-        Value val = comp.getval(p);
-        T* high = std::upper_bound(p, end, val, comp);
-        size_t count = high - first - offset;
-        callback(ctx, val, offset, count);
-        offset += count;
-    }
-
 }
 
 } // namespace
