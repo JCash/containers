@@ -1,4 +1,61 @@
+/*
+ABOUT:
+    A radix sort function
+        - Very small (~70 loc)
+        - Very fast, even on armv7 (tested on iPhone 4S)
+        - Supports values with cast operator to uint64_t
+
+VERSION:
+    1.00 - (2018-01-21) Added radix_sort_stable()
+
+LICENSE:
+
+    The MIT License (MIT)
+
+    Copyright (c) 2018 Mathias Westerdahl
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+
+
+DISCLAIMER:
+
+    This software is supplied "AS IS" without any warranties and support
+
+*/
+
 #pragma once
+
+namespace jc
+{
+    /**
+     * Sorts an array of items of type T. The type must have a cast operator compatible with uint64_t
+     * The result is written to the input array (begin)
+     *
+     * @param begin the start of the contiguous array
+     * @param end the end of the contiguous array
+     * @param tmp a temporary array, it must be at least as large as the input array
+     */
+    template<typename T>
+    void radix_sort_stable(T* begin, T* end, T* tmp);
+}
+
+#ifdef JC_SORT_IMPLEMENTATION
 
 // Notes on radix sort
 // Pierre Terdiman, http://codercorner.com/RadixSortRevisited.htm
@@ -7,14 +64,6 @@
 // http://www.drdobbs.com/parallel/parallel-in-place-radix-sort-simplified/229000734?pgno=2
 // https://github.com/coderodde/radixsort.cpp/blob/master/radixsort.cpp/radixsort.h
 // https://github.com/maybeshewill/openmp_msd_radix/blob/master/radix.cpp
-
-namespace jc
-{
-    template<typename KeyType, typename T, typename GetKey>
-    void radix_sort_stable(T* begin, T* end, T* out);
-}
-
-#ifdef JC_SORT_IMPLEMENTATION
 
 namespace jc
 {
@@ -72,13 +121,22 @@ void radix_sort_stable_internal(T* begin, T* end, T* out){
 #undef KEY_TO_INDEX
 #undef PREFETCH
 
+#if defined(_MSC_VER)
+    #pragma warning( push )
+    #pragma warning( disable : 4507 34 )
+#endif
+
     if (N & 1)
         memcpy(out, begin, size*sizeof(T));
+
+#if defined(_MSC_VER)
+    #pragma warning( pop )
+#endif
 }
 
 template<typename T>
-void radix_sort_stable(T* begin, T* end, T* out){
-    radix_sort_stable_internal<sizeof(T), T>(begin, end, out);
+void radix_sort_stable(T* begin, T* end, T* tmp){
+    radix_sort_stable_internal<sizeof(T), T>(begin, end, tmp);
 }
 
 
