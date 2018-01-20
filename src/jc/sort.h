@@ -22,7 +22,11 @@ namespace jc
 template<int N, typename T>
 void radix_sort_stable_internal(T* begin, T* end, T* out){
     #define KEY_TO_INDEX(_X) ((*(_X) >> shift) & 0xFF)
+#if defined(__GNUC__)
     #define PREFETCH(_A) __builtin_prefetch(_A, 0, 2)
+#else
+    #define PREFETCH
+#endif
 
     size_t size = end - begin;
 
@@ -65,7 +69,8 @@ void radix_sort_stable_internal(T* begin, T* end, T* out){
         begin = out;
         out = tmp;
     }
-    #undef KEY_TO_INDEX
+#undef KEY_TO_INDEX
+#undef PREFETCH
 
     if (N & 1)
         memcpy(out, begin, size*sizeof(T));
