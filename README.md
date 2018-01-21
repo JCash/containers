@@ -6,7 +6,7 @@
 
 # Containers
 
-A collection of containers that I use
+A collection of header only containers that I use
 
 # Disclaimer
 
@@ -15,7 +15,6 @@ This software is supplied "AS IS" without any warranties and support
 # License
 
 [The MIT license](http://choosealicense.com/licenses/mit/)
-
 
 ## jc::HashTable
 
@@ -26,6 +25,16 @@ A fast and small C++ implementation of a hash table
 * Robin Hood collision resolving
 * Backward shift deletion
 * On par with Google's dense_hash_map
+
+## [jc/algorithm](src/jc/algorithm.h)
+
+The jc::lower_bound and jc::upper_bound are about 1.6x - 2.3x faster than their STL counter parts.
+
+## jc::radix_sort
+
+The radix sort is a stable sort, which requires an output buffer of the same length.
+It is ~70 lines of code.
+It is 12%-25% faster than [ska::sort](https://github.com/skarupke/ska_sort)
 
 # Benchmarks
 

@@ -1,6 +1,7 @@
 
 #include <string.h>
 #include <iostream>
+#include <unistd.h>
 #include "defines.h"
 #include "report.h"
 
@@ -28,12 +29,14 @@ int main(int argc, char **argv)
 			num_elements = 1;
 	}
 	*/
-	verbose = 0;
+	verbose = 1;
 
 	printf("# value size: %lu\n", sizeof(value_t));
 
 	report_t results;
 	test(reportformat, num_iterations, num_elements, results, verbose);
 	report(reportformat, results, verbose);
+	fflush(stdout);
+	fflush(stderr);
 	return 0;
 }
