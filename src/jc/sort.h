@@ -125,7 +125,7 @@ void radix_sort_stable_internal(T* begin, T* end, T* out){
 
 #if defined(_MSC_VER)
     #pragma warning( push )
-    #pragma warning( disable : 4507 34 )
+    #pragma warning( disable : 2147 ) // disable constant expression
 #endif
 
     if (N & 1)

@@ -225,7 +225,7 @@ static int* ReadArray(const char* path, int& asize)
 static void algorithm_lower_bound_file(SCtx*)
 {
     int asize = 0;
-    int* a = ReadArray("/Users/mathiaswesterdahl/work/containers/test.txt", asize);
+    int* a = ReadArray("./test/test.txt", asize);
     ASSERT_NE(0, a);
 
     int nbuffervalues = 3;
