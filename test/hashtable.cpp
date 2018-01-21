@@ -1,5 +1,5 @@
 #include "jc_test.h"
-#include "hashtable.h"
+#include <jc/hashtable.h>
 
 #include <stdlib.h>
 
