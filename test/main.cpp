@@ -1,8 +1,8 @@
 #define JC_TEST_IMPLEMENTATION
 #include "jc_test.h"
 #include "algorithm.cpp"
-//#include "list.cpp"
-//#include "hashtable.cpp"
+#include "array.cpp"
+#include "hashtable.cpp"
 
 int main(int argc, const char** argv)
 {

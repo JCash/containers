@@ -62,16 +62,16 @@ static uint32_t Hash32(uint8_t* buf, uint32_t len, uint32_t seed)
 }
 
 
-typedef struct SCtx
+typedef struct SCtxAlgorithm
 {
     std::vector<SRange> ranges;
     std::vector<RenderObject> renderobjects;
     std::vector<uint64_t> unsorted;
-} SCtx;
+} SCtxAlgorithm;
 
-static SCtx* algorithm_main_setup()
+static SCtxAlgorithm* algorithm_main_setup()
 {
-    SCtx* ctx = new SCtx;
+    SCtxAlgorithm* ctx = new SCtxAlgorithm;
 
     size_t count = 65536 + rand() % 100;
     size_t num_buckets = 20;
@@ -88,12 +88,12 @@ static SCtx* algorithm_main_setup()
     return ctx;
 }
 
-static void algorithm_main_teardown(SCtx* ctx)
+static void algorithm_main_teardown(SCtxAlgorithm* ctx)
 {
     delete ctx;
 }
 
-static void test_setup(SCtx* ctx)
+static void algorithm_test_setup(SCtxAlgorithm* ctx)
 {
     ctx->ranges.clear();
 
@@ -105,7 +105,7 @@ static void test_setup(SCtx* ctx)
     }
 }
 
-static void test_teardown(SCtx* ctx)
+static void algorithm_test_teardown(SCtxAlgorithm* ctx)
 {
     (void)ctx;
 }
@@ -136,7 +136,7 @@ static bool compare(int a, int b)
     return a < b;
 }
 
-static void algorithm_upper_bound(SCtx*)
+static void algorithm_upper_bound(SCtxAlgorithm*)
 {
     int* it_stl;
     int* it_jc;
@@ -163,7 +163,7 @@ static void algorithm_upper_bound(SCtx*)
     }
 }
 
-static void algorithm_lower_bound(SCtx*)
+static void algorithm_lower_bound(SCtxAlgorithm*)
 {
     int* it_stl;
     int* it_jc;
@@ -216,7 +216,7 @@ static int* ReadArray(const char* path, int& asize)
     return a;
 }
 
-static void algorithm_lower_bound_file(SCtx*)
+static void algorithm_lower_bound_file(SCtxAlgorithm*)
 {
     int asize = 0;
     int* a = ReadArray("./test/test.txt", asize);
@@ -233,7 +233,7 @@ static void algorithm_lower_bound_file(SCtx*)
     }
 }
 
-static void sort_radix_stable(SCtx* ctx)
+static void sort_radix_stable(SCtxAlgorithm* ctx)
 {
     bool is_sorted = true;
     uint32_t hash = 0;
@@ -286,7 +286,7 @@ static void sort_radix_stable(SCtx* ctx)
 
 }
 
-TEST_BEGIN(algorithm_test, algorithm_main_setup, algorithm_main_teardown, test_setup, test_teardown)
+TEST_BEGIN(algorithm_test, algorithm_main_setup, algorithm_main_teardown, algorithm_test_setup, algorithm_test_teardown)
     TEST(algorithm_upper_bound)
     TEST(algorithm_lower_bound)
     TEST(algorithm_lower_bound_file)
