@@ -4,8 +4,10 @@
 
 #if defined(__APPLE__)
     #include "TargetConditionals.h"
-    #if defined(TARGET_OS_IPHONE)
+	#if TARGET_OS_IPHONE
 		extern void Printf(const char*, ...);
+	#else
+		#define Printf printf
 	#endif
 #else
 	#define Printf printf
@@ -66,7 +68,7 @@ static void Report(size_t reportformat,
 	if( reportformat == 0 )
 	{
 		Printf("%s\t%s\tused %zu bytes in %zu allocations\n", container, title, memory_size, memory_allocations);
-		Printf("%s\t%s\titerations: %zu\tavg: %f %s\tmedian: %f %s\tmin: %f %s\tmax: %f %s", container, title, num_iterations,
+		Printf("%s\t%s\titerations: %zu\tavg: %f %s\tmedian: %f %s\tmin: %f %s\tmax: %f %s\n", container, title, num_iterations,
 				convert_time(timeavg, multiplier), get_unit(timeavg, multiplier),
 				convert_time(timemedian, multiplier), get_unit(timemedian, multiplier),
 				convert_time(timemin, multiplier), get_unit(timemin, multiplier),

@@ -1,5 +1,5 @@
 import sys, os, subprocess
-from render import get_path_from_test_name
+
 
 def run(cmd):
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
@@ -13,6 +13,9 @@ def get_cpu():
 def get_machine():
     cmd = 'sysctl -n hw.model'
     return run(cmd.split())
+
+def get_path_from_test_name(category, name):
+    return './images/%s/%s.png' % (category, name.lower().replace(' ', '_'))
 
 def get_log(path):
     lines = []
@@ -39,50 +42,39 @@ def sub(x):
         
 if __name__ == '__main__':
 
-    log1    = sys.argv[1]
-    log2    = sys.argv[2]
-    title   = sys.argv[3]
-    
+    title   = sys.argv[1]
+    category= sys.argv[2]
+    log     = sys.argv[3]
+
     print "# %s benchmarks" % title
     print ""
     print "Benchmarks run on a:", get_machine(), " ", get_cpu() 
     print ""
 
-    lines1 = get_log(log1)
-    lines2 = get_log(log2)
+    lines = get_log(log)
 
     print "# Images"
 
-    tests1 = get_tests(lines1)
-    tests2 = get_tests(lines2)
-    for test1, test2 in zip(tests1,tests2):
-        if ('dmHashTable' in test1) or ('dmHashTable' in test2):
+    tests = get_tests(lines)
+    i = 0
+    for test in tests:
+        if ('dmHashTable' in test):
             continue
-        print '<img src="%s" alt="%s" width="350">' % (get_path_from_test_name(test1), test1)
-        print '<img src="%s" alt="%s" width="350">' % (get_path_from_test_name(test2), test2)
-        print '<br/>'
+        if (i % 2) == 0:
+            print '_\n<br/>'
+        i = i + 1
+        print '<img src="%s" alt="%s" width="350">' % (get_path_from_test_name(category, test), test)
 
+
+    print ""
     print "# Tables"
-
     print ""
-    print "### %s" % log1
-    print "<sub>"
-    for line in lines1:
+
+    print "### %s" % log
+    print ""
+    for line in lines:
         if 'dmHashTable' in line:
             continue
         tokens = line.split()
         tokens = map(sub, tokens)
         print " ".join(tokens)
-
-    print ""
-    print "### %s" % log2
-    print "<sub>"
-    for line in lines2:
-        if 'dmHashTable' in line:
-            continue
-        tokens = line.split()
-        tokens = map(sub, tokens)
-        print " ".join(tokens)
-
-    
-    
