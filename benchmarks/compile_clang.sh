@@ -94,6 +94,10 @@ function compile_algorithm {
 }
 
 function compile_array {
+
+    echo $TESTCATEGORY: carray
+    $CXX -o $BUILDDIR/${TESTCATEGORY}_carray -DIMPL_C $ARGS $FILES
+
     if [ -d "$BOOST_INCLUDE" ]; then
         echo $TESTCATEGORY: boost
         $CXX -o $BUILDDIR/${TESTCATEGORY}_boost -DIMPL_BOOST -I$BOOST_INCLUDE/container/include -I$BOOST_INCLUDE/move/include -I$BOOST_INCLUDE/assert/include -I$BOOST_INCLUDE/static_assert/include -I$BOOST_INCLUDE/intrusive/include -I$BOOST_INCLUDE/core/include -I$BOOST_INCLUDE/config/include $ARGS $FILES

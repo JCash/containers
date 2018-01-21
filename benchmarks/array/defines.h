@@ -57,6 +57,11 @@ typedef struct SValue
     typedef boost::container::vector<valuesmall_t> container_valuesmall_t;
     typedef boost::container::vector<valuelarge_t> container_valuelarge_t;
 
+#elif defined(IMPL_C)
+    #define CONTAINERNAME "carray"
+    typedef valuesmall_t* container_valuesmall_t;
+    typedef valuelarge_t* container_valuelarge_t;
+
 #elif defined(IMPL_JC)
     #include <jc/array.h>
     #define CONTAINERNAME "jc::Array"

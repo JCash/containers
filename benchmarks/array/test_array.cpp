@@ -11,22 +11,46 @@ struct SCtx
     container_valuesmall_t  smallvalues;
     container_valuelarge_t  largevalues;
     uint64_t                sum;            // sum of all small values
+
+#if defined(IMPL_C)
+    SCtx() : smallvalues(0), largevalues(0)
+    {
+
+    }
+    ~SCtx()
+    {
+        if(smallvalues)
+            free(smallvalues);
+        if(largevalues)
+            free(largevalues);
+    }
+#endif
 };
 
 static void clear(SCtx& ctx)
 {
     srand(0);
+#if defined(IMPL_C)
+    ctx.smallvalues = (container_valuesmall_t)malloc(sizeof(valuesmall_t)*ctx.num_elements);
+    ctx.largevalues = (container_valuelarge_t)malloc(sizeof(valuelarge_t)*ctx.num_elements);
+#else
     SET_CAPACITY(ctx.smallvalues, ctx.num_elements);
     SET_CAPACITY(ctx.largevalues, ctx.num_elements);
     SET_SIZE(ctx.smallvalues, 0);
     SET_SIZE(ctx.largevalues, 0);
+#endif
 }
 
 static void setup_random(SCtx& ctx)
 {
     srand(0);
+#if defined(IMPL_C)
+    ctx.smallvalues = (container_valuesmall_t)malloc(sizeof(valuesmall_t)*ctx.num_elements);
+    ctx.largevalues = (container_valuelarge_t)malloc(sizeof(valuelarge_t)*ctx.num_elements);
+#else
     SET_SIZE(ctx.smallvalues, ctx.num_elements);
     SET_SIZE(ctx.largevalues, ctx.num_elements);
+#endif
     for( size_t i = 0; i < ctx.num_elements; ++i )
     {
         ctx.smallvalues[i] = rand();
@@ -72,7 +96,11 @@ static uint64_t push_back(SCtx& ctx)
     uint64_t sum = 0;
     for( size_t i = 0; i < ctx.num_elements; ++i )
     {
+#if defined(IMPL_C)
+        ctx.smallvalues[i] = i;
+#else
         PUSH(ctx.smallvalues, i);
+#endif
         sum += ctx.smallvalues[i];
     }
     return sum;

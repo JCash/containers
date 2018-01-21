@@ -46,7 +46,7 @@ function benchmark_array {
          SERIES+="$count "
          ((count+=100000))
     done
-    benchmark "stl eastl boost jc" "$SERIES"
+    benchmark "stl eastl boost jc carray" "$SERIES"
 }
 
 case $TESTCATEGORY in
