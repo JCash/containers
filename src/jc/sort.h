@@ -57,6 +57,8 @@ namespace jc
 
 #ifdef JC_SORT_IMPLEMENTATION
 
+#include <string.h> // memcpy
+
 // Notes on radix sort
 // Pierre Terdiman, http://codercorner.com/RadixSortRevisited.htm
 // Michael Herf, http://stereopsis.com/radix.html

@@ -1,4 +1,9 @@
 
+#if defined(__linux__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
+#endif
+
 #include <stdint.h>
 #define JC_ALGORITHM_IMPLEMENTATION
 #include <jc/algorithm.h>
@@ -293,3 +298,7 @@ TEST_BEGIN(algorithm_test, algorithm_main_setup, algorithm_main_teardown, test_s
     TEST(algorithm_lower_bound_file)
     TEST(sort_radix_stable)
 TEST_END(algorithm_test)
+
+#if defined(__linux__)
+#pragma GCC diagnostic pop
+#endif
