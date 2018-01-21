@@ -231,6 +231,8 @@ static void algorithm_lower_bound_file(SCtxAlgorithm*)
 
         ASSERT_EQ( (it_stl - a), (it_jc - a) );
     }
+
+    delete[] a;
 }
 
 static void sort_radix_stable(SCtxAlgorithm* ctx)
