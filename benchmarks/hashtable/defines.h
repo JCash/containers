@@ -1,6 +1,7 @@
 #pragma once
 
 #include "timeit.h"
+#include "../helpers.h"
 
 typedef uint64_t 	keey_t;	// because iostream defines a key_t
 
@@ -35,7 +36,7 @@ typedef uint64_t 	value_t;
 #endif
 
 
-const uint32_t		MAX_LOAD_FACTOR = 85;  // percent
+const uint32_t		MAX_LOAD_FACTOR = 50;  // percent
 
 #if defined(IMPL_STL_MAP) || defined(IMPL_STL_UNORDERED_MAP)
 	#ifdef IMPL_STL_UNORDERED_MAP
@@ -76,6 +77,15 @@ const uint32_t		MAX_LOAD_FACTOR = 85;  // percent
 	typedef hashtable_t::const_iterator iterator_t;
 	#define STL_LIKE_CONTAINER 1
 
+
+#elif defined(IMPL_SKA_FLAT_HASH_MAP)
+	#define CONTAINERNAME "ska::flat_hash_map"
+	#include <vector>
+	#include "flat_hash_map.hpp"
+	typedef ska::flat_hash_map<keey_t, value_t> hashtable_t;
+	typedef hashtable_t::const_iterator iterator_t;
+	#define STL_LIKE_CONTAINER 1
+
 #elif defined(IMPL_GOOGLE_SPARSEHASHMAP)
 	#define CONTAINERNAME "google::sparse_hash_map"
 	#include <sparsehash/sparse_hash_map>
@@ -91,25 +101,30 @@ const uint32_t		MAX_LOAD_FACTOR = 85;  // percent
 	typedef hashtable_t::const_iterator iterator_t;
 	#define GOOGLE_LIKE_CONTAINER 1
 
-#elif defined(IMPL_JC_HASHTABLE_CH) || defined(IMPL_JC_HASHTABLE_OA) || defined(IMPL_JC_HASHTABLE)
+#elif defined(IMPL_JC_HASHTABLE_CH) || defined(IMPL_JC_HASHTABLE_V2) || defined(IMPL_JC_HASHTABLE)
 	#if defined(IMPL_JC_HASHTABLE_CH)
-		#include "../../src/hashtable_ch.h"
+		#include "../../src/jc/hashtable_ch.h"
 		#define CONTAINERNAME "jc::hashtable_ch"
-	#elif defined(IMPL_JC_HASHTABLE_OA)
-		#include "../../src/hashtable_oa.h"
-		#define CONTAINERNAME "jc::hashtable_oa"
+	#elif defined(IMPL_JC_HASHTABLE_V2)
+		#include "../variants/hashtable.h"
+		#define CONTAINERNAME "jc::hashtable_v2"
 	#else
-		#include "../../src/hashtable.h"
+		#include "../../src/jc/hashtable.h"
 		#define CONTAINERNAME "jc::hashtable"
 	#endif
 
 	typedef jc::HashTable<keey_t, value_t> hashtable_t;
 	typedef hashtable_t::Iterator iterator_t;
 
+
 	inline void Init( hashtable_t& ht, uint32_t numelements )
 	{
 		(void)numelements;
 		uint32_t tablesize = uint32_t(numelements / (MAX_LOAD_FACTOR/100.0f));
+
+		size_t ts = (size_t)tablesize;
+		next_size_over(ts);
+		tablesize = (uint32_t)ts;
 
 #if defined(IMPL_JC_HASHTABLE_CH)
 		void* mem = new uint8_t[ hashtable_t::CalcSize( tablesize, numelements ) ];
@@ -177,7 +192,7 @@ const uint32_t		MAX_LOAD_FACTOR = 85;  // percent
 	}
 
 #elif defined(IMPL_DM_HASHTABLE)
-	#include "dmhashtable.h"
+	#include "hashtable.h"
 	#define CONTAINERNAME "dmHashTable"
 	typedef dmHashTable<keey_t, value_t> hashtable_t;
 

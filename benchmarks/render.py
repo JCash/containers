@@ -63,70 +63,13 @@ def parse_log(path):
 
     return tests
 
-
-def render(test):
-    scale = 1.0 #test['scale']
-    unit = test['unit']
-    
-    bars = []
-    for name, values in test['headers'].iteritems():
-        values = map(lambda x: x * scale, values)
-
-        bar = Bar(  x=test['counts'],
-                    y=values,
-                    name=name )
-        bars.append(bar)
-
-    layout = Layout(title=test['name'],
-                    font=Font(family='Raleway, sans-serif'),
-                    showlegend=True,
-                    barmode='group',
-                    bargap=0.15,
-                    bargroupgap=0.1,
-                    legend=Legend(x=0, y=1.0),
-                    xaxis=XAxis(title='Num Elements', type='category'),
-                    yaxis=YAxis(title=unit)
-                    )
-    
-    data = Data(bars)
-    fig = Figure(data=data, layout=layout)
-    outpath = get_path_from_test_name(test['name'])
-    py.image.save_as(fig, outpath)
-    
-    fig.close()
-    print "Wrote", outpath
-    
-def get_path_from_test_name(name):
-    return '../images/%s.png' % name.lower().replace(' ', '_')
-
-def render_pygal(test):
-
-    chart = pygal.Bar()
-    chart.x_labels = map(str, test['counts'])
-    chart.title = test['name']
-    
-    unit = test['unit']
-    chart.value_formatter = lambda x: '%.2f %s' % ((x if x is not None else ''), unit)
-    
-    scale = 1.0 #test['scale']
-    
-    for name, values in test['headers'].iteritems():
-        chart.add(name, map(lambda x: x * scale, values))
-        
-    chart.render()
-    #outpath = '../images/%s%s.svg' % (category, suffix)
-    #chart.render_to_file(outpath)
-    outpath = '../images/%s.png' % test['name'].lower().replace(' ', '_')
-    chart.render_to_png(outpath)
-    print "Wrote", outpath
-
 def random_color():
     r = 100 + random.randint(0, 155) % 155
     g = 100 + random.randint(0, 155)*3 % 155
     b = 100 + random.randint(0, 155)*7 % 155
     return '#%0x%0x%0x' % (r, g, b)
 
-def render_matplotlib(test):
+def render_matplotlib(test, outputdir):
     random.seed(0)
 
     unit = test['unit']
@@ -154,13 +97,6 @@ def render_matplotlib(test):
     markers='ov*sxd'
     for i, (name, values) in enumerate(test['headers'].iteritems()):
         values = [x * scale for x in values]
-        """plt.bar(index + offset, values, bar_width,
-                     alpha=opacity,
-                     #color=random_color(),
-                     label=name)
-        """
-        if name in ("std::map", "dmHashTable"):
-            continue
         plt.plot(test['counts'], values, label=name, color=random_color(), marker=markers[i % len(markers)])
         offset += bar_width
     
@@ -171,7 +107,7 @@ def render_matplotlib(test):
      
     #plt.tight_layout()
     
-    outpath = '../images/%s.png' % test['name'].lower().replace(' ', '_')
+    outpath = '%s/%s.png' % (outputdir, test['name'].lower().replace(' ', '_'))
     plt.savefig(outpath)
     plt.close()
 
@@ -179,6 +115,12 @@ def render_matplotlib(test):
             
 if __name__ == '__main__':
     tests = parse_log(sys.argv[1])
+    outputdir = '.'
+    if len(sys.argv) > 2:
+        outputdir = sys.argv[2]
+    if not os.path.exists(outputdir):
+        os.makedirs(outputdir)
+    
     for test in tests:
-        render_matplotlib(test)
+        render_matplotlib(test, outputdir)
     
