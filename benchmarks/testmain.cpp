@@ -31,8 +31,6 @@ int main(int argc, char **argv)
 	*/
 	verbose = 1;
 
-	printf("# value size: %lu\n", sizeof(value_t));
-
 	report_t results;
 	test(reportformat, num_iterations, num_elements, results, verbose);
 	report(reportformat, results, verbose);

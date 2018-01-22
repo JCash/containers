@@ -16,7 +16,7 @@ This software is supplied "AS IS" without any warranties and support
 
 [The MIT license](http://choosealicense.com/licenses/mit/)
 
-## jc::HashTable
+## [jc::HashTable](src/jc/hashtable.h)
 
 A fast and small C++ implementation of a hash table
 
@@ -30,25 +30,34 @@ A fast and small C++ implementation of a hash table
 
 The jc::lower_bound and jc::upper_bound are about 1.6x - 2.3x faster than their STL counter parts.
 
-## jc::radix_sort
+## [jc::radix_sort](src/jc/sort.h)
 
 The radix sort is a stable sort, which requires an output buffer of the same length.
 It is ~70 lines of code.
 It is 12%-25% faster than [ska::sort](https://github.com/skarupke/ska_sort)
 
-# Benchmarks
+## [jc::Array](src/jc/array.h)
 
-[Benchmarks Hashtable](benchmarks/benchmarks_ht.md)
+A fast and small C++ container for storing dynamic arrays.
 
-Performance examples for jc::HashTable. See benchmark page for more stats.
-<img src="./images/timings_insert_random_sizeof(value)==8.png" alt="Timings insert_random size=8" width="350">
-<img src="./images/timings_insert_random_sizeof(value)==152.png" alt="Timings insert_random size=152" width="350">
+* ~140 lines of code
+* ~3x faster than std::vector, and ~2x faster than eastl::vector when using "push_back"
+* Otherwise same performance as the others
 
-<img src="./images/timings_get_random_sizeof(value)==8.png" alt="Timings get_random size=8" width="350">
-<img src="./images/timings_get_random_sizeof(value)==152.png" alt="Timings get_random size=152" width="350">
+# [Benchmarks](benchmarks/README.md)
 
-<img src="./images/memory_get_random_sizeof(value)==8.png" alt="Memory get_random size=8" width="350">
-<img src="./images/memory_get_random_sizeof(value)==152.png" alt="Memory get_random size=152" width="350">
+*See [benchmark page](benchmarks/README.md) for more stats.*
+
+Performance examples for jc::HashTable.
+<br/>
+<img src="./benchmarks/images/timings_insert_random_sizeof(value)==152.png" alt="Timings insert_random size=152" width="350">
+<img src="./benchmarks/images/timings_get_random_sizeof(value)==152.png" alt="Timings get_random size=152" width="350">
+
+Performance examples for jc::Array.(See benchmark page for more stats)
+<br/>
+<img src="./benchmarks/images/array/timings_get_random_small.png" alt="Timings get_random size=8" width="350">
+<img src="./benchmarks/images/array/timings_push_back.png" alt="Timings push_back size=8" width="350">
+
 
 # Usage
 
@@ -88,5 +97,21 @@ Performance examples for jc::HashTable. See benchmark page for more stats.
     ht.Erase(17);
     
     free(mem);
+
+    
+## jc::Array
+
+    #include <jc/array.h>
+
+    jc::Array<int> a;
+    a.SetCapacity(4);
+    for(size_t i = 0; i < a.Capacity(); ++i)
+        a.Push(i);
+    
+    a.EraseSwap(0); // 0,1,2,3 -> 3,1,2    
+    
+    size_t sum = 0;
+    for(size_t i = 0; i < a.Size(); ++i)
+        sum += a[i];
 
     

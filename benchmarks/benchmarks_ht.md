@@ -3,91 +3,122 @@
 Benchmarks run on a: MacBookPro10,2   Intel(R) Core(TM) i7-3520M CPU @ 2.90GHz
 
 # Images
-<img src="../images/timings_insert_sequential_sizeof(value)==8.png" alt="Timings insert_sequential sizeof(value)==8" width="350">
-<img src="../images/timings_insert_sequential_sizeof(value)==152.png" alt="Timings insert_sequential sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/timings_insert_random_sizeof(value)==8.png" alt="Timings insert_random sizeof(value)==8" width="350">
-<img src="../images/timings_insert_random_sizeof(value)==152.png" alt="Timings insert_random sizeof(value)==152" width="350">
+<img src="./images/timings_insert_sequential_sizeof(value)==8.png" alt="Timings insert_sequential sizeof(value)==8" width="350">
+<img src="./images/timings_insert_sequential_sizeof(value)==152.png" alt="Timings insert_sequential sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/timings_get_sequential_sizeof(value)==8.png" alt="Timings get_sequential sizeof(value)==8" width="350">
-<img src="../images/timings_get_sequential_sizeof(value)==152.png" alt="Timings get_sequential sizeof(value)==152" width="350">
+<img src="./images/timings_insert_random_sizeof(value)==8.png" alt="Timings insert_random sizeof(value)==8" width="350">
+<img src="./images/timings_insert_random_sizeof(value)==152.png" alt="Timings insert_random sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/timings_get_random_sizeof(value)==8.png" alt="Timings get_random sizeof(value)==8" width="350">
-<img src="../images/timings_get_random_sizeof(value)==152.png" alt="Timings get_random sizeof(value)==152" width="350">
+<img src="./images/timings_get_sequential_sizeof(value)==8.png" alt="Timings get_sequential sizeof(value)==8" width="350">
+<img src="./images/timings_get_sequential_sizeof(value)==152.png" alt="Timings get_sequential sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/timings_erase_sequential_sizeof(value)==8.png" alt="Timings erase_sequential sizeof(value)==8" width="350">
-<img src="../images/timings_erase_sequential_sizeof(value)==152.png" alt="Timings erase_sequential sizeof(value)==152" width="350">
+<img src="./images/timings_get_random_sizeof(value)==8.png" alt="Timings get_random sizeof(value)==8" width="350">
+<img src="./images/timings_get_random_sizeof(value)==152.png" alt="Timings get_random sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/timings_erase_random_sizeof(value)==8.png" alt="Timings erase_random sizeof(value)==8" width="350">
-<img src="../images/timings_erase_random_sizeof(value)==152.png" alt="Timings erase_random sizeof(value)==152" width="350">
+<img src="./images/timings_erase_sequential_sizeof(value)==8.png" alt="Timings erase_sequential sizeof(value)==8" width="350">
+<img src="./images/timings_erase_sequential_sizeof(value)==152.png" alt="Timings erase_sequential sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/timings_iterator_sizeof(value)==8.png" alt="Timings iterator sizeof(value)==8" width="350">
-<img src="../images/timings_iterator_sizeof(value)==152.png" alt="Timings iterator sizeof(value)==152" width="350">
+<img src="./images/timings_erase_random_sizeof(value)==8.png" alt="Timings erase_random sizeof(value)==8" width="350">
+<img src="./images/timings_erase_random_sizeof(value)==152.png" alt="Timings erase_random sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/timings_create_insert_sum_sizeof(value)==8.png" alt="Timings create_insert_sum sizeof(value)==8" width="350">
-<img src="../images/timings_create_insert_sum_sizeof(value)==152.png" alt="Timings create_insert_sum sizeof(value)==152" width="350">
+<img src="./images/timings_iterator_sizeof(value)==8.png" alt="Timings iterator sizeof(value)==8" width="350">
+<img src="./images/timings_iterator_sizeof(value)==152.png" alt="Timings iterator sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/timings_adds_and_removes_sizeof(value)==8.png" alt="Timings adds_and_removes sizeof(value)==8" width="350">
-<img src="../images/timings_adds_and_removes_sizeof(value)==152.png" alt="Timings adds_and_removes sizeof(value)==152" width="350">
+<img src="./images/timings_create_insert_sum_sizeof(value)==8.png" alt="Timings create_insert_sum sizeof(value)==8" width="350">
+<img src="./images/timings_create_insert_sum_sizeof(value)==152.png" alt="Timings create_insert_sum sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/memory_insert_sequential_sizeof(value)==8.png" alt="Memory insert_sequential sizeof(value)==8" width="350">
-<img src="../images/memory_insert_sequential_sizeof(value)==152.png" alt="Memory insert_sequential sizeof(value)==152" width="350">
+<img src="./images/timings_adds_and_removes_sizeof(value)==8.png" alt="Timings adds_and_removes sizeof(value)==8" width="350">
+<img src="./images/timings_adds_and_removes_sizeof(value)==152.png" alt="Timings adds_and_removes sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/memory_insert_random_sizeof(value)==8.png" alt="Memory insert_random sizeof(value)==8" width="350">
-<img src="../images/memory_insert_random_sizeof(value)==152.png" alt="Memory insert_random sizeof(value)==152" width="350">
+<img src="./images/memory_insert_sequential_sizeof(value)==8.png" alt="Memory insert_sequential sizeof(value)==8" width="350">
+<img src="./images/memory_insert_sequential_sizeof(value)==152.png" alt="Memory insert_sequential sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/memory_get_sequential_sizeof(value)==8.png" alt="Memory get_sequential sizeof(value)==8" width="350">
-<img src="../images/memory_get_sequential_sizeof(value)==152.png" alt="Memory get_sequential sizeof(value)==152" width="350">
+<img src="./images/memory_insert_random_sizeof(value)==8.png" alt="Memory insert_random sizeof(value)==8" width="350">
+<img src="./images/memory_insert_random_sizeof(value)==152.png" alt="Memory insert_random sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/memory_get_random_sizeof(value)==8.png" alt="Memory get_random sizeof(value)==8" width="350">
-<img src="../images/memory_get_random_sizeof(value)==152.png" alt="Memory get_random sizeof(value)==152" width="350">
+<img src="./images/memory_get_sequential_sizeof(value)==8.png" alt="Memory get_sequential sizeof(value)==8" width="350">
+<img src="./images/memory_get_sequential_sizeof(value)==152.png" alt="Memory get_sequential sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/memory_erase_sequential_sizeof(value)==8.png" alt="Memory erase_sequential sizeof(value)==8" width="350">
-<img src="../images/memory_erase_sequential_sizeof(value)==152.png" alt="Memory erase_sequential sizeof(value)==152" width="350">
+<img src="./images/memory_get_random_sizeof(value)==8.png" alt="Memory get_random sizeof(value)==8" width="350">
+<img src="./images/memory_get_random_sizeof(value)==152.png" alt="Memory get_random sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/memory_erase_random_sizeof(value)==8.png" alt="Memory erase_random sizeof(value)==8" width="350">
-<img src="../images/memory_erase_random_sizeof(value)==152.png" alt="Memory erase_random sizeof(value)==152" width="350">
+<img src="./images/memory_erase_sequential_sizeof(value)==8.png" alt="Memory erase_sequential sizeof(value)==8" width="350">
+<img src="./images/memory_erase_sequential_sizeof(value)==152.png" alt="Memory erase_sequential sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/memory_iterator_sizeof(value)==8.png" alt="Memory iterator sizeof(value)==8" width="350">
-<img src="../images/memory_iterator_sizeof(value)==152.png" alt="Memory iterator sizeof(value)==152" width="350">
+<img src="./images/memory_erase_random_sizeof(value)==8.png" alt="Memory erase_random sizeof(value)==8" width="350">
+<img src="./images/memory_erase_random_sizeof(value)==152.png" alt="Memory erase_random sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/memory_create_insert_sum_sizeof(value)==8.png" alt="Memory create_insert_sum sizeof(value)==8" width="350">
-<img src="../images/memory_create_insert_sum_sizeof(value)==152.png" alt="Memory create_insert_sum sizeof(value)==152" width="350">
+<img src="./images/memory_iterator_sizeof(value)==8.png" alt="Memory iterator sizeof(value)==8" width="350">
+<img src="./images/memory_iterator_sizeof(value)==152.png" alt="Memory iterator sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/memory_adds_and_removes_sizeof(value)==8.png" alt="Memory adds_and_removes sizeof(value)==8" width="350">
-<img src="../images/memory_adds_and_removes_sizeof(value)==152.png" alt="Memory adds_and_removes sizeof(value)==152" width="350">
+<img src="./images/memory_create_insert_sum_sizeof(value)==8.png" alt="Memory create_insert_sum sizeof(value)==8" width="350">
+<img src="./images/memory_create_insert_sum_sizeof(value)==152.png" alt="Memory create_insert_sum sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/num_allocations_insert_sequential_sizeof(value)==8.png" alt="Num Allocations insert_sequential sizeof(value)==8" width="350">
-<img src="../images/num_allocations_insert_sequential_sizeof(value)==152.png" alt="Num Allocations insert_sequential sizeof(value)==152" width="350">
+<img src="./images/memory_adds_and_removes_sizeof(value)==8.png" alt="Memory adds_and_removes sizeof(value)==8" width="350">
+<img src="./images/memory_adds_and_removes_sizeof(value)==152.png" alt="Memory adds_and_removes sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/num_allocations_insert_random_sizeof(value)==8.png" alt="Num Allocations insert_random sizeof(value)==8" width="350">
-<img src="../images/num_allocations_insert_random_sizeof(value)==152.png" alt="Num Allocations insert_random sizeof(value)==152" width="350">
+<img src="./images/num_allocations_insert_sequential_sizeof(value)==8.png" alt="Num Allocations insert_sequential sizeof(value)==8" width="350">
+<img src="./images/num_allocations_insert_sequential_sizeof(value)==152.png" alt="Num Allocations insert_sequential sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/num_allocations_get_sequential_sizeof(value)==8.png" alt="Num Allocations get_sequential sizeof(value)==8" width="350">
-<img src="../images/num_allocations_get_sequential_sizeof(value)==152.png" alt="Num Allocations get_sequential sizeof(value)==152" width="350">
+<img src="./images/num_allocations_insert_random_sizeof(value)==8.png" alt="Num Allocations insert_random sizeof(value)==8" width="350">
+<img src="./images/num_allocations_insert_random_sizeof(value)==152.png" alt="Num Allocations insert_random sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/num_allocations_get_random_sizeof(value)==8.png" alt="Num Allocations get_random sizeof(value)==8" width="350">
-<img src="../images/num_allocations_get_random_sizeof(value)==152.png" alt="Num Allocations get_random sizeof(value)==152" width="350">
+<img src="./images/num_allocations_get_sequential_sizeof(value)==8.png" alt="Num Allocations get_sequential sizeof(value)==8" width="350">
+<img src="./images/num_allocations_get_sequential_sizeof(value)==152.png" alt="Num Allocations get_sequential sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/num_allocations_erase_sequential_sizeof(value)==8.png" alt="Num Allocations erase_sequential sizeof(value)==8" width="350">
-<img src="../images/num_allocations_erase_sequential_sizeof(value)==152.png" alt="Num Allocations erase_sequential sizeof(value)==152" width="350">
+<img src="./images/num_allocations_get_random_sizeof(value)==8.png" alt="Num Allocations get_random sizeof(value)==8" width="350">
+<img src="./images/num_allocations_get_random_sizeof(value)==152.png" alt="Num Allocations get_random sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/num_allocations_erase_random_sizeof(value)==8.png" alt="Num Allocations erase_random sizeof(value)==8" width="350">
-<img src="../images/num_allocations_erase_random_sizeof(value)==152.png" alt="Num Allocations erase_random sizeof(value)==152" width="350">
+<img src="./images/num_allocations_erase_sequential_sizeof(value)==8.png" alt="Num Allocations erase_sequential sizeof(value)==8" width="350">
+<img src="./images/num_allocations_erase_sequential_sizeof(value)==152.png" alt="Num Allocations erase_sequential sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/num_allocations_iterator_sizeof(value)==8.png" alt="Num Allocations iterator sizeof(value)==8" width="350">
-<img src="../images/num_allocations_iterator_sizeof(value)==152.png" alt="Num Allocations iterator sizeof(value)==152" width="350">
+<img src="./images/num_allocations_erase_random_sizeof(value)==8.png" alt="Num Allocations erase_random sizeof(value)==8" width="350">
+<img src="./images/num_allocations_erase_random_sizeof(value)==152.png" alt="Num Allocations erase_random sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/num_allocations_create_insert_sum_sizeof(value)==8.png" alt="Num Allocations create_insert_sum sizeof(value)==8" width="350">
-<img src="../images/num_allocations_create_insert_sum_sizeof(value)==152.png" alt="Num Allocations create_insert_sum sizeof(value)==152" width="350">
+<img src="./images/num_allocations_iterator_sizeof(value)==8.png" alt="Num Allocations iterator sizeof(value)==8" width="350">
+<img src="./images/num_allocations_iterator_sizeof(value)==152.png" alt="Num Allocations iterator sizeof(value)==152" width="350">
+_
 <br/>
-<img src="../images/num_allocations_adds_and_removes_sizeof(value)==8.png" alt="Num Allocations adds_and_removes sizeof(value)==8" width="350">
-<img src="../images/num_allocations_adds_and_removes_sizeof(value)==152.png" alt="Num Allocations adds_and_removes sizeof(value)==152" width="350">
+<img src="./images/num_allocations_create_insert_sum_sizeof(value)==8.png" alt="Num Allocations create_insert_sum sizeof(value)==8" width="350">
+<img src="./images/num_allocations_create_insert_sum_sizeof(value)==152.png" alt="Num Allocations create_insert_sum sizeof(value)==152" width="350">
+_
 <br/>
+<img src="./images/num_allocations_adds_and_removes_sizeof(value)==8.png" alt="Num Allocations adds_and_removes sizeof(value)==8" width="350">
+<img src="./images/num_allocations_adds_and_removes_sizeof(value)==152.png" alt="Num Allocations adds_and_removes sizeof(value)==152" width="350">
+_
+<br/>
+
 # Tables
 
 ### log_new_small_3.txt
-<sub>
+
+
 ## <sub>Timings</sub> <sub>insert_sequential</sub> <sub>sizeof(value)==8</sub>
 
 | <sub>counts</sub> | <sub>std::unordered_map</sub> | <sub>boost::unordered_map</sub> | <sub>eastl::hash_map</sub> | <sub>google::dense_hash_map</sub> | <sub>jc::hashtable</sub> |

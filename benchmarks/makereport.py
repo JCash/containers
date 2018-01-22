@@ -1,11 +1,10 @@
-#! /usr/bin/python
+#!/usr/bin/python
 
 import os
 import sys
 import time
 import subprocess
 from collections import OrderedDict
-
 
 def find_time_unit(t):
     if t < 0.000001:
@@ -25,68 +24,49 @@ def convert_time(t, unit):
         return t / 1000.0
     return t
 
+def parse_log(report, reportpath):
+    counts = []
+    with open(reportpath, 'rb') as f:
+        n = -1
+        iterations = -1
+        for line in f:
+            if line.startswith('# n '):
+                tokens = line.split()
+                n = int(tokens[2])
+                iterations = int(tokens[4])
+                if not n in counts:
+                    counts.append(n)
+                continue
+            if line.startswith('#'):
+                continue
 
-def run_test(test, report, *args):
-    cmd = [test]+map(str, args)
-    print "# cmd:", ' '.join(cmd)
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-    p.wait()
-    d = p.stdout.read()
-    
-    lines = d.replace('\r', '\n').split('\n')
-    
-    for line in lines[1:]:
-        tokens = line.split()
-        if not tokens:
-            continue
-        
-        if tokens[0][0] == '#':
-            print line
-            continue
-        
-        # print [ (i, x) for (i, x) in enumerate(tokens) ]
+            tokens = line.split()
+            name = tokens[0] # container name
+            testname = tokens[1]
+            if not testname in report['timings']:
+                report['memory'][testname]      = OrderedDict()
+                report['allocations'][testname] = OrderedDict()
+                report['timings'][testname]     = OrderedDict()
             
-        name = tokens[0] # container name
-        testname = tokens[1]
-        if not testname in report['timings']:
-            report['memory'][testname]      = OrderedDict()
-            report['allocations'][testname] = OrderedDict()
-            report['timings'][testname]     = OrderedDict()
-        
-        if not name in report['timings'][testname]:
-            report['memory'][testname][name]      = list()
-            report['allocations'][testname][name] = list()
-            report['timings'][testname][name]     = list()
-            
-        if 'used' == tokens[2]:
-            memory      = int(tokens[3])
-            allocations = int(tokens[6])
-            report['memory'][testname][name].append(memory)
-            report['allocations'][testname][name].append(allocations)
-            
-        else: # timings
-            index       = tokens.index("min:") # avg, median, min, max
-            timing      = float(tokens[index+1])
-            unit        = tokens[index+2]
-            timing      = convert_time(timing, unit)
-            report['timings'][testname][name].append(timing)
-            
-        #print tokens
+            if not name in report['timings'][testname]:
+                report['memory'][testname][name]      = list()
+                report['allocations'][testname][name] = list()
+                report['timings'][testname][name]     = list()
+                
+            if 'used' == tokens[2]:
+                memory      = int(tokens[3])
+                allocations = int(tokens[6])
+                report['memory'][testname][name].append(memory)
+                report['allocations'][testname][name].append(allocations)
+                
+            else: # timings
+                index       = tokens.index("min:") # avg, median, min, max
+                timing      = float(tokens[index+1])
+                unit        = tokens[index+2]
+                timing      = convert_time(timing, unit)
+                report['timings'][testname][name].append(timing)
+    return counts
 
-
-
-"""
-
-* memory usage
-* num allocations
-* avg time
-
-
-fmt:
-libname testname    used 8371052 bytes in 497 allocations
-libname testname    iterations: 1    avg: 51.633 ms    median: 51.633 ms    min: 51.633 ms    max: 51.633 ms
-
-"""
 
 def collect_table_data(counts, report, tabledata):
 
@@ -113,7 +93,7 @@ def collect_table_data(counts, report, tabledata):
                 tabledata[category][testname][name].extend(values)
             
 
-def make_table_report(data, bigtest):
+def make_table_report(data):
     usediff = False
 
     for category, tests in data.iteritems():
@@ -156,7 +136,7 @@ def make_table_report(data, bigtest):
                 else:
                     headersunderline.append( '-' * (length + 2) )
                     
-            print "## " + title + " " + testname + (" sizeof(value)==152" if bigtest else " sizeof(value)==8")
+            print "## " + title + " " + testname
             print ""
             print '|' + '|'.join(headers) + '|'
             print '|' + '|'.join(headersunderline) + '|'
@@ -187,49 +167,9 @@ def make_table_report(data, bigtest):
             print "Total diff:", totaldiff
 
 
-
 if __name__ == '__main__':
     timestart = time.time()
-    
-    tests = [   #'./build/ht_stl_map',
-                './build/ht_stl_unordered_map',
-                './build/ht_boost_unordered_map',
-                './build/ht_eastl_hash_map',
-                #'./build/ht_boost_flat_map',
-                './build/ht_google_dense_hash_map',
-                #'./build/ht_google_sparse_hash_map',
-                #'./build/ht_dm_hashtable',
-                #'./build/ht_jc_hashtable_ch',
-                #'./build/ht_jc_hashtable_rh',
-                './build/ht_jc_hashtable',]
-                
-    testsx = [   './build/ht_boost_flat_map',
-                #'./build/ht_dm_hashtable',
-                './build/ht_jc_hashtable']
-    testsx = [   './build/ht_google_dense_hash_map',
-                './build/ht_dm_hashtable',
-                './build/ht_jc_hashtable_ch',
-                './build/ht_jc_hashtable_oa',
-                './build/ht_jc_hashtable_rh']
 
-    bigtest = False
-    if bigtest:
-        tests = [x + "_big" for x in tests]
-    
-    iterations = 10
-    counts = [1000, 5000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000]
-    #counts = [1000, 5000, 10000, 20000]
-    #counts = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000]
-    #counts = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 10000, 20000, 30000, 40000]
-    #counts = [1000, 2000, 3000, 4000, 5000, 6000]
-    #counts = [10000]
-    #counts = [100]
-    
-    tabledata = OrderedDict()
-    tabledata['timings'] = OrderedDict()
-    tabledata['memory'] = OrderedDict()
-    tabledata['allocations'] = OrderedDict()
-    
     report = OrderedDict()
     report['timings'] = OrderedDict()
     report['memory'] = OrderedDict()
@@ -245,55 +185,32 @@ if __name__ == '__main__':
     report['allocations']['scale'] = 1
     report['allocations']['unit']  = ''
         
-    for count in counts:
-        for testname in tests:
-            run_test( testname, report, count, iterations )
+    counts = parse_log(report, sys.argv[1])
+
+    tabledata = OrderedDict()
+    tabledata['timings'] = OrderedDict()
+    tabledata['memory'] = OrderedDict()
+    tabledata['allocations'] = OrderedDict()
+    
     collect_table_data(counts, report, tabledata)
 
-    if './build/ht_boost_flat_map' in tests:
-        tests.remove('./build/ht_boost_flat_map')
-    if './build/ht_boost_flat_map_big' in tests:
-        tests.remove('./build/ht_boost_flat_map_big')
+    del tabledata['memory']
+    del tabledata['allocations']
 
-    if False:
-        iterations = 2
-        counts = [1000000, 2000000, 3000000, 4000000, 5000000]
-        #counts = [1000000]
-        #counts = [1000]
-        
-        report = OrderedDict()
-        report['timings'] = OrderedDict()
-        report['memory'] = OrderedDict()
-        report['allocations'] = OrderedDict()
-        
-        report['timings']['title'] = 'Timings (milliseconds)'
-        report['timings']['scale'] = 1000.0
-        report['timings']['unit']  = 'ms'
-        report['memory']['title'] = 'Memory (kb)'
-        report['memory']['scale'] = 1 / 1024.0
-        report['memory']['unit']  = 'kb'
-        report['allocations']['title'] = 'Num Allocations'
-        report['allocations']['scale'] = 1
-        report['allocations']['unit']  = ''
-            
-        for count in counts:
-            for testname in tests:
-                run_test( testname, report, count, iterations )
-                
-        collect_table_data(counts, report, tabledata)
-
-    
     tabledata['timings']['title'] = 'Timings'
     tabledata['timings']['scale'] = 1000.0
     tabledata['timings']['formatter'] = lambda x: '%.4f ms' % x
-    tabledata['memory']['title'] = 'Memory'
-    tabledata['memory']['scale'] = 1 / 1024.0
-    tabledata['memory']['formatter']  = lambda x: '%d kb' % x
-    tabledata['allocations']['title'] = 'Num Allocations'
-    tabledata['allocations']['scale'] = 1
-    tabledata['allocations']['formatter'] = lambda x: str(x)
+    if 'memory' in tabledata:
+        tabledata['memory']['title'] = 'Memory'
+        tabledata['memory']['scale'] = 1 / 1024.0
+        tabledata['memory']['formatter']  = lambda x: '%d kb' % x
+    if 'allocations' in tabledata:
+        tabledata['allocations']['title'] = 'Num Allocations'
+        tabledata['allocations']['scale'] = 1
+        tabledata['allocations']['formatter'] = lambda x: str(x)
 
-    make_table_report(tabledata, bigtest)
-    
+    # Render to output to table format
+    make_table_report(tabledata)
+
     timeend = time.time()
     print "# Report made in %f seconds" % (timeend - timestart)
