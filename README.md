@@ -4,6 +4,14 @@
 |dev         | [![Build Status](https://travis-ci.org/JCash/containers.svg?branch=dev)](https://travis-ci.org/JCash/containers?branch=dev) | [![Build status](https://ci.appveyor.com/api/projects/status/vi3jklpkj9eb5sfr/branch/dev?svg=true)](https://ci.appveyor.com/project/JCash/containers/branch/dev) |
 
 
+TESTING SVG
+![Alt text](./test.svg)
+<img src="./test.svg">
+
+![Alt text](./test2.svg)
+<img src="./test2.svg">
+
+
 # Containers
 
 A collection of header only containers that I use
@@ -114,4 +122,3 @@ Performance examples for jc::Array.(See benchmark page for more stats)
     for(size_t i = 0; i < a.Size(); ++i)
         sum += a[i];
 
-    
