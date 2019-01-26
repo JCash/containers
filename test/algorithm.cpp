@@ -62,6 +62,13 @@ static uint32_t Hash32(uint8_t* buf, uint32_t len, uint32_t seed)
   return hash;
 }
 
+typedef struct SCtxAlgorithm
+{
+    std::vector<SRange> ranges;
+    std::vector<RenderObject> renderobjects;
+    std::vector<uint64_t> unsorted;
+} SCtxAlgorithm;
+
 class AlgorithmTest : public jc_test_base_class
 {
 public:
