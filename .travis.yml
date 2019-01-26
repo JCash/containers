@@ -11,7 +11,7 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then choco install visualstudio2017-workload-vctools -y; fi
 
 script:
-  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then ./compile_cl.bat fi
-  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then ./build/test.exe fi
-  - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then ./compile_clang.sh fi
-  - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then ./build/test fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then ./compile_cl.bat; fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then ./build/test.exe; fi
+  - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then ./compile_clang.sh; fi
+  - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then ./build/test; fi
