@@ -1,4 +1,4 @@
-#include "jc_test.h"
+#include <jc/test.h>
 #include <jc/hashtable.h>
 
 #include <stdlib.h>
@@ -12,7 +12,7 @@ struct SPod
 {
 	int a;
 	int b;
-	
+
 	bool operator== (const SPod& rhs) const
 	{
 		return memcmp(this, &rhs, sizeof(SPod)) == 0;
@@ -21,76 +21,61 @@ struct SPod
 
 typedef jc::HashTable<uint64_t, SPod> TestHT64;
 
-typedef struct SCtx
+class HashTableTest : public jc_test_base_class
 {
-	uint32_t 	count;
-	uint32_t 	memorysize;
-	void* 		memory;
-	TestHT64	ht;
-} SCtx;
+protected:
+    void SetUp() {
+        count = 10;
+        memorysize = TestHT64::CalcSize(count);
+        memory = malloc( memorysize );
+        ht.Create(count, memory);
+    }
+    void TearDown() {
+        free(memory);
+    }
+    uint32_t    count;
+    uint32_t    memorysize;
+    void*       memory;
+    TestHT64    ht;
+};
 
-static SCtx* hashtable_main_setup()
+TEST_F(HashTableTest, Create)
 {
-	return reinterpret_cast<SCtx*>( malloc( sizeof(SCtx) ) );
-}
+	TestHT64 ht(count, memory);
 
-static void hashtable_main_teardown(SCtx* ctx)
-{
-	free(ctx);
-}
-
-static void test_setup(SCtx* ctx)
-{
-	ctx->count = 10;
-	ctx->memorysize = TestHT64::CalcSize(ctx->count);
-	ctx->memory = malloc( ctx->memorysize );
-	ctx->ht.Create(ctx->count, ctx->memory);
-}
-
-static void test_teardown(SCtx* ctx)
-{
-	free(ctx->memory);
-}
-
-static void hashtable_create(SCtx* ctx)
-{
-	TestHT64 ht(ctx->count, ctx->memory);
-	
 	ASSERT_TRUE( ht.Empty() );
-	
-	ctx->ht.Create(ctx->count, ctx->memory);
 
-	ASSERT_TRUE( ctx->ht.Empty() );
+	ht.Create(count, memory);
+
+	ASSERT_TRUE( ht.Empty() );
 }
 
-static void hashtable_insert_remove(SCtx* ctx)
+TEST_F(HashTableTest, InsertRemove)
 {
-	TestHT64& ht = ctx->ht;
-
 	ASSERT_TRUE( ht.Empty() );
 	ASSERT_EQ( 0, ht.Size() );
-	
-	for( uint32_t i = 0; i < ctx->count; ++i )
+
+	for( uint32_t i = 0; i < count; ++i )
 	{
 		SPod v = { 1, 2 };
 		ht.Put( 1234, v );
-		
+
 		ASSERT_EQ( 1, ht.Size() );
-        
+
 		SPod* value = ht.Get(1234);
         ASSERT_TRUE( value != 0 );
         ASSERT_EQ( v, *value );
-        
+
 		const SPod* constvalue = const_cast<const TestHT64&>(ht).Get(1234);
 		ASSERT_TRUE( constvalue != 0 );
 		ASSERT_EQ( v, *constvalue );
 
 		ht.Erase(1234);
-		
+
 		ASSERT_TRUE( ht.Empty() );
 		ASSERT_EQ( 0, ht.Size() );
 	}
-	
+
 	// Reinsert it
 	SPod v2 = { 2, 3 };
 	ht.Put( 1234, v2 );
@@ -98,7 +83,7 @@ static void hashtable_insert_remove(SCtx* ctx)
 	const SPod* value = ht.Get(1234);
 	ASSERT_TRUE( value != 0 );
 	ASSERT_EQ( v2, *value );
-	
+
 	// Change it
 	SPod v3 = { 3, 4 };
 	ASSERT_EQ( 1, ht.Size() );
@@ -110,20 +95,19 @@ static void hashtable_insert_remove(SCtx* ctx)
 
 }
 
-static void hashtable_iterate(SCtx* ctx)
+TEST_F(HashTableTest, Iterate)
 {
-	(void)ctx;
 	uint32_t count = 200;
 	uint32_t memorysize = TestHT64::CalcSize(count);
 	void* memory = malloc( memorysize );
-	
+
 	TestHT64 ht2;
 	ht2.Create(count, memory);
-	
+
 	srand(0);
-	
+
 	std::map<uint64_t, SPod> comparison;
-	
+
 	// insert
 	for( uint32_t i = 0; i < count; ++i )
 	{
@@ -133,7 +117,7 @@ static void hashtable_iterate(SCtx* ctx)
 		SPod pod = {v1, v2};
 
 		ht2.Put( key, pod );
-		
+
 		comparison[key] = pod;
 	}
 	ASSERT_EQ( count, ht2.Size() );
@@ -144,15 +128,15 @@ static void hashtable_iterate(SCtx* ctx)
 	{
 		const uint64_t* key = it.GetKey();
 		const SPod* value = it.GetValue();
-		
+
 		std::map<uint64_t, SPod>::const_iterator compit = comparison.find(*key);
 		ASSERT_TRUE( compit != comparison.end() );
 		ASSERT_EQ( compit->first, *key );
 		ASSERT_EQ( compit->second, *value );
 	}
-	
+
 	ht2.Clear();
-	
+
 	int numelements = 0;
     it = ht2.Begin();
     itend = ht2.End();
@@ -161,25 +145,24 @@ static void hashtable_iterate(SCtx* ctx)
         ++numelements;
     }
     ASSERT_EQ( 0, numelements );
-	
+
 	free(memory);
 }
 
-static void hashtable_stress(SCtx* ctx)
+TEST_F(HashTableTest, Stress)
 {
-	(void)ctx;
 	uint32_t count = 10;
 	uint32_t capacity = count;
 	uint32_t memorysize = TestHT64::CalcSize(capacity);
 	void* memory = malloc( memorysize );
-	
+
 	TestHT64 ht;
 	ht.Create(capacity, memory);
-	
+
 	srand(0);
-	
+
 	std::map<uint64_t, SPod> comparison;
-	
+
 	// insert
 	for( uint32_t i = 0; i < (count*PERCENT)/100; ++i )
 	{
@@ -189,7 +172,7 @@ static void hashtable_stress(SCtx* ctx)
 		SPod pod = {v1, v2};
 
 		ht.Put( static_cast<uint64_t>(key), pod );
-		
+
 		comparison[key] = pod;
 	}
 	ASSERT_EQ( (count*PERCENT)/100, ht.Size() );
@@ -199,7 +182,7 @@ static void hashtable_stress(SCtx* ctx)
 	for( ; testit != testitend; ++testit )
 	{
 		uint64_t key = *testit.GetKey();
-		
+
 		std::map<uint64_t, SPod>::const_iterator compit = comparison.find(key);
 		ASSERT_TRUE( compit != comparison.end() );
 		ASSERT_EQ( compit->first, *testit.GetKey() );
@@ -212,7 +195,7 @@ static void hashtable_stress(SCtx* ctx)
 	{
 		const uint64_t key = it->first;
 		const SPod& p = it->second;
-		
+
 		const SPod* value = ht.Get(key);
 		ASSERT_TRUE( value != 0 );
 		ASSERT_EQ( p, *value );
@@ -221,24 +204,24 @@ static void hashtable_stress(SCtx* ctx)
 	}
 
 	ASSERT_EQ( 0, ht.Size() );
-	
+
 	free(memory);
 }
 
-static void hashtable_create_small(SCtx* ctx)
+TEST_F(HashTableTest, Small)
 {
-    for( uint32_t i = 0; i < ctx->count; ++i )
+    for( uint32_t i = 0; i < count; ++i )
     {
-        TestHT64 ht(i, ctx->memory);
-        
+        TestHT64 ht(i, memory);
+
         ASSERT_TRUE( ht.Empty() );
-        
+
         for( uint32_t j = 0; j < i; ++j )
         {
             SPod pod = { static_cast<int>(j), static_cast<int>(j*2+10) };
             ht.Put(j, pod);
         }
-        
+
         ASSERT_EQ( i, ht.Size() );
 
         for( uint32_t j = 0; j < i; ++j )
@@ -247,9 +230,9 @@ static void hashtable_create_small(SCtx* ctx)
         }
 
         ASSERT_EQ( 0, ht.Size() );
-        
+
         uint32_t numelements = 0;
-        
+
         TestHT64::Iterator testit = ht.Begin();
         TestHT64::Iterator testitend = ht.End();
         for( ; testit != testitend; ++testit )
@@ -262,7 +245,7 @@ static void hashtable_create_small(SCtx* ctx)
 }
 
 
-static void hashtable_add_remove_add(SCtx*)
+TEST_F(HashTableTest, AddRemoveAdd)
 {
 	const uint32_t N = 20;
 	uint32_t memorysize = jc::HashTable<uint32_t, uint32_t>::CalcSize(N);
@@ -275,7 +258,7 @@ static void hashtable_add_remove_add(SCtx*)
 
         jc::HashTable<uint32_t, uint32_t> ht( i, memory );
         std::map<uint32_t, uint32_t> refmap;
-        
+
         ASSERT_TRUE( ht.Empty() );
 
         for( uint32_t j = 0; j < i; ++j )
@@ -310,7 +293,7 @@ static void hashtable_add_remove_add(SCtx*)
         }
 
         ASSERT_EQ( refmap.size(), ht.Size() );
-        
+
         // Compare again
         refit = refmap.begin();
         refitend = refmap.end();
@@ -326,7 +309,7 @@ static void hashtable_add_remove_add(SCtx*)
     free(memory);
 }
 
-static void hashtable_add_remove_add_2(SCtx*)
+TEST_F(HashTableTest, AddRemoveAdd2)
 {
 	const uint32_t N = 20;
 
@@ -339,7 +322,7 @@ static void hashtable_add_remove_add_2(SCtx*)
         for (uint32_t table_size = 1; table_size <= 2*N; ++table_size)
         {
        		memset(memory, 0xcd, memorysize);
-       		
+
             std::map<uint32_t, uint32_t> map;
             jc::HashTable<uint32_t, uint32_t> ht( table_size > count ? table_size : count, memory );
 
@@ -392,12 +375,12 @@ static void hashtable_add_remove_add_2(SCtx*)
 }
 
 
-static void hashtable_bug_erase(SCtx*)
+TEST_F(HashTableTest, Bug_Erase)
 {
 	uint32_t memorysize = jc::HashTable<uint64_t, uint64_t>::CalcSize(16);
 	void* memory = malloc( memorysize );
 	memset(memory, 0xcd, memorysize);
-    
+
     jc::HashTable<uint64_t, uint64_t> ht( 16, memory );
 
     ht.Put( 2061551824, 5271368961445147204 );
@@ -416,40 +399,3 @@ static void hashtable_bug_erase(SCtx*)
 
     free(memory);
 }
-
-/*
-struct SCtx
-{
-
-};
-
-static SCtx* hashtable_main_setup()
-{
-    return reinterpret_cast<SCtx*>( malloc( sizeof(SCtx) ) );
-}
-
-static void hashtable_main_teardown(SCtx* ctx)
-{
-    free(ctx);
-}
-
-static void test_setup(SCtx* ctx)
-{
-}
-
-static void test_teardown(SCtx* ctx)
-{
-}
-*/
-
-TEST_BEGIN(hashtable_test, hashtable_main_setup, hashtable_main_teardown, test_setup, test_teardown)
-    TEST(hashtable_create)
-    TEST(hashtable_insert_remove)
-    TEST(hashtable_iterate)
-    TEST(hashtable_stress)
-    TEST(hashtable_create_small)
-    TEST(hashtable_add_remove_add)
-    TEST(hashtable_add_remove_add_2)
-    TEST(hashtable_bug_erase)
-TEST_END(hashtable_test)
-

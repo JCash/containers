@@ -1,14 +1,8 @@
 #include <stdint.h>
 #define JC_ARRAY_IMPLEMENTATION
 #include <jc/array.h>
+#include <jc/test.h>
 #include <vector>
-#include "jc_test.h"
-
-typedef struct SCtxArray
-{
-    std::vector<int> numbers;
-    size_t           sum;
-} SCtxArray;
 
 template<typename T>
 static size_t FillArray(T& a, size_t count)
@@ -33,51 +27,41 @@ static size_t Sum(T& a, size_t count)
     return sum;
 }
 
-static SCtxArray* array_main_setup()
+class ArrayTest : public jc_test_base_class
 {
-    SCtxArray* ctx = new SCtxArray;
+protected:
+    void SetUp()
+    {
+        size_t count = 65436 + rand() % 100;
+        numbers.resize(count);
+        sum = FillArray(numbers, count);
+    }
 
-    size_t count = 65436 + rand() % 100;
-    ctx->numbers.resize(count);
-    ctx->sum = FillArray(ctx->numbers, count);
-    return ctx;
-}
+    std::vector<int> numbers;
+    size_t           sum;
+};
 
-static void array_main_teardown(SCtxArray* ctx)
-{
-    delete ctx;
-}
 
-static void array_test_setup(SCtxArray* ctx)
-{
-    (void)ctx;
-}
-
-static void array_test_teardown(SCtxArray* ctx)
-{
-    (void)ctx;
-}
-
-static void array_create(SCtxArray* ctx)
+TEST_F(ArrayTest, Create)
 {
     jc::Array<int> a;
     ASSERT_TRUE(a.Empty());
     ASSERT_TRUE(a.Full());
 
-    a.SetCapacity(ctx->numbers.size());
+    a.SetCapacity(numbers.size());
 
-    ASSERT_EQ(ctx->numbers.size(), a.Capacity());
+    ASSERT_EQ(numbers.size(), a.Capacity());
     ASSERT_EQ(0, a.Size());
 
-    a.SetSize(ctx->numbers.size());
-    ASSERT_EQ(ctx->numbers.size(), a.Size());
+    a.SetSize(numbers.size());
+    ASSERT_EQ(numbers.size(), a.Size());
 
     size_t sum = FillArray(a, a.Size());
-    ASSERT_EQ(ctx->sum, sum);
+    ASSERT_EQ(sum, sum);
 }
 
 
-static void array_first_last(SCtxArray*)
+TEST_F(ArrayTest, FirstLast)
 {
     jc::Array<int> a;
     a.SetSize(4);
@@ -90,10 +74,8 @@ static void array_first_last(SCtxArray*)
     ASSERT_EQ(40, a.Last());
 }
 
-static void array_resize(SCtxArray* ctx)
+TEST_F(ArrayTest, Resize)
 {
-    (void)ctx;
-
     jc::Array<int> a;
     a.SetSize(32);
     size_t sum = FillArray(a, a.Size());
@@ -109,24 +91,24 @@ static void array_resize(SCtxArray* ctx)
     ASSERT_EQ(sum, sum2);
 }
 
-static void array_push(SCtxArray* ctx)
+TEST_F(ArrayTest, Push)
 {
     jc::Array<int> a;
-    a.SetCapacity(ctx->numbers.size());
+    a.SetCapacity(numbers.size());
 
     for( uint32_t i = 0; i < a.Capacity(); ++i)
         a.Push(i % 4000);
 
-    ASSERT_EQ(ctx->numbers.size(), a.Size());
+    ASSERT_EQ(numbers.size(), a.Size());
 
     size_t sum = Sum(a, a.Size());
-    ASSERT_EQ(ctx->sum, sum);
+    ASSERT_EQ(sum, sum);
 }
 
-static void array_pop(SCtxArray* ctx)
+TEST_F(ArrayTest, Pop)
 {
     jc::Array<int> a;
-    a.SetSize(ctx->numbers.size());
+    a.SetSize(numbers.size());
     FillArray(a, a.Size());
 
     size_t sum = 0;
@@ -134,7 +116,7 @@ static void array_pop(SCtxArray* ctx)
         sum += a.Pop();
 
     ASSERT_EQ(0, a.Size());
-    ASSERT_EQ(ctx->sum, sum);
+    ASSERT_EQ(sum, sum);
 }
 
 template<typename S, typename T>
@@ -148,7 +130,7 @@ static bool Compare(const S& a, const T& b, size_t count)
     return true;
 }
 
-static void array_erase_swap(SCtxArray*)
+TEST_F(ArrayTest, EraseSwap)
 {
     jc::Array<int> a;
     a.SetSize(4);
@@ -189,12 +171,3 @@ static void array_erase_swap(SCtxArray*)
     a.EraseSwap(0);
     ASSERT_EQ(0, a.Size());
 }
-
-TEST_BEGIN(array_test, array_main_setup, array_main_teardown, array_test_setup, array_test_teardown)
-    TEST(array_create)
-    TEST(array_first_last)
-    TEST(array_resize)
-    TEST(array_push)
-    TEST(array_pop)
-    TEST(array_erase_swap)
-TEST_END(array_test)

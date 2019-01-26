@@ -27,5 +27,7 @@
 *.out
 *.app
 
+*.DS_Store
+
 build/**
 benchmarks/build/**

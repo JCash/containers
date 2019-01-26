@@ -3,6 +3,7 @@
 #include <jc/algorithm.h>
 #define JC_SORT_IMPLEMENTATION
 #include <jc/sort.h>
+#include <jc/test.h>
 #include <algorithm>
 #include <vector>
 
@@ -61,54 +62,45 @@ static uint32_t Hash32(uint8_t* buf, uint32_t len, uint32_t seed)
   return hash;
 }
 
-
-typedef struct SCtxAlgorithm
+class AlgorithmTest : public jc_test_base_class
 {
-    std::vector<SRange> ranges;
-    std::vector<RenderObject> renderobjects;
-    std::vector<uint64_t> unsorted;
-} SCtxAlgorithm;
+public:
+    static SCtxAlgorithm* ctx;
 
-static SCtxAlgorithm* algorithm_main_setup()
-{
-    SCtxAlgorithm* ctx = new SCtxAlgorithm;
-
-    size_t count = 65536 + rand() % 100;
-    size_t num_buckets = 20;
-    ctx->renderobjects.reserve(count);
-    for( uint32_t i = 0; i < count; ++i)
-    {
-        RenderObject obj;
-        obj.payload = i;
-        obj.sortkey = i % num_buckets;
-        ctx->renderobjects.push_back(obj);
+    static void SetUpTestCase() {
+        ctx = new SCtxAlgorithm;
+        size_t count = 65536 + rand() % 100;
+        size_t num_buckets = 20;
+        ctx->renderobjects.reserve(count);
+        for( uint32_t i = 0; i < count; ++i)
+        {
+            RenderObject obj;
+            obj.payload = i;
+            obj.sortkey = i % num_buckets;
+            ctx->renderobjects.push_back(obj);
+        }
+        std::sort(ctx->renderobjects.begin(), ctx->renderobjects.end(), compare_render_object);
     }
-    std::sort(ctx->renderobjects.begin(), ctx->renderobjects.end(), compare_render_object);
 
-    return ctx;
-}
-
-static void algorithm_main_teardown(SCtxAlgorithm* ctx)
-{
-    delete ctx;
-}
-
-static void algorithm_test_setup(SCtxAlgorithm* ctx)
-{
-    ctx->ranges.clear();
-
-    uint32_t count = 3000;
-    ctx->unsorted.resize(count);
-    for( uint32_t i = 0; i < count; ++i )
-    {
-        ctx->unsorted[i] = rand();
+    static void TearDownTestCase() {
+        delete ctx;
     }
-}
 
-static void algorithm_test_teardown(SCtxAlgorithm* ctx)
-{
-    (void)ctx;
-}
+protected:
+    void SetUp()
+    {
+        ctx->ranges.clear();
+        uint32_t count = 3000;
+        ctx->unsorted.resize(count);
+        for( uint32_t i = 0; i < count; ++i )
+        {
+            ctx->unsorted[i] = rand();
+        }
+    }
+};
+
+SCtxAlgorithm* AlgorithmTest::ctx = 0;
+
 
 #define ARRAY_SIZE(_X) (sizeof(_X)/sizeof(_X[0]))
 
@@ -136,7 +128,7 @@ static bool compare(int a, int b)
     return a < b;
 }
 
-static void algorithm_upper_bound(SCtxAlgorithm*)
+TEST_F(AlgorithmTest, UpperBound)
 {
     int* it_stl;
     int* it_jc;
@@ -163,7 +155,7 @@ static void algorithm_upper_bound(SCtxAlgorithm*)
     }
 }
 
-static void algorithm_lower_bound(SCtxAlgorithm*)
+TEST_F(AlgorithmTest, LowerBound)
 {
     int* it_stl;
     int* it_jc;
@@ -216,7 +208,8 @@ static int* ReadArray(const char* path, int& asize)
     return a;
 }
 
-static void algorithm_lower_bound_file(SCtxAlgorithm*)
+
+TEST_F(AlgorithmTest, LowerBoundFile)
 {
     int asize = 0;
     int* a = ReadArray("./test/test.txt", asize);
@@ -235,7 +228,8 @@ static void algorithm_lower_bound_file(SCtxAlgorithm*)
     delete[] a;
 }
 
-static void sort_radix_stable(SCtxAlgorithm* ctx)
+
+TEST_F(AlgorithmTest, SortRadixStable)
 {
     bool is_sorted = true;
     uint32_t hash = 0;
@@ -287,10 +281,3 @@ static void sort_radix_stable(SCtxAlgorithm* ctx)
     ASSERT_NE(hash, hash_after);
 
 }
-
-TEST_BEGIN(algorithm_test, algorithm_main_setup, algorithm_main_teardown, algorithm_test_setup, algorithm_test_teardown)
-    TEST(algorithm_upper_bound)
-    TEST(algorithm_lower_bound)
-    TEST(algorithm_lower_bound_file)
-    TEST(sort_radix_stable)
-TEST_END(algorithm_test)

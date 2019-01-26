@@ -1,14 +1,11 @@
 #define JC_TEST_IMPLEMENTATION
-#include "jc_test.h"
+#include <jc/test.h>
 #include "algorithm.cpp"
 #include "array.cpp"
 #include "hashtable.cpp"
 
-int main(int argc, const char** argv)
+int main(int argc, char** argv)
 {
-	(void)argc;
-	(void)argv;
-
-	RUN_ALL();
-	return 0;
+    jc_test_init(&argc, argv);
+	return JC_TEST_RUN_ALL();
 }
