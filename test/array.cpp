@@ -56,8 +56,8 @@ TEST_F(ArrayTest, Create)
     a.SetSize(numbers.size());
     ASSERT_EQ(numbers.size(), a.Size());
 
-    size_t sum = FillArray(a, a.Size());
-    ASSERT_EQ(sum, sum);
+    size_t asum = FillArray(a, a.Size());
+    ASSERT_EQ(sum, asum);
 }
 
 
@@ -78,7 +78,7 @@ TEST_F(ArrayTest, Resize)
 {
     jc::Array<int> a;
     a.SetSize(32);
-    size_t sum = FillArray(a, a.Size());
+    size_t sum1 = FillArray(a, a.Size());
 
     int* begin = a.Begin();
 
@@ -88,7 +88,7 @@ TEST_F(ArrayTest, Resize)
         a.SetCapacity(a.Capacity() + 16);
     }
     size_t sum2 = Sum(a, a.Size());
-    ASSERT_EQ(sum, sum2);
+    ASSERT_EQ(sum1, sum2);
 }
 
 TEST_F(ArrayTest, Push)
@@ -101,8 +101,8 @@ TEST_F(ArrayTest, Push)
 
     ASSERT_EQ(numbers.size(), a.Size());
 
-    size_t sum = Sum(a, a.Size());
-    ASSERT_EQ(sum, sum);
+    size_t sum1 = Sum(a, a.Size());
+    ASSERT_EQ(sum, sum1);
 }
 
 TEST_F(ArrayTest, Pop)
@@ -111,12 +111,12 @@ TEST_F(ArrayTest, Pop)
     a.SetSize(numbers.size());
     FillArray(a, a.Size());
 
-    size_t sum = 0;
+    size_t sum1 = 0;
     while( !a.Empty() )
-        sum += a.Pop();
+        sum1 += a.Pop();
 
     ASSERT_EQ(0, a.Size());
-    ASSERT_EQ(sum, sum);
+    ASSERT_EQ(sum, sum1);
 }
 
 template<typename S, typename T>

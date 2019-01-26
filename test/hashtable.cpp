@@ -25,15 +25,15 @@ class HashTableTest : public jc_test_base_class
 {
 protected:
     void SetUp() {
-        count = 10;
-        memorysize = TestHT64::CalcSize(count);
+        htcount = 10;
+        memorysize = TestHT64::CalcSize(htcount);
         memory = malloc( memorysize );
-        ht.Create(count, memory);
+        ht.Create(htcount, memory);
     }
     void TearDown() {
         free(memory);
     }
-    uint32_t    count;
+    uint32_t    htcount;
     uint32_t    memorysize;
     void*       memory;
     TestHT64    ht;
@@ -41,11 +41,11 @@ protected:
 
 TEST_F(HashTableTest, Create)
 {
-	TestHT64 ht(count, memory);
+	TestHT64 ht(htcount, memory);
 
 	ASSERT_TRUE( ht.Empty() );
 
-	ht.Create(count, memory);
+	ht.Create(htcount, memory);
 
 	ASSERT_TRUE( ht.Empty() );
 }
@@ -55,7 +55,7 @@ TEST_F(HashTableTest, InsertRemove)
 	ASSERT_TRUE( ht.Empty() );
 	ASSERT_EQ( 0, ht.Size() );
 
-	for( uint32_t i = 0; i < count; ++i )
+	for( uint32_t i = 0; i < htcount; ++i )
 	{
 		SPod v = { 1, 2 };
 		ht.Put( 1234, v );
@@ -210,7 +210,7 @@ TEST_F(HashTableTest, Stress)
 
 TEST_F(HashTableTest, Small)
 {
-    for( uint32_t i = 0; i < count; ++i )
+    for( uint32_t i = 0; i < htcount; ++i )
     {
         TestHT64 ht(i, memory);
 
