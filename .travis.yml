@@ -1,13 +1,17 @@
 language: cpp
-sudo: true
 compiler:
   - clang
 
 os:
   - linux
   - osx
+  - windows
+
+install:
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then choco install visualstudio2017-workload-vctools -y; fi
 
 script:
-  - ./compile_clang.sh
-  - ./build/test
-  
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; ./compile_cl.bat fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; ./build/test.exe fi
+  - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; ./compile_clang.sh fi
+  - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; ./build/test fi
