@@ -104,9 +104,9 @@ typedef void* (*jc_test_fixture_setup_func)();
 
 typedef struct jc_test_entry
 {
-    const char*     name;
-
+    const char* name;
 #if defined(__cplusplus)
+    jc_test_base_class * instance;
     union {
 #endif
         jc_test_func    test;
@@ -296,8 +296,11 @@ extern int jc_test_strcmp(const char* a, const char* b);
 
 #define JC_TEST_ASSERT_NEARm( _EXPECTED, _VALUE, _EPSILON, _MSG)                            \
     do { jc_test_increment_assertions();                                                    \
-        if( JC_TEST_ABS((_EXPECTED)-(_VALUE)) > (_EPSILON) ) { JC_TEST_FAILm(_MSG) }        \
-    } while(0)
+        double _expected = (_EXPECTED);                                                     \
+        double _value = (_VALUE);                                                           \
+        double _epsilon = (_EPSILON);                                                       \
+        if( JC_TEST_ABS(_expected - _value) > _epsilon ) { JC_TEST_FAILm(_MSG) }            \
+     } while(0)
 
 #define JC_TEST_ASSERT_STREQm( _EXPECTED, _VALUE, _MSG )                        \
     do { jc_test_increment_assertions();                                        \
@@ -592,9 +595,9 @@ int jc_test_register_class_test(const char* fixture_name, const char* test_name,
     info.fn_name = test_name;
     info.member_fn = &jc_test_base_class::TestBody;
 
-    jc_test_register_test_info( &info );
+    jc_test_entry* test = jc_test_register_test_info( &info );
+    test->instance = instance;
     jc_test_fixture* fixture = info.fixture;
-    fixture->ctx = instance;
     fixture->type = fixture_type;
     fixture->cpp.fixture_setup = class_setup;
     fixture->cpp.fixture_teardown = class_teardown;
@@ -682,6 +685,7 @@ public:
             test->name = info->fn_name;
             test->test = info->fn;
             test->member_test = info->member_fn;
+            test->instance = 0;
         }
         return test;
     }
@@ -816,7 +820,6 @@ void jc_test_run_test_fixture(jc_test_fixture* fixture)
 
     size_t count = 0;
     jc_test_entry* test = &fixture->tests[count];
-
     while( test->test && count < sizeof(fixture->tests)/sizeof(fixture->tests[0]) )
     {
         fixture->fail = JC_TEST_PASS;
@@ -838,6 +841,13 @@ void jc_test_run_test_fixture(jc_test_fixture* fixture)
         jc_test_func fns[3] = { fixture->c.test_setup, test->test, fixture->c.test_teardown };
         jc_test_void_memberfunc cppfns[3] = { &jc_test_base_class::SetUp, &jc_test_base_class::TestBody, &jc_test_base_class::TearDown };
 
+        #if defined(__cplusplus)
+        jc_test_base_class* instance = JC_TEST_CAST(jc_test_base_class*, fixture->ctx);
+        if (test->instance) {
+            instance = test->instance;
+        }
+        #endif
+
         for( int i = 0; i < 3; ++i )
         {
             if( (fixture->type == JC_TEST_FIXTURE_TYPE_FUNCTION && !fns[i]) ||
@@ -856,7 +866,7 @@ void jc_test_run_test_fixture(jc_test_fixture* fixture)
             }
 #if defined(__cplusplus)
             else {
-                JC_TEST_INVOKE_MEMBER_FN(fixture->ctx, cppfns[i]);
+                JC_TEST_INVOKE_MEMBER_FN(instance, cppfns[i]);
             }
 #endif
 
