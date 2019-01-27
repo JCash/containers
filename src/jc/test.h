@@ -247,89 +247,79 @@ extern int jc_test_strcmp(const char* a, const char* b);
 
 #define JC_TEST_FAILm(_MSG)                                                             \
     {                                                                                   \
+        JC_TEST_FILE_AND_LINE;                                                          \
         JC_TEST_PRINTF("\n\t%s( %d ): %s\n", jc_test_filename, jc_test_line, (_MSG));   \
         jc_test_set_test_fail();                                                        \
     }
 
 #define JC_TEST_ASSERT_TRUEm(_VALUE, _MSG)                                 \
-    do { JC_TEST_FILE_AND_LINE;                                            \
-        jc_test_increment_assertions();                                    \
-        if( !(_VALUE) ) { JC_TEST_FAILm(_MSG ); }                          \
+    do { jc_test_increment_assertions();                                   \
+        if( !(_VALUE) ) { JC_TEST_FAILm(_MSG) }                            \
     } while(0)
 
 #define JC_TEST_ASSERT_FALSEm( _VALUE, _MSG) \
-    do { JC_TEST_FILE_AND_LINE;                                            \
-        jc_test_increment_assertions();                                    \
-        if( (_VALUE) ) { JC_TEST_FAILm(_MSG ); }                           \
-    } while (0)
+    do { jc_test_increment_assertions();                                      \
+        if( (_VALUE) ) { JC_TEST_FAILm(_MSG) }                             \
+    } while(0)
 
 #define JC_TEST_ASSERT_EQm( _EXPECTED, _VALUE, _MSG) \
-    do { JC_TEST_FILE_AND_LINE;                                            \
-        jc_test_increment_assertions();                                    \
-        if( !((_EXPECTED) == (_VALUE)) ) { JC_TEST_FAILm(_MSG ); }         \
-    } while (0)
+    do { jc_test_increment_assertions();                                    \
+        if( !((_EXPECTED) == (_VALUE)) ) { JC_TEST_FAILm(_MSG) }            \
+    } while(0)
 
 #define JC_TEST_ASSERT_NEm( _EXPECTED, _VALUE, _MSG) \
-    do { JC_TEST_FILE_AND_LINE;                                            \
-        jc_test_increment_assertions();                                    \
-        if( ((_EXPECTED) == (_VALUE)) ) { JC_TEST_FAILm(_MSG ); }          \
-    } while (0)
+    do { jc_test_increment_assertions();                                    \
+        if( ((_EXPECTED) == (_VALUE)) ) { JC_TEST_FAILm(_MSG) }             \
+    } while(0)
 
-#define JC_TEST_ASSERT_GTm( _EXPECTED, _VALUE, _MSG )                      \
-    do { JC_TEST_FILE_AND_LINE;                                            \
-        jc_test_increment_assertions();                                    \
-        if ((_EXPECTED) <= (_VALUE)) { JC_TEST_FAILm(_MSG); }              \
-    } while (0)
+#define JC_TEST_ASSERT_GTm( _EXPECTED, _VALUE, _MSG )                       \
+    do { jc_test_increment_assertions();                                    \
+        if ((_EXPECTED) <= (_VALUE)) { JC_TEST_FAILm(_MSG) }                \
+    } while(0)
 
-#define JC_TEST_ASSERT_LTm( _EXPECTED, _VALUE, _MSG )                      \
-    do { JC_TEST_FILE_AND_LINE;                                            \
-        jc_test_increment_assertions();                                    \
-        if ((_EXPECTED) >= (_VALUE)) { JC_TEST_FAILm(_MSG); }              \
-    } while (0)
+#define JC_TEST_ASSERT_LTm( _EXPECTED, _VALUE, _MSG )                       \
+    do { jc_test_increment_assertions();                                    \
+        if ((_EXPECTED) >= (_VALUE)) { JC_TEST_FAILm(_MSG) }                \
+    } while(0)
 
-#define JC_TEST_ASSERT_GEm( _EXPECTED, _VALUE, _MSG )                      \
-    do { JC_TEST_FILE_AND_LINE;                                            \
-        jc_test_increment_assertions();                                    \
-        if ((_EXPECTED) < (_VALUE)) { JC_TEST_FAILm(_MSG); }              \
-    } while (0)
+#define JC_TEST_ASSERT_GEm( _EXPECTED, _VALUE, _MSG )                       \
+    do { jc_test_increment_assertions();                                    \
+        if ((_EXPECTED) < (_VALUE)) { JC_TEST_FAILm(_MSG) }                 \
+    } while(0)
 
-#define JC_TEST_ASSERT_LEm( _EXPECTED, _VALUE, _MSG )                      \
-    do { JC_TEST_FILE_AND_LINE;                                            \
-        jc_test_increment_assertions();                                    \
-        if ((_EXPECTED) > (_VALUE)) { JC_TEST_FAILm(_MSG); }              \
-    } while (0)
+#define JC_TEST_ASSERT_LEm( _EXPECTED, _VALUE, _MSG )                       \
+    do { jc_test_increment_assertions();                                    \
+        if ((_EXPECTED) > (_VALUE)) { JC_TEST_FAILm(_MSG) }                 \
+    } while(0)
 
 #define JC_TEST_ABS(A) ((A) < 0 ? -(A) : (A))
 
-#define JC_TEST_ASSERT_NEARm( _EXPECTED, _VALUE, _EPSILON, _MSG)                           \
-    do { JC_TEST_FILE_AND_LINE;                                                            \
-        jc_test_increment_assertions();                                                 \
-        if( JC_TEST_ABS((_EXPECTED)-(_VALUE)) > (_EPSILON) ) { JC_TEST_FAILm(_MSG); }       \
-    } while (0)
+#define JC_TEST_ASSERT_NEARm( _EXPECTED, _VALUE, _EPSILON, _MSG)                            \
+    do { jc_test_increment_assertions();                                                    \
+        if( JC_TEST_ABS((_EXPECTED)-(_VALUE)) > (_EPSILON) ) { JC_TEST_FAILm(_MSG) }        \
+    } while(0)
 
-#define JC_TEST_ASSERT_STREQm( _EXPECTED, _VALUE, _MSG )                       \
-    do { JC_TEST_FILE_AND_LINE;                                                \
-        jc_test_increment_assertions();                                     \
-        if ( jc_test_strcmp(_EXPECTED, _VALUE) != 0 ) { JC_TEST_FAILm(_MSG); } \
-    } while (0)
+#define JC_TEST_ASSERT_STREQm( _EXPECTED, _VALUE, _MSG )                        \
+    do { jc_test_increment_assertions();                                        \
+        if ( jc_test_strcmp(_EXPECTED, _VALUE) != 0 ) { JC_TEST_FAILm(_MSG) }   \
+    } while(0)
 
-#define JC_TEST_ASSERT_STRNEm( _EXPECTED, _VALUE, _MSG )                       \
-    do { JC_TEST_FILE_AND_LINE;                                                \
-        jc_test_increment_assertions();                                     \
-        if ( jc_test_strcmp(_EXPECTED, _VALUE) == 0 ) { JC_TEST_FAILm(_MSG); } \
-    } while (0)
+#define JC_TEST_ASSERT_STRNEm( _EXPECTED, _VALUE, _MSG )                        \
+    do { jc_test_increment_assertions();                                        \
+        if ( jc_test_strcmp(_EXPECTED, _VALUE) == 0 ) { JC_TEST_FAILm(_MSG) }   \
+    } while(0)
 
-#define JC_TEST_ASSERT_TRUE( _VALUE )          JC_TEST_ASSERT_TRUEm( _VALUE, "" );
-#define JC_TEST_ASSERT_FALSE( _VALUE )         JC_TEST_ASSERT_FALSEm( _VALUE, "" );
-#define JC_TEST_ASSERT_EQ( _A, _B )            JC_TEST_ASSERT_EQm( _A, _B, #_A " != " #_B );
-#define JC_TEST_ASSERT_NE( _A, _B )            JC_TEST_ASSERT_NEm( _A, _B, #_A " == " #_B );
-#define JC_TEST_ASSERT_GT( _A, _B )            JC_TEST_ASSERT_GTm( _A, _B, #_A " <= " #_B );
-#define JC_TEST_ASSERT_LT( _A, _B )            JC_TEST_ASSERT_LTm( _A, _B, #_A " >= " #_B );
-#define JC_TEST_ASSERT_GE( _A, _B )            JC_TEST_ASSERT_GEm( _A, _B, #_A " < " #_B );
-#define JC_TEST_ASSERT_LE( _A, _B )            JC_TEST_ASSERT_LEm( _A, _B, #_A " > " #_B );
-#define JC_TEST_ASSERT_NEAR( _A, _B, _EPS )    JC_TEST_ASSERT_NEARm( _A, _B, _EPS, "ABS(" #_A " - " #_B ") > " #_EPS );
-#define JC_TEST_ASSERT_STREQ( _A, _B )         JC_TEST_ASSERT_STREQm( _A, _B, #_A " != " #_B );
-#define JC_TEST_ASSERT_STRNE( _A, _B )         JC_TEST_ASSERT_STRNEm( _A, _B, #_A " == " #_B );
+#define JC_TEST_ASSERT_TRUE( _VALUE )          JC_TEST_ASSERT_TRUEm( _VALUE, "" )
+#define JC_TEST_ASSERT_FALSE( _VALUE )         JC_TEST_ASSERT_FALSEm( _VALUE, "" )
+#define JC_TEST_ASSERT_EQ( _A, _B )            JC_TEST_ASSERT_EQm( _A, _B, #_A " != " #_B )
+#define JC_TEST_ASSERT_NE( _A, _B )            JC_TEST_ASSERT_NEm( _A, _B, #_A " == " #_B )
+#define JC_TEST_ASSERT_GT( _A, _B )            JC_TEST_ASSERT_GTm( _A, _B, #_A " <= " #_B )
+#define JC_TEST_ASSERT_LT( _A, _B )            JC_TEST_ASSERT_LTm( _A, _B, #_A " >= " #_B )
+#define JC_TEST_ASSERT_GE( _A, _B )            JC_TEST_ASSERT_GEm( _A, _B, #_A " < " #_B )
+#define JC_TEST_ASSERT_LE( _A, _B )            JC_TEST_ASSERT_LEm( _A, _B, #_A " > " #_B )
+#define JC_TEST_ASSERT_NEAR( _A, _B, _EPS )    JC_TEST_ASSERT_NEARm( _A, _B, _EPS, "ABS(" #_A " - " #_B ") > " #_EPS )
+#define JC_TEST_ASSERT_STREQ( _A, _B )         JC_TEST_ASSERT_STREQm( _A, _B, #_A " != " #_B )
+#define JC_TEST_ASSERT_STRNE( _A, _B )         JC_TEST_ASSERT_STRNEm( _A, _B, #_A " == " #_B )
 
 #define JC_TEST_SCOPED_TRACE(_MSG)
 
@@ -376,11 +366,11 @@ public:
     void Rewind()       { cursor = begin; }
 };
 
-template<typename T> jc_test_array_iterator<T>* jc_test_values(const T* begin, const T* end) {
+template<typename T> jc_test_array_iterator<T>* jc_test_values_in(const T* begin, const T* end) {
     return new jc_test_array_iterator<T>(begin, end);
 }
-template<typename T, size_t N> jc_test_array_iterator<T>* jc_test_values(const T (&arr)[N] ) {
-    return jc_test_values(arr, arr+N);
+template<typename T, size_t N> jc_test_array_iterator<T>* jc_test_values_in(const T (&arr)[N] ) {
+    return jc_test_values_in(arr, arr+N);
 }
 
 template<typename ParamType>
@@ -433,7 +423,7 @@ extern jc_test_entry* jc_test_register_test_info(struct jc_test_info* info);
 // TEST(MyNameSpace, TestName)( ASSERT_EQ(4, 2*2); )
 #define JC_TEST(testfixture,testfn)                                                                            \
     extern void JC_TEST_MAKE_FUNCTION_NAME(testfixture,testfn)(void* _jc_test_ctx);                         \
-    static struct int JC_TEST_MAKE_UNIQUE_NAME(testfixture,testfn,__LINE__) =                                \
+    static int JC_TEST_MAKE_UNIQUE_NAME(testfixture,testfn,__LINE__) =                                \
             jc_test_register_test(#testfixture, #testfn, JC_TEST_MAKE_FUNCTION_NAME(testfixture,testfn));  \
     void JC_TEST_MAKE_FUNCTION_NAME(testfixture,testfn)(void* _jc_test_ctx)
 
