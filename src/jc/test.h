@@ -816,6 +816,14 @@ static void jc_test_report_time(jc_test_time_t t) // Micro seconds
             //(((jc_test_base_class*)(INSTANCE)) -> * (_FN) ) ();
 #endif
 
+static inline int jc_test_cmp_fpos_t(const fpos_t* a, const fpos_t* b) {
+    #if defined(__linux__)
+        return a->_pos == a->_pos;
+    #else
+        return *a == *b;
+    #endif
+}
+
 void jc_test_run_test_fixture(jc_test_fixture* fixture)
 {
     jc_test_global_state.current_fixture = fixture;
@@ -861,7 +869,7 @@ void jc_test_run_test_fixture(jc_test_fixture* fixture)
         } else {
             JC_TEST_PRINTF("%s%s%s/%d: ", JC_TEST_CLR_YELLOW, test->name, JC_TEST_CLR_DEFAULT, index);
         }
-        fpos_t stdout_pos_start = {0};
+        fpos_t stdout_pos_start;
         fgetpos(stdout, &stdout_pos_start);
 
         jc_test_time_t teststart = 0;
@@ -910,10 +918,10 @@ void jc_test_run_test_fixture(jc_test_fixture* fixture)
             }
         }
 
-        fpos_t stdout_pos_end = {0};
+        fpos_t stdout_pos_end;
         fgetpos(stdout, &stdout_pos_end);
 
-        const char* return_char = stdout_pos_end == stdout_pos_start ? "\r" : "\n";
+        const char* return_char = jc_test_cmp_fpos_t(&stdout_pos_end, &stdout_pos_start) ? "\r" : "\n";
 
         if (index != 0xFFFFFF) {
             JC_TEST_PRINTF("%s%s%s%s %s (", return_char, JC_TEST_CLR_YELLOW, test->name, JC_TEST_CLR_DEFAULT, fixture->fail == JC_TEST_PASS ? (JC_TEST_CLR_GREEN "PASS" JC_TEST_CLR_DEFAULT) : (JC_TEST_CLR_RED "FAIL" JC_TEST_CLR_DEFAULT) );
