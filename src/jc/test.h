@@ -818,7 +818,7 @@ static void jc_test_report_time(jc_test_time_t t) // Micro seconds
 
 static inline int jc_test_cmp_fpos_t(const fpos_t* a, const fpos_t* b) {
     #if defined(__linux__)
-        return a->__pos == a->__pos;
+        return a->__pos == b->__pos;
     #else
         return *a == *b;
     #endif
