@@ -143,11 +143,11 @@ struct jc_test_funcs_c {
 #endif
 
 #ifndef JC_TEST_MAX_NUM_TESTS_PER_FIXTURE
-    #define JC_TEST_MAX_NUM_TESTS_PER_FIXTURE 256
+    #define JC_TEST_MAX_NUM_TESTS_PER_FIXTURE 128
 #endif
 
 #ifndef JC_TEST_MAX_NUM_FIXTURES
-    #define JC_TEST_MAX_NUM_FIXTURES 256
+    #define JC_TEST_MAX_NUM_FIXTURES 128
 #endif
 
 typedef struct jc_test_fixture
@@ -657,7 +657,14 @@ class JCTestState
 {
 public:
     ~JCTestState() {
-        for( int i = 0; i < jc_test_global_state.num_fixtures; ++i) {
+        for (int i = 0; i < jc_test_global_state.num_fixtures; ++i) {
+            for (int j = 0; j < JC_TEST_MAX_NUM_TESTS_PER_FIXTURE; ++j) {
+                if (!jc_test_global_state.fixtures[i]->tests[j].name) {
+                    break;
+                }
+                if (jc_test_global_state.fixtures[i]->tests[j].instance)
+                    delete jc_test_global_state.fixtures[i]->tests[j].instance;
+            }
             delete jc_test_global_state.fixtures[i];
         }
     }
