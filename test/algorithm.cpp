@@ -9,9 +9,10 @@
 
 struct SRange
 {
-    int sortkey;
+    size_t sortkey;
     size_t start;
     size_t count;
+    size_t _pad;
 };
 
 struct RenderObject

@@ -332,7 +332,7 @@ extern int jc_test_streq(const char* a, const char* b);
 // <-- End C TEST API
 
 extern void jc_test_run_test_fixture(jc_test_fixture* fixture);
-extern int jc_test_JC_TEST_RUN_ALL(int argc, char** argv, jc_test_state* state);
+extern int jc_test_run_all_tests(jc_test_state* state);
 
 #if defined(__cplusplus)
 
@@ -391,7 +391,7 @@ template<typename ParamType> const ParamType* jc_test_params_class<ParamType>::p
 template<typename ParamType>
 struct jc_test_fixture_with_param : public jc_test_fixture
 {
-    void SetParam() { ((jc_test_params_class<ParamType>*)ctx)->SetParam(param); };
+    void SetParam() { JC_TEST_CAST(jc_test_params_class<ParamType>*, ctx)->SetParam(param); }
     const ParamType* param;
 };
 
@@ -417,7 +417,7 @@ struct jc_test_info;
 extern int jc_test_register_test(const char* fixture_name, const char* test_name, jc_test_func test_fn);
 extern int jc_test_register_class_test(const char* fixture_name, const char* test_name,
                                                 jc_test_void_staticfunc class_setup, jc_test_void_staticfunc class_teardown,
-                                                jc_test_base_class* instance, int fixture_type);
+                                                jc_test_base_class* instance, unsigned int fixture_type);
 template<typename ParamType>
 extern int jc_test_register_param_class_test(const char* fixture_name, const char* test_name,
                                                 jc_test_void_staticfunc class_setup, jc_test_void_staticfunc class_teardown,
@@ -550,7 +550,7 @@ extern jc_test_entry* jc_test_register_test_info(struct jc_test_info* info);
 static inline void jc_test_memset(void* _mem, unsigned int pattern, size_t size)
 {
     for (size_t i = 0; i < size; ++i) {
-        JC_TEST_CAST(unsigned char*, _mem)[i] = (unsigned char)(pattern & 0xFF);
+        JC_TEST_CAST(unsigned char*, _mem)[i] = JC_TEST_STATIC_CAST(unsigned char, pattern & 0xFF);
     }
 }
 
@@ -568,7 +568,7 @@ int jc_test_streq(const char* a, const char* b)
     while (*a && (*a == *b)) {
         ++a; ++b;
     }
-    return (*(const unsigned char*)a - *(const unsigned char*)b) == 0 ? 1 : 0;
+    return (*a - *b) == 0 ? 1 : 0;
 }
 
 jc_test_base_class::~jc_test_base_class() {}
@@ -601,7 +601,7 @@ int jc_test_register_test(const char* fixture_name, const char* test_name, jc_te
 
 int jc_test_register_class_test(const char* fixture_name, const char* test_name,
                         jc_test_void_staticfunc class_setup, jc_test_void_staticfunc class_teardown,
-                        jc_test_base_class* instance, int fixture_type)
+                        jc_test_base_class* instance, unsigned int fixture_type)
 {
     jc_test_info info;
     info.fixture_name = fixture_name;
@@ -670,7 +670,7 @@ public:
     }
 
     jc_test_fixture* AllocFixture(const char* name, void* ctx) {
-        JC_TEST_ASSERT_FN(jc_test_global_state.num_fixtures < (int)(sizeof(jc_test_global_state.fixtures)/sizeof(jc_test_fixture*)));
+        JC_TEST_ASSERT_FN(jc_test_global_state.num_fixtures < JC_TEST_MAX_NUM_FIXTURES);
         jc_test_fixture* fixture = new jc_test_fixture;
         jc_test_memset_fixure(fixture);
         fixture->name = name;
@@ -681,8 +681,8 @@ public:
     }
 
     template<typename ParamType>
-    jc_test_fixture_with_param<ParamType>* AllocFixtureWithParam(const char* name, void* ctx, const ParamType* param) {
-        JC_TEST_ASSERT_FN(jc_test_global_state.num_fixtures < (int)(sizeof(jc_test_global_state.fixtures)/sizeof(jc_test_fixture*)));
+    jc_test_fixture_with_param<ParamType>* AllocFixtureWithParam(const char* name, void* ctx) {
+        JC_TEST_ASSERT_FN(jc_test_global_state.num_fixtures < JC_TEST_MAX_NUM_FIXTURES);
         jc_test_fixture_with_param<ParamType>* fixture = new jc_test_fixture_with_param<ParamType>;
         jc_test_memset_fixure(fixture);
         fixture->ctx = ctx;
@@ -745,7 +745,7 @@ int jc_test_register_param_tests(const char* fixture_name, const char* test_name
 
         const ParamType* param = values->Get();
         // Allocate a new fixture, and instantiate the test class
-        jc_test_fixture_with_param<ParamType>* fixture = g_GlobalTestSuite->AllocFixtureWithParam<ParamType>(test_name, 0, param);
+        jc_test_fixture_with_param<ParamType>* fixture = g_GlobalTestSuite->AllocFixtureWithParam<ParamType>(test_name, 0);
         fixture->parent = first_fixture;
         fixture->first = first_fixture == 0 ? 1 : 0;
         fixture->type = JC_TEST_FIXTURE_TYPE_CLASS;
@@ -809,8 +809,8 @@ static void jc_test_report_time(jc_test_time_t t) // Micro seconds
 #if defined(__cplusplus)
     #define JC_TEST_INVOKE_MEMBER_FN(INSTANCE, FN) \
             { \
-                jc_test_base_class* inst = (jc_test_base_class*)(INSTANCE); \
-                jc_test_void_memberfunc fn = (jc_test_void_memberfunc)(FN); \
+                jc_test_base_class* inst = JC_TEST_CAST(jc_test_base_class*, (INSTANCE) ); \
+                jc_test_void_memberfunc fn = JC_TEST_CAST(jc_test_void_memberfunc, (FN) ); \
                 (inst->*fn)(); \
             }
             //(((jc_test_base_class*)(INSTANCE)) -> * (_FN) ) ();
@@ -851,17 +851,17 @@ void jc_test_run_test_fixture(jc_test_fixture* fixture)
     {
         fixture->fail = JC_TEST_PASS;
 
-        int index = -1;
+        unsigned int index = 0xFFFFFFFF;
         if (!(fixture->first & fixture->last)) {
             index = fixture->index;
         }
 
-        if (index < 0) {
+        if (index == 0xFFFFFFFF) {
             JC_TEST_PRINTF("%s%s%s: ", JC_TEST_CLR_YELLOW, test->name, JC_TEST_CLR_DEFAULT);
         } else {
             JC_TEST_PRINTF("%s%s%s/%d: ", JC_TEST_CLR_YELLOW, test->name, JC_TEST_CLR_DEFAULT, index);
         }
-        fpos_t stdout_pos_start = 0;
+        fpos_t stdout_pos_start = {0};
         fgetpos(stdout, &stdout_pos_start);
 
         jc_test_time_t teststart = 0;
@@ -910,7 +910,7 @@ void jc_test_run_test_fixture(jc_test_fixture* fixture)
             }
         }
 
-        fpos_t stdout_pos_end = 0;
+        fpos_t stdout_pos_end = {0};
         fgetpos(stdout, &stdout_pos_end);
 
         const char* return_char = stdout_pos_end == stdout_pos_start ? "\r" : "\n";
