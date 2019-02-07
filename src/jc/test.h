@@ -73,12 +73,25 @@
     #define JC_TEST_PRINTF printf
 #endif
 
+#ifndef JC_TEST_ASSERT_FN
+    #include <assert.h>
+    #define JC_TEST_ASSERT_FN assert
+#endif
+
 #ifndef JC_TEST_FMT
     #define JC_TEST_FMT
 #endif
 
 #define JC_TEST_PASS    0
 #define JC_TEST_FAIL    1
+
+#ifndef JC_TEST_MAX_NUM_TESTS_PER_FIXTURE
+    #define JC_TEST_MAX_NUM_TESTS_PER_FIXTURE 128
+#endif
+
+#ifndef JC_TEST_MAX_NUM_FIXTURES
+    #define JC_TEST_MAX_NUM_FIXTURES 256
+#endif
 
 #ifndef JC_TEST_TIMING_FUNC
     #if defined(_MSC_VER)
@@ -101,20 +114,20 @@ typedef void* (*jc_test_fixture_setup_func)();
     class jc_test_base_class;
     typedef void (*jc_test_void_staticfunc)();
     typedef void (jc_test_base_class::*jc_test_void_memberfunc)();
+#else
+    typedef int jc_test_base_class;
+    typedef void (*jc_test_void_staticfunc)();
+    typedef void (*jc_test_void_memberfunc)();
 #endif
 
 typedef struct jc_test_entry
 {
-    const char* name;
-#if defined(__cplusplus)
-    jc_test_base_class * instance;
+    const char*         name;
+    jc_test_base_class* instance;
     union {
-#endif
-        jc_test_func    test;
-#if defined(__cplusplus)
+        jc_test_func            test;
         jc_test_void_memberfunc member_test;
     };
-#endif
 } jc_test_entry;
 
 typedef struct jc_test_stats
@@ -133,22 +146,10 @@ struct jc_test_funcs_c {
     jc_test_func                test_teardown;
 };
 
-#if defined(__cplusplus)
-    struct jc_test_funcs_cpp {
-        jc_test_void_staticfunc      fixture_setup;
-        jc_test_void_staticfunc      fixture_teardown;
-    };
-#else
-    struct jc_test_funcs_cpp {};
-#endif
-
-#ifndef JC_TEST_MAX_NUM_TESTS_PER_FIXTURE
-    #define JC_TEST_MAX_NUM_TESTS_PER_FIXTURE 128
-#endif
-
-#ifndef JC_TEST_MAX_NUM_FIXTURES
-    #define JC_TEST_MAX_NUM_FIXTURES 128
-#endif
+struct jc_test_funcs_cpp {
+    jc_test_void_staticfunc     fixture_setup;
+    jc_test_void_staticfunc     fixture_teardown;
+};
 
 typedef struct jc_test_fixture
 {
@@ -164,12 +165,14 @@ typedef struct jc_test_fixture
     unsigned int            type:2;     // 0: function, 1: class, 2: params class, 3: params instance
     unsigned int            first:1;    // If it's the first in a range of fixtures
     unsigned int            last:1;     // If it's the last in a range of fixtures
-    unsigned int            index;      // the index of the param in the original array
+    unsigned int            index;      // the index of the param in the original params array
+    unsigned int            num_tests;
+    unsigned int            _pad;
     jc_test_entry   tests[JC_TEST_MAX_NUM_TESTS_PER_FIXTURE];
 
     #if defined(__cplusplus)
-    virtual ~jc_test_fixture() {}
-    virtual void SetParam() {}
+    virtual ~jc_test_fixture();
+    virtual void SetParam();
     #endif
 } jc_test_fixture;
 
@@ -358,6 +361,7 @@ public:
     virtual bool Empty() const = 0;   // return false when out of values
     virtual void Rewind() = 0;
 };
+template<typename T> jc_test_value_iterator<T>::~jc_test_value_iterator() {} // separate line to silence warning
 
 template<typename T>
 class jc_test_array_iterator : public jc_test_value_iterator<T> {
@@ -398,6 +402,7 @@ struct jc_test_fixture_with_param : public jc_test_fixture
 template<typename ParamType>
 class jc_test_factory_interface {
 public:
+    virtual ~jc_test_factory_interface() {}
     virtual jc_test_params_class<ParamType>* New() = 0;
     virtual void SetParam(const ParamType* param) = 0;
 };
@@ -406,27 +411,82 @@ template<typename T>
 class jc_test_factory : public jc_test_factory_interface<typename T::param_t> {
 public:
     jc_test_params_class<typename T::param_t>* New()    { return new T(); }
-    void SetParam(const typename T::param_t* param)           { T::SetParam(param); }
+    void SetParam(const typename T::param_t* param)     { T::SetParam(param); }
 };
 
 #define JC_TEST_FIXTURE_TYPE_FUNCTION           0
 #define JC_TEST_FIXTURE_TYPE_CLASS              1
 #define JC_TEST_FIXTURE_TYPE_PARAMS_CLASS       2
 
-struct jc_test_info;
+extern jc_test_fixture* jc_test_find_fixture(const char* name, unsigned int fixture_type);
+extern jc_test_fixture* jc_test_alloc_fixture(const char* name, unsigned int fixture_type, void* ctx);
+extern jc_test_fixture* jc_test_create_fixture(jc_test_fixture* fixture, const char* name, unsigned int fixture_type, void* ctx);
+extern jc_test_entry*   jc_test_add_test_to_fixture(jc_test_fixture* fixture, const char* test_name, jc_test_func test_fn, jc_test_base_class* instance);
+extern void jc_test_memcpy(void* dst, void* src, size_t size);
+
+extern int jc_test_register_test_fn(const char* fixture_name, const char* test_name, jc_test_func test_fn);
 extern int jc_test_register_test(const char* fixture_name, const char* test_name, jc_test_func test_fn);
 extern int jc_test_register_class_test(const char* fixture_name, const char* test_name,
                                                 jc_test_void_staticfunc class_setup, jc_test_void_staticfunc class_teardown,
                                                 jc_test_base_class* instance, unsigned int fixture_type);
-template<typename ParamType>
-extern int jc_test_register_param_class_test(const char* fixture_name, const char* test_name,
-                                                jc_test_void_staticfunc class_setup, jc_test_void_staticfunc class_teardown,
-                                                jc_test_factory_interface<ParamType>* factory);
+template <typename ParamType>
+int jc_test_register_param_class_test(const char* fixture_name, const char* test_name,
+                        jc_test_void_staticfunc class_setup, jc_test_void_staticfunc class_teardown,
+                        jc_test_factory_interface<ParamType>* factory)
+{
+    jc_test_fixture* fixture = jc_test_find_fixture(fixture_name, JC_TEST_FIXTURE_TYPE_PARAMS_CLASS);
+    if (!fixture) {
+        fixture = jc_test_alloc_fixture(fixture_name, JC_TEST_FIXTURE_TYPE_PARAMS_CLASS, factory);
+        fixture->cpp.fixture_setup = class_setup;
+        fixture->cpp.fixture_teardown = class_teardown;
+    }
+    jc_test_add_test_to_fixture(fixture, test_name, 0, 0);
+    return 0;
+}
 
 template<typename ParamType>
-extern int jc_test_register_param_tests(const char* fixture_name, const char* test_name, jc_test_value_iterator<ParamType>* values);
+jc_test_fixture* jc_test_alloc_fixture_with_param(const char* name, unsigned int type, void* ctx) {
+    return jc_test_create_fixture(new jc_test_fixture_with_param<ParamType>, name, type, ctx);
+}
 
-extern jc_test_entry* jc_test_register_test_info(struct jc_test_info* info);
+template<typename ParamType>
+int jc_test_register_param_tests(const char* fixture_name, const char* test_name, jc_test_value_iterator<ParamType>* values)
+{
+    unsigned int index = 0;
+    jc_test_fixture* first_fixture = 0;
+    while (!values->Empty()) {
+        jc_test_fixture* prototype_fixture = jc_test_find_fixture(fixture_name, JC_TEST_FIXTURE_TYPE_PARAMS_CLASS);
+        JC_TEST_ASSERT_FN(prototype_fixture->type == JC_TEST_FIXTURE_TYPE_PARAMS_CLASS); // Make sure we've got the prototype
+
+        // Allocate a new fixture, and create the test class
+        jc_test_fixture_with_param<ParamType>* fixture = JC_TEST_CAST(jc_test_fixture_with_param<ParamType>*,
+                                jc_test_alloc_fixture_with_param<ParamType>(test_name, JC_TEST_FIXTURE_TYPE_CLASS, 0) );
+
+        fixture->first = first_fixture == 0 ? 1 : 0;
+        if (!first_fixture) {
+            first_fixture = fixture; // A silly trick to make the first fixture accumulate all the timings from this batch
+        }
+        fixture->parent = first_fixture;
+        fixture->cpp = prototype_fixture->cpp;
+        fixture->index = index++;
+
+        jc_test_factory_interface<ParamType>* factory = JC_TEST_CAST(jc_test_factory_interface<ParamType>*, prototype_fixture->ctx);
+
+        fixture->param = values->Get();
+        factory->SetParam(fixture->param);
+        fixture->ctx = JC_TEST_CAST(void*, factory->New());
+
+        fixture->num_tests = prototype_fixture->num_tests;
+        jc_test_memcpy(fixture->tests, prototype_fixture->tests, sizeof(fixture->tests));
+
+        values->Advance();
+
+        fixture->last = values->Empty() ? 1 : 0;
+    }
+
+    delete values;
+    return 0;
+}
 
 #define JC_TEST_MAKE_NAME2(X,Y)                 X ## _ ## Y
 #define JC_TEST_MAKE_NAME3(X,Y,Z)               X ## _ ## Y ## _ ## Z
@@ -438,7 +498,7 @@ extern jc_test_entry* jc_test_register_test_info(struct jc_test_info* info);
 #define JC_TEST(testfixture,testfn)                                                                            \
     extern void JC_TEST_MAKE_FUNCTION_NAME(testfixture,testfn)(void* _jc_test_ctx);                         \
     static int JC_TEST_MAKE_UNIQUE_NAME(testfixture,testfn,__LINE__) =                                \
-            jc_test_register_test(#testfixture, #testfn, JC_TEST_MAKE_FUNCTION_NAME(testfixture,testfn));  \
+            jc_test_register_test_fn(#testfixture, #testfn, JC_TEST_MAKE_FUNCTION_NAME(testfixture,testfn));  \
     void JC_TEST_MAKE_FUNCTION_NAME(testfixture,testfn)(void* _jc_test_ctx)
 
 
@@ -486,7 +546,7 @@ extern jc_test_entry* jc_test_register_test_info(struct jc_test_info* info);
 // INSTANTIATE_TEST_CASE_P(EvenValues, MyParamTest, jc_test_values(2,4,6,8,10));
 #define JC_TEST_INSTANTIATE_TEST_CASE_P(prefix,testfixture,testvalues)                                            \
     static int JC_TEST_MAKE_UNIQUE_NAME(prefix,testfixture,__LINE__) =                                                     \
-                    jc_test_register_param_tests<testfixture::param_t>(#testfixture, #prefix "/" #testfixture, testvalues);
+                    jc_test_register_param_tests<testfixture::param_t>(#testfixture, #prefix "/" #testfixture, testvalues)
 
 
 #endif // __cplusplus
@@ -542,10 +602,7 @@ extern jc_test_entry* jc_test_register_test_info(struct jc_test_info* info);
 
 #if defined(__cplusplus)
 
-#ifndef JC_TEST_ASSERT_FN
-    #include <assert.h>
-    #define JC_TEST_ASSERT_FN assert
-#endif
+static void jc_test_global_cleanup();
 
 static inline void jc_test_memset(void* _mem, unsigned int pattern, size_t size)
 {
@@ -554,7 +611,7 @@ static inline void jc_test_memset(void* _mem, unsigned int pattern, size_t size)
     }
 }
 
-static inline void jc_test_memcpy(void* dst, void* src, size_t size)
+void jc_test_memcpy(void* dst, void* src, size_t size)
 {
     for (size_t i = 0; i < size; ++i) {
         JC_TEST_CAST(unsigned char*, dst)[i] = JC_TEST_CAST(unsigned char*, src)[i];
@@ -571,218 +628,91 @@ int jc_test_streq(const char* a, const char* b)
     return (*a - *b) == 0 ? 1 : 0;
 }
 
+jc_test_fixture::~jc_test_fixture() {}
+void jc_test_fixture::SetParam() {}
+
 jc_test_base_class::~jc_test_base_class() {}
 void jc_test_base_class::SetUp() {}
 void jc_test_base_class::TearDown() {}
-template<typename T> jc_test_value_iterator<T>::~jc_test_value_iterator() {}
 
-struct jc_test_info
-{
-    const char*         fixture_name;
-    const char*         fn_name;
-    jc_test_fixture*    fixture;
-    union {
-        jc_test_func        fn;
-        jc_test_void_memberfunc  member_fn;
-    };
-};
+jc_test_fixture* jc_test_create_fixture(jc_test_fixture* fixture, const char* name, unsigned int fixture_type, void* ctx) {
+    fixture->name = name;
+    fixture->ctx = ctx;
+    fixture->type = fixture_type;
+    fixture->parent = 0;
+    fixture->fail = 0;
+    fixture->index = 0xFFFFFFFF;
+    fixture->num_tests = 0;
+    fixture->first = fixture->last = 1;
+    jc_test_memset(&fixture->c, 0, sizeof(fixture->c));
+    jc_test_memset(&fixture->stats, 0, sizeof(fixture->stats));
+    jc_test_memset(fixture->tests, 0, sizeof(fixture->tests));
+    JC_TEST_ASSERT_FN(jc_test_global_state.num_fixtures < JC_TEST_MAX_NUM_FIXTURES);
+    return jc_test_global_state.fixtures[jc_test_global_state.num_fixtures++] = fixture;
+}
 
-int jc_test_register_test(const char* fixture_name, const char* test_name, jc_test_func test_fn)
-{
-    jc_test_info* info = new jc_test_info;
-    info->fixture_name = fixture_name;
-    info->fn_name = test_name;
-    info->fn = test_fn;
-    jc_test_register_test_info( info );
-    jc_test_fixture* fixture = info->fixture;
-    fixture->type = JC_TEST_FIXTURE_TYPE_FUNCTION;
+jc_test_entry* jc_test_add_test_to_fixture(jc_test_fixture* fixture, const char* test_name, jc_test_func test_fn, jc_test_base_class* instance) {
+    if (fixture->num_tests >= JC_TEST_MAX_NUM_TESTS_PER_FIXTURE) {
+        // error
+        return 0;
+    }
+    jc_test_entry* test = &fixture->tests[fixture->num_tests++];
+    test->name = test_name;
+    test->test = test_fn;
+    test->instance = instance;
+    return test;
+}
+
+jc_test_fixture* jc_test_find_fixture(const char* name, unsigned int fixture_type) {
+    for( int i = 0; i < jc_test_global_state.num_fixtures; ++i) {
+        if (jc_test_streq(jc_test_global_state.fixtures[i]->name, name) && jc_test_global_state.fixtures[i]->type == fixture_type)
+            return jc_test_global_state.fixtures[i];
+    }
+    return 0;
+}
+
+jc_test_fixture* jc_test_alloc_fixture(const char* name, unsigned int fixture_type, void* ctx) {
+    return jc_test_create_fixture(new jc_test_fixture, name, fixture_type, ctx);
+}
+
+static jc_test_fixture* jc_test_find_or_alloc_fixture(const char* fixture_name, unsigned int fixture_type, void* ctx) {
+    jc_test_fixture* fixture = jc_test_find_fixture(fixture_name, fixture_type);
+    if (!fixture) {
+        fixture = jc_test_alloc_fixture(fixture_name, fixture_type, ctx);
+    }
+    return fixture;
+}
+
+int jc_test_register_test_fn(const char* fixture_name, const char* test_name, jc_test_func test_fn) {
+    jc_test_fixture* fixture = jc_test_find_or_alloc_fixture(fixture_name, JC_TEST_FIXTURE_TYPE_FUNCTION, 0);
+    jc_test_add_test_to_fixture(fixture, test_name, test_fn, 0);
     return 0;
 }
 
 int jc_test_register_class_test(const char* fixture_name, const char* test_name,
                         jc_test_void_staticfunc class_setup, jc_test_void_staticfunc class_teardown,
-                        jc_test_base_class* instance, unsigned int fixture_type)
-{
-    jc_test_info info;
-    info.fixture_name = fixture_name;
-    info.fn_name = test_name;
-    info.member_fn = &jc_test_base_class::TestBody;
-
-    jc_test_entry* test = jc_test_register_test_info( &info );
-    test->instance = instance;
-    jc_test_fixture* fixture = info.fixture;
-    fixture->type = fixture_type;
-    fixture->cpp.fixture_setup = class_setup;
-    fixture->cpp.fixture_teardown = class_teardown;
+                        jc_test_base_class* instance, unsigned int fixture_type) {
+    jc_test_fixture* fixture = jc_test_find_fixture(fixture_name, fixture_type);
+    if (!fixture) {
+        fixture = jc_test_alloc_fixture(fixture_name, fixture_type, 0);
+        fixture->cpp.fixture_setup = class_setup;
+        fixture->cpp.fixture_teardown = class_teardown;
+    }
+    jc_test_add_test_to_fixture(fixture, test_name, 0, instance);
     return 0;
 }
 
-template <typename ParamType>
-int jc_test_register_param_class_test(const char* fixture_name, const char* test_name,
-                        jc_test_void_staticfunc class_setup, jc_test_void_staticfunc class_teardown,
-                        jc_test_factory_interface<ParamType>* factory)
-{
-    jc_test_info info;
-    info.fixture_name = fixture_name;
-    info.fn_name = test_name;
-    info.member_fn = &jc_test_base_class::TestBody;
-
-    jc_test_register_test_info( &info );
-    jc_test_fixture* fixture = info.fixture;
-
-    fixture->ctx = factory;
-    fixture->type = JC_TEST_FIXTURE_TYPE_PARAMS_CLASS;
-    fixture->cpp.fixture_setup = class_setup;
-    fixture->cpp.fixture_teardown = class_teardown;
-    return 0;
-}
-
-static void jc_test_global_cleanup();
-
-static void jc_test_memset_fixure(jc_test_fixture* fixture) {
-    fixture->name = 0;
-    fixture->ctx = 0;
-    fixture->parent = 0;
-    fixture->fail = 0;
-    fixture->type = 0;
-    fixture->first = 0;
-    fixture->last = 0;
-    fixture->index = 0;
-    jc_test_memset(&fixture->c, 0, sizeof(fixture->c));
-    jc_test_memset(&fixture->stats, 0, sizeof(fixture->stats));
-    jc_test_memset(fixture->tests, 0, sizeof(fixture->tests));
-}
-
-class JCTestState
-{
-public:
-    ~JCTestState() {
-        for (int i = 0; i < jc_test_global_state.num_fixtures; ++i) {
-            for (int j = 0; j < JC_TEST_MAX_NUM_TESTS_PER_FIXTURE; ++j) {
-                if (!jc_test_global_state.fixtures[i]->tests[j].name) {
-                    break;
-                }
-                if (jc_test_global_state.fixtures[i]->tests[j].instance)
-                    delete jc_test_global_state.fixtures[i]->tests[j].instance;
+static void jc_test_global_cleanup() {
+    for (int i = 0; i < jc_test_global_state.num_fixtures; ++i) {
+        for (int j = 0; j < JC_TEST_MAX_NUM_TESTS_PER_FIXTURE; ++j) {
+            if (!jc_test_global_state.fixtures[i]->tests[j].name) {
+                break;
             }
-            delete jc_test_global_state.fixtures[i];
+            if (jc_test_global_state.fixtures[i]->tests[j].instance)
+                delete jc_test_global_state.fixtures[i]->tests[j].instance;
         }
+        delete jc_test_global_state.fixtures[i];
     }
-    jc_test_fixture* FindFixture(const char* name) {
-        for( int i = 0; i < jc_test_global_state.num_fixtures; ++i) {
-            if (jc_test_streq(jc_test_global_state.fixtures[i]->name, name))
-                return jc_test_global_state.fixtures[i];
-        }
-        return 0;
-    }
-
-    jc_test_fixture* AllocFixture(const char* name, void* ctx) {
-        JC_TEST_ASSERT_FN(jc_test_global_state.num_fixtures < JC_TEST_MAX_NUM_FIXTURES);
-        jc_test_fixture* fixture = new jc_test_fixture;
-        jc_test_memset_fixure(fixture);
-        fixture->name = name;
-        fixture->ctx = ctx;
-        fixture->first = fixture->last = 1;
-        jc_test_global_state.fixtures[jc_test_global_state.num_fixtures++] = fixture;
-        return fixture;
-    }
-
-    template<typename ParamType>
-    jc_test_fixture_with_param<ParamType>* AllocFixtureWithParam(const char* name, void* ctx) {
-        JC_TEST_ASSERT_FN(jc_test_global_state.num_fixtures < JC_TEST_MAX_NUM_FIXTURES);
-        jc_test_fixture_with_param<ParamType>* fixture = new jc_test_fixture_with_param<ParamType>;
-        jc_test_memset_fixure(fixture);
-        fixture->ctx = ctx;
-        fixture->name = name;
-        fixture->first = fixture->last = 1;
-        jc_test_global_state.fixtures[jc_test_global_state.num_fixtures++] = fixture;
-        return fixture;
-    }
-
-    jc_test_entry* AddTest(jc_test_fixture* fixture, jc_test_info* info) {
-        size_t size = sizeof(fixture->tests)/sizeof(fixture->tests[0]);
-        jc_test_entry* test = fixture->tests;
-        size_t count = 0;
-        while (test->name && count < size) {
-            count++;
-            test++;
-        }
-
-        if (count == size) {
-            // ERROR
-            return 0;
-        }
-        else {
-            test->name = info->fn_name;
-            test->test = info->fn;
-            test->member_test = info->member_fn;
-            test->instance = 0;
-        }
-        return test;
-    }
-
-    jc_test_entry* RegisterTest(jc_test_info* info) {
-        jc_test_fixture* fixture = FindFixture(info->fixture_name);
-        if (!fixture) {
-            fixture = AllocFixture(info->fixture_name, 0);
-        }
-        jc_test_entry* test = AddTest(fixture, info);
-        info->fixture = fixture;
-        return test;
-    }
-
-};
-
-static JCTestState* g_GlobalTestSuite;
-static void jc_test_global_cleanup()
-{
-    delete g_GlobalTestSuite;
-    g_GlobalTestSuite = 0;
-}
-
-template<typename ParamType>
-int jc_test_register_param_tests(const char* fixture_name, const char* test_name, jc_test_value_iterator<ParamType>* values)
-{
-    int index = 0;
-    jc_test_fixture* first_fixture = 0;
-    while (!values->Empty()) {
-
-        jc_test_fixture* prototype_fixture = g_GlobalTestSuite->FindFixture(fixture_name);
-        JC_TEST_ASSERT_FN(prototype_fixture->type == JC_TEST_FIXTURE_TYPE_PARAMS_CLASS); // Make sure we've got the prototype
-
-        const ParamType* param = values->Get();
-        // Allocate a new fixture, and instantiate the test class
-        jc_test_fixture_with_param<ParamType>* fixture = g_GlobalTestSuite->AllocFixtureWithParam<ParamType>(test_name, 0);
-        fixture->parent = first_fixture;
-        fixture->first = first_fixture == 0 ? 1 : 0;
-        fixture->type = JC_TEST_FIXTURE_TYPE_CLASS;
-        fixture->cpp = prototype_fixture->cpp;
-        fixture->index = index++;
-
-        if (!first_fixture) {
-            first_fixture = fixture;
-        }
-
-        jc_test_factory_interface<ParamType>* factory = JC_TEST_CAST(jc_test_factory_interface<ParamType>*, prototype_fixture->ctx);
-
-        fixture->param = param;
-        factory->SetParam(param);
-        fixture->ctx = JC_TEST_CAST(void*, factory->New());
-
-        jc_test_memcpy(fixture->tests, prototype_fixture->tests, sizeof(fixture->tests));
-
-        values->Advance();
-
-        fixture->last = values->Empty() ? 1 : 0;
-    }
-
-    delete values;
-    return 0;
-}
-
-jc_test_entry* jc_test_register_test_info(jc_test_info* info)
-{
-    return g_GlobalTestSuite->RegisterTest(info);
 }
 
 #endif // __cplusplus
@@ -860,21 +790,15 @@ void jc_test_run_test_fixture(jc_test_fixture* fixture)
     }
     #endif
 
-    size_t count = 0;
-    jc_test_entry* test = &fixture->tests[count];
-    while( test->test && count < sizeof(fixture->tests)/sizeof(fixture->tests[0]) )
+    for (unsigned int count = 0; count < fixture->num_tests; ++count)
     {
+        jc_test_entry* test = &fixture->tests[count];
         fixture->fail = JC_TEST_PASS;
 
-        unsigned int index = 0xFFFFFFFF;
-        if (!(fixture->first & fixture->last)) {
-            index = fixture->index;
-        }
-
-        if (index == 0xFFFFFFFF) {
+        if (fixture->index == 0xFFFFFFFF) {
             JC_TEST_PRINTF("%s%s%s: ", JC_TEST_CLR_YELLOW, test->name, JC_TEST_CLR_DEFAULT);
         } else {
-            JC_TEST_PRINTF("%s%s%s/%d: ", JC_TEST_CLR_YELLOW, test->name, JC_TEST_CLR_DEFAULT, index);
+            JC_TEST_PRINTF("%s%s%s/%d: ", JC_TEST_CLR_YELLOW, test->name, JC_TEST_CLR_DEFAULT, fixture->index);
         }
         fpos_t stdout_pos_start;
         fgetpos(stdout, &stdout_pos_start);
@@ -892,16 +816,12 @@ void jc_test_run_test_fixture(jc_test_fixture* fixture)
         }
         #endif
 
-        for( int i = 0; i < 3; ++i )
-        {
-            if( (fixture->type == JC_TEST_FIXTURE_TYPE_FUNCTION && !fns[i]) ||
-                (fixture->type == JC_TEST_FIXTURE_TYPE_CLASS && !cppfns[i]))
-            {
+        for( int i = 0; i < 3; ++i ) {
+            if( (fixture->type == JC_TEST_FIXTURE_TYPE_FUNCTION && !fns[i])) {
                 continue;
             }
 
-            if( i == 1 )
-            {
+            if( i == 1 ) {
                 teststart = JC_TEST_TIMING_FUNC();
             }
 
@@ -914,13 +834,11 @@ void jc_test_run_test_fixture(jc_test_fixture* fixture)
             }
 #endif
 
-            if( i == 1 )
-            {
+            if( i == 1 ) {
                 testend = JC_TEST_TIMING_FUNC();
             }
 
-            if( fixture->fail != JC_TEST_PASS )
-            {
+            if( fixture->fail != JC_TEST_PASS ) {
                 break;
             }
         }
@@ -930,10 +848,10 @@ void jc_test_run_test_fixture(jc_test_fixture* fixture)
 
         const char* return_char = jc_test_cmp_fpos_t(&stdout_pos_end, &stdout_pos_start) ? "\r" : "\n";
 
-        if (index != 0xFFFFFF) {
+        if (fixture->index == 0xFFFFFFFF) {
             JC_TEST_PRINTF("%s%s%s%s %s (", return_char, JC_TEST_CLR_YELLOW, test->name, JC_TEST_CLR_DEFAULT, fixture->fail == JC_TEST_PASS ? (JC_TEST_CLR_GREEN "PASS" JC_TEST_CLR_DEFAULT) : (JC_TEST_CLR_RED "FAIL" JC_TEST_CLR_DEFAULT) );
         } else {
-            JC_TEST_PRINTF("%s%s%s%s/%d %s (", return_char, JC_TEST_CLR_YELLOW, test->name, JC_TEST_CLR_DEFAULT, index, fixture->fail == JC_TEST_PASS ? (JC_TEST_CLR_GREEN "PASS" JC_TEST_CLR_DEFAULT) : (JC_TEST_CLR_RED "FAIL" JC_TEST_CLR_DEFAULT) );
+            JC_TEST_PRINTF("%s%s%s%s/%d %s (", return_char, JC_TEST_CLR_YELLOW, test->name, JC_TEST_CLR_DEFAULT, fixture->index, fixture->fail == JC_TEST_PASS ? (JC_TEST_CLR_GREEN "PASS" JC_TEST_CLR_DEFAULT) : (JC_TEST_CLR_RED "FAIL" JC_TEST_CLR_DEFAULT) );
         }
         jc_test_report_time(testend - teststart);
         JC_TEST_PRINTF(")\n");
@@ -943,9 +861,6 @@ void jc_test_run_test_fixture(jc_test_fixture* fixture)
         else
             ++fixture->stats.num_fail;
         ++fixture->stats.num_tests;
-
-        ++count;
-        test = &fixture->tests[count];
     }
 
     if(fixture->type == JC_TEST_FIXTURE_TYPE_FUNCTION) {
@@ -1034,9 +949,6 @@ void jc_test_init(int* argc, char** argv)
 {
     (void)argc; (void)argv;
     JC_TEST_ATEXIT(jc_test_global_cleanup);
-#if defined(__cplusplus)
-    g_GlobalTestSuite = new JCTestState;
-#endif
 }
 
 #endif
