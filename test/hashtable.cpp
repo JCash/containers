@@ -1,4 +1,5 @@
-#include <jc/test.h>
+
+#include "jc_test.h"
 #include <jc/hashtable.h>
 
 #include <stdlib.h>
@@ -24,6 +25,7 @@ typedef jc::HashTable<uint64_t, SPod> TestHT64;
 class HashTableTest : public jc_test_base_class
 {
 protected:
+    virtual ~HashTableTest();
     void SetUp() {
         htcount = 10;
         memorysize = TestHT64::CalcSize(htcount);
@@ -39,6 +41,8 @@ protected:
     TestHT64    ht;
 };
 
+HashTableTest::~HashTableTest() {}
+
 TEST_F(HashTableTest, Create)
 {
 	TestHT64 ht(htcount, memory);
@@ -53,14 +57,14 @@ TEST_F(HashTableTest, Create)
 TEST_F(HashTableTest, InsertRemove)
 {
 	ASSERT_TRUE( ht.Empty() );
-	ASSERT_EQ( 0, ht.Size() );
+	ASSERT_EQ( 0u, ht.Size() );
 
 	for( uint32_t i = 0; i < htcount; ++i )
 	{
 		SPod v = { 1, 2 };
 		ht.Put( 1234, v );
 
-		ASSERT_EQ( 1, ht.Size() );
+		ASSERT_EQ(1u, ht.Size());
 
 		SPod* value = ht.Get(1234);
         ASSERT_TRUE( value != 0 );
@@ -73,22 +77,22 @@ TEST_F(HashTableTest, InsertRemove)
 		ht.Erase(1234);
 
 		ASSERT_TRUE( ht.Empty() );
-		ASSERT_EQ( 0, ht.Size() );
+		ASSERT_EQ(0u, ht.Size());
 	}
 
 	// Reinsert it
 	SPod v2 = { 2, 3 };
 	ht.Put( 1234, v2 );
-	ASSERT_EQ( 1, ht.Size() );
+	ASSERT_EQ( 1u, ht.Size() );
 	const SPod* value = ht.Get(1234);
 	ASSERT_TRUE( value != 0 );
 	ASSERT_EQ( v2, *value );
 
 	// Change it
 	SPod v3 = { 3, 4 };
-	ASSERT_EQ( 1, ht.Size() );
+	ASSERT_EQ( 1u, ht.Size() );
 	ht.Put( 1234, v3 );
-	ASSERT_EQ( 1, ht.Size() );
+	ASSERT_EQ( 1u, ht.Size() );
 	value = ht.Get(1234);
 	ASSERT_TRUE( value != 0 );
 	ASSERT_EQ( v3, *value );
@@ -175,7 +179,7 @@ TEST_F(HashTableTest, Stress)
 
 		comparison[key] = pod;
 	}
-	ASSERT_EQ( (count*PERCENT)/100, ht.Size() );
+	ASSERT_EQ( (count*PERCENT)/100u, ht.Size() );
 
 	TestHT64::Iterator testit = ht.Begin();
 	TestHT64::Iterator testitend = ht.End();
@@ -203,7 +207,7 @@ TEST_F(HashTableTest, Stress)
 		ht.Erase(key);
 	}
 
-	ASSERT_EQ( 0, ht.Size() );
+	ASSERT_EQ( 0u, ht.Size() );
 
 	free(memory);
 }
@@ -229,7 +233,7 @@ TEST_F(HashTableTest, Small)
             ht.Erase(j);
         }
 
-        ASSERT_EQ( 0, ht.Size() );
+        ASSERT_EQ( 0u, ht.Size() );
 
         uint32_t numelements = 0;
 
@@ -240,7 +244,7 @@ TEST_F(HashTableTest, Small)
             ++numelements;
         }
 
-        ASSERT_EQ( 0, numelements );
+        ASSERT_EQ( 0u, numelements );
     }
 }
 

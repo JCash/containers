@@ -79,7 +79,7 @@ void radix_sort_stable_internal(T* begin, T* end, T* out){
     #define PREFETCH
 #endif
 
-    size_t size = end - begin;
+    size_t size = (size_t)(end - begin);
 
     uint32_t counts[N][256] = {{0}};
     for( size_t i = 0; i < size; ++i )

@@ -3,7 +3,7 @@
 #include <jc/algorithm.h>
 #define JC_SORT_IMPLEMENTATION
 #include <jc/sort.h>
-#include <jc/test.h>
+#include "jc_test.h"
 #include <algorithm>
 #include <vector>
 
@@ -48,11 +48,11 @@ static uint32_t Hash32(uint8_t* buf, uint32_t len, uint32_t seed)
   switch (len)
   {
     case 3:
-      hash ^= static_cast<unsigned char>(buf[2]) << 16;
+      hash ^= (uint32_t)(static_cast<unsigned char>(buf[2]) << 16);
     case 2:
-      hash ^= static_cast<unsigned char>(buf[1]) << 8;
+      hash ^= (uint32_t)(static_cast<unsigned char>(buf[1]) << 8);
     case 1:
-      hash ^= static_cast<unsigned char>(buf[0]);
+      hash ^= (uint32_t)(static_cast<unsigned char>(buf[0]) << 0);
       hash *= m;
   };
 
@@ -80,11 +80,11 @@ public:
         size_t count = 65536 + rand() % 100;
         size_t num_buckets = 20;
         ctx->renderobjects.reserve(count);
-        for( uint32_t i = 0; i < count; ++i)
+        for( size_t i = 0; i < count; ++i)
         {
             RenderObject obj;
-            obj.payload = i;
-            obj.sortkey = i % num_buckets;
+            obj.payload = (int)i;
+            obj.sortkey = (int)(i % num_buckets);
             ctx->renderobjects.push_back(obj);
         }
         std::sort(ctx->renderobjects.begin(), ctx->renderobjects.end(), compare_render_object);
@@ -102,10 +102,14 @@ protected:
         ctx->unsorted.resize(count);
         for( uint32_t i = 0; i < count; ++i )
         {
-            ctx->unsorted[i] = rand();
+            ctx->unsorted[i] = (uint64_t)rand();
         }
     }
+
+    virtual ~AlgorithmTest();
 };
+
+AlgorithmTest::~AlgorithmTest() {}
 
 SCtxAlgorithm* AlgorithmTest::ctx = 0;
 
@@ -144,7 +148,7 @@ TEST_F(AlgorithmTest, UpperBound)
     int nbuffervalues = 3;
     int aa[] = {10000000,10000000,10000000,0,1,2,3,4,5,6,7,8,9,-10000000,-10000000,-10000000};
     int* a = aa+nbuffervalues;
-    int asize = ARRAY_SIZE(aa) - 2*nbuffervalues;
+    int asize = (int)ARRAY_SIZE(aa) - 2*nbuffervalues;
 
     for( int t = -nbuffervalues; t < asize+nbuffervalues; ++t)
     {
@@ -172,7 +176,7 @@ TEST_F(AlgorithmTest, LowerBound)
     int nbuffervalues = 3;
     int aa[] = {10000000,10000000,10000000,0,1,2,3,4,5,6,7,8,9,-10000000,-10000000,-10000000};
     int* a = aa+nbuffervalues;
-    int asize = ARRAY_SIZE(aa) - 2*nbuffervalues;
+    int asize = (int)ARRAY_SIZE(aa) - 2*nbuffervalues;
 
     for( int t = -nbuffervalues; t < asize+nbuffervalues; ++t)
     {
@@ -221,7 +225,6 @@ TEST_F(AlgorithmTest, LowerBoundFile)
 {
     int asize = 0;
     int* a = ReadArray("./test/test.txt", asize);
-    ASSERT_NE(0, a);
 
     int nbuffervalues = 3;
 
@@ -259,7 +262,7 @@ TEST_F(AlgorithmTest, SortRadixStable)
         {
             for( uint32_t i = 0; i < ctx->unsorted.size(); ++i )
             {
-                ctx->unsorted[i] = rand();
+                ctx->unsorted[i] = (uint64_t)rand();
             }
         }
     }
