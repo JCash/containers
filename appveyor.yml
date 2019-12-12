@@ -4,7 +4,7 @@ platform:
 install:
 
 build_script:
-  - compile_cl.bat
+  - scripts\compile_cl.bat
 
 test_script:
-  - build\test.exe
+  - scripts\run_tests.bat
