@@ -3,14 +3,16 @@
 #include <jc/algorithm.h>
 #define JC_SORT_IMPLEMENTATION
 #include <jc/sort.h>
+#include "jc_test.h"
 #include <algorithm>
 #include <vector>
 
 struct SRange
 {
-    int sortkey;
+    size_t sortkey;
     size_t start;
     size_t count;
+    size_t _pad;
 };
 
 struct RenderObject
@@ -46,11 +48,11 @@ static uint32_t Hash32(uint8_t* buf, uint32_t len, uint32_t seed)
   switch (len)
   {
     case 3:
-      hash ^= static_cast<unsigned char>(buf[2]) << 16;
+      hash ^= (uint32_t)(static_cast<unsigned char>(buf[2]) << 16);
     case 2:
-      hash ^= static_cast<unsigned char>(buf[1]) << 8;
+      hash ^= (uint32_t)(static_cast<unsigned char>(buf[1]) << 8);
     case 1:
-      hash ^= static_cast<unsigned char>(buf[0]);
+      hash ^= (uint32_t)(static_cast<unsigned char>(buf[0]) << 0);
       hash *= m;
   };
 
@@ -61,7 +63,6 @@ static uint32_t Hash32(uint8_t* buf, uint32_t len, uint32_t seed)
   return hash;
 }
 
-
 typedef struct SCtxAlgorithm
 {
     std::vector<SRange> ranges;
@@ -69,46 +70,49 @@ typedef struct SCtxAlgorithm
     std::vector<uint64_t> unsorted;
 } SCtxAlgorithm;
 
-static SCtxAlgorithm* algorithm_main_setup()
+class AlgorithmTest : public jc_test_base_class
 {
-    SCtxAlgorithm* ctx = new SCtxAlgorithm;
+public:
+    static SCtxAlgorithm* ctx;
 
-    size_t count = 65536 + rand() % 100;
-    size_t num_buckets = 20;
-    ctx->renderobjects.reserve(count);
-    for( uint32_t i = 0; i < count; ++i)
-    {
-        RenderObject obj;
-        obj.payload = i;
-        obj.sortkey = i % num_buckets;
-        ctx->renderobjects.push_back(obj);
+    static void SetUpTestCase() {
+        ctx = new SCtxAlgorithm;
+        size_t count = 65536 + rand() % 100;
+        size_t num_buckets = 20;
+        ctx->renderobjects.reserve(count);
+        for( size_t i = 0; i < count; ++i)
+        {
+            RenderObject obj;
+            obj.payload = (int)i;
+            obj.sortkey = (int)(i % num_buckets);
+            ctx->renderobjects.push_back(obj);
+        }
+        std::sort(ctx->renderobjects.begin(), ctx->renderobjects.end(), compare_render_object);
     }
-    std::sort(ctx->renderobjects.begin(), ctx->renderobjects.end(), compare_render_object);
 
-    return ctx;
-}
-
-static void algorithm_main_teardown(SCtxAlgorithm* ctx)
-{
-    delete ctx;
-}
-
-static void algorithm_test_setup(SCtxAlgorithm* ctx)
-{
-    ctx->ranges.clear();
-
-    uint32_t count = 3000;
-    ctx->unsorted.resize(count);
-    for( uint32_t i = 0; i < count; ++i )
-    {
-        ctx->unsorted[i] = rand();
+    static void TearDownTestCase() {
+        delete ctx;
     }
-}
 
-static void algorithm_test_teardown(SCtxAlgorithm* ctx)
-{
-    (void)ctx;
-}
+protected:
+    void SetUp()
+    {
+        ctx->ranges.clear();
+        uint32_t count = 3000;
+        ctx->unsorted.resize(count);
+        for( uint32_t i = 0; i < count; ++i )
+        {
+            ctx->unsorted[i] = (uint64_t)rand();
+        }
+    }
+
+    virtual ~AlgorithmTest();
+};
+
+AlgorithmTest::~AlgorithmTest() {}
+
+SCtxAlgorithm* AlgorithmTest::ctx = 0;
+
 
 #define ARRAY_SIZE(_X) (sizeof(_X)/sizeof(_X[0]))
 
@@ -136,7 +140,7 @@ static bool compare(int a, int b)
     return a < b;
 }
 
-static void algorithm_upper_bound(SCtxAlgorithm*)
+TEST_F(AlgorithmTest, UpperBound)
 {
     int* it_stl;
     int* it_jc;
@@ -144,7 +148,7 @@ static void algorithm_upper_bound(SCtxAlgorithm*)
     int nbuffervalues = 3;
     int aa[] = {10000000,10000000,10000000,0,1,2,3,4,5,6,7,8,9,-10000000,-10000000,-10000000};
     int* a = aa+nbuffervalues;
-    int asize = ARRAY_SIZE(aa) - 2*nbuffervalues;
+    int asize = (int)ARRAY_SIZE(aa) - 2*nbuffervalues;
 
     for( int t = -nbuffervalues; t < asize+nbuffervalues; ++t)
     {
@@ -163,7 +167,7 @@ static void algorithm_upper_bound(SCtxAlgorithm*)
     }
 }
 
-static void algorithm_lower_bound(SCtxAlgorithm*)
+TEST_F(AlgorithmTest, LowerBound)
 {
     int* it_stl;
     int* it_jc;
@@ -172,7 +176,7 @@ static void algorithm_lower_bound(SCtxAlgorithm*)
     int nbuffervalues = 3;
     int aa[] = {10000000,10000000,10000000,0,1,2,3,4,5,6,7,8,9,-10000000,-10000000,-10000000};
     int* a = aa+nbuffervalues;
-    int asize = ARRAY_SIZE(aa) - 2*nbuffervalues;
+    int asize = (int)ARRAY_SIZE(aa) - 2*nbuffervalues;
 
     for( int t = -nbuffervalues; t < asize+nbuffervalues; ++t)
     {
@@ -216,11 +220,11 @@ static int* ReadArray(const char* path, int& asize)
     return a;
 }
 
-static void algorithm_lower_bound_file(SCtxAlgorithm*)
+
+TEST_F(AlgorithmTest, LowerBoundFile)
 {
     int asize = 0;
     int* a = ReadArray("./test/test.txt", asize);
-    ASSERT_NE(0, a);
 
     int nbuffervalues = 3;
 
@@ -235,7 +239,8 @@ static void algorithm_lower_bound_file(SCtxAlgorithm*)
     delete[] a;
 }
 
-static void sort_radix_stable(SCtxAlgorithm* ctx)
+
+TEST_F(AlgorithmTest, SortRadixStable)
 {
     bool is_sorted = true;
     uint32_t hash = 0;
@@ -257,7 +262,7 @@ static void sort_radix_stable(SCtxAlgorithm* ctx)
         {
             for( uint32_t i = 0; i < ctx->unsorted.size(); ++i )
             {
-                ctx->unsorted[i] = rand();
+                ctx->unsorted[i] = (uint64_t)rand();
             }
         }
     }
@@ -287,10 +292,3 @@ static void sort_radix_stable(SCtxAlgorithm* ctx)
     ASSERT_NE(hash, hash_after);
 
 }
-
-TEST_BEGIN(algorithm_test, algorithm_main_setup, algorithm_main_teardown, algorithm_test_setup, algorithm_test_teardown)
-    TEST(algorithm_upper_bound)
-    TEST(algorithm_lower_bound)
-    TEST(algorithm_lower_bound_file)
-    TEST(sort_radix_stable)
-TEST_END(algorithm_test)
