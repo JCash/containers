@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <jc/array.h>
 #include <vector>
+#define JC_TEST_USE_DEFAULT_MAIN
 #include "jc_test.h"
 
 template<typename T>
