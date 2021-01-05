@@ -26,6 +26,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build tests
-        run: ./scripts/compile_clang.bat
+        run: ./scripts/compile_cl.bat
       - name: Run Tests
         run: ./scripts/run_tests.bat
