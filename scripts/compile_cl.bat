@@ -1,4 +1,11 @@
-echo off
+echo on
+
+if NOT DEFINED VCINSTALLDIR (
+    if exist "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" (
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
+        echo "USING VISUAL STUDIO 17"
+    )
+)
 
 if NOT DEFINED VCINSTALLDIR (
     if exist "C:\Program Files (x86)\Microsoft Visual Studio 15.0\VC\vcvarsall.bat" (
@@ -28,13 +35,25 @@ if NOT DEFINED VCINSTALLDIR (
     )
 )
 
+echo "Using " %VCINSTALLDIR%
+
 if NOT DEFINED VCINSTALLDIR (
     echo "No compatible visual studio found! run vcvarsall.bat first!"
 )
 
+python --version 2>NUL
+if errorlevel 1 goto errorNoPython
+set TIMEIT=python %~dp0/timeit.py
+goto hasPython
+:errorNoPython
+set TIMEIT
+:hasPython
+
 mkdir build
 
-cl.exe /O2 /D_CRT_SECURE_NO_WARNINGS /D_HAS_EXCEPTIONS=0 /EHsc /W4 /Isrc test/main.cpp /link /out:.\build\test.exe
+%TIMEIT% cl.exe /O2 /D_CRT_SECURE_NO_WARNINGS /nologo /D_HAS_EXCEPTIONS=0 /EHsc /W4 /wd4611 /Isrc /Itest test/algorithm.cpp test/main.cpp /link /out:.\build\jc_algorithm.exe
+%TIMEIT% cl.exe /O2 /D_CRT_SECURE_NO_WARNINGS /nologo /D_HAS_EXCEPTIONS=0 /EHsc /W4 /wd4611 /Isrc /Itest test/array.cpp test/main.cpp /link /out:.\build\jc_array.exe
+%TIMEIT% cl.exe /O2 /D_CRT_SECURE_NO_WARNINGS /nologo /D_HAS_EXCEPTIONS=0 /EHsc /W4 /wd4611 /Isrc /Itest test/hashtable.cpp test/main.cpp /link /out:.\build\jc_hashtable.exe
 
 del *.obj
 

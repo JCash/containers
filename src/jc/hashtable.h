@@ -56,33 +56,33 @@ USAGE:
         float   f;
     };
     typedef jc::HashTable<uint32_t, SPod> hashtable_t;
-    
+
     uint32_t numelements    = 1000; // The maximum number of entries to store
     uint32_t load_factor    = 85; // percent
-    uint32_t tablesize      = uint32_t(numelements / (load_factor/100.0f)); 
+    uint32_t tablesize      = uint32_t(numelements / (load_factor/100.0f));
     uint32_t sizeneeded     = hashtable_t::CalcSize(tablesize);
-    
+
     void* mem = malloc(sizeneeded);
-    
+
     hashtable_t ht;
     ht.Create(numelements, mem);
-    
+
     SPod value = { 1, 2.0f };
     ht.Put(17, value);
-    
+
     Spod* pval = ht.Get(17);
     assert( pval->i == 1 );
     assert( pval->f == 2.0f );
-    
+
     hashtable_t it = ht.Begin();
     hashtable_t itend = ht.End();
     for(; it != itend; ++it)
     {
         printf("key: %u  value: %d, %f\n", *it.GetKey(), it.GetValue()->i, it.GetValue()->f);
     }
-    
+
     ht.Erase(17);
-    
+
     free(mem);
 */
 
@@ -101,7 +101,7 @@ class HashTable
 public:
     typedef KEY key_type;
     typedef VALUE mapped_type;
-    
+
     // Calculate the size of the memory needed
     static uint32_t CalcSize(uint32_t capacity)
     {
@@ -111,12 +111,12 @@ public:
     HashTable()
     {
     }
-    
+
     HashTable(uint32_t capacity, void* mem)
     {
         Create(capacity, mem);
     }
-    
+
     void Create(uint32_t capacity, void* mem)
     {
         m_Capacity      = capacity;
@@ -124,7 +124,7 @@ public:
         m_Values        = reinterpret_cast<Value*>(m_Entries + m_Capacity);
         Clear();
     }
-    
+
     inline void Clear()
     {
         m_Size = 0;
@@ -132,17 +132,17 @@ public:
         m_InitialFreeList = 0;
         memset(m_Entries, 0xFF, sizeof(Entry) * m_Capacity);
     }
-    
+
     inline VALUE* Get(const KEY& key)
     {
         return const_cast<VALUE*>(GetInternal(key));
     }
-    
+
     inline const VALUE* Get(const KEY& key) const
     {
         return GetInternal(key);
     }
-    
+
     inline void Put(KEY key, const VALUE& value)
     {
         assert(m_Size < m_Capacity);
@@ -159,7 +159,7 @@ public:
             m_FreeList = m_Values[valueindex].m_Next;
         }
         m_Values[valueindex].m_Value = value;
-        
+
         uint32_t current_dist = 0;
         uint32_t indexinit = key % m_Capacity;
         for(uint32_t n = 0; n < m_Capacity; ++n, ++indexinit)
@@ -227,7 +227,7 @@ public:
         {
             previndex = (index + n - 1) % m_Capacity;
             swapindex = (index + n) % m_Capacity;
-            
+
             if( IsFree(swapindex) || Distance(swapindex) == 0 )
             {
                 m_Entries[previndex].m_Index = 0xFFFFFFFF;
@@ -242,16 +242,19 @@ public:
     {
         return m_Size == 0;
     }
-    
+
     inline uint32_t Size() const
     {
         return m_Size;
     }
-    
+
     class Iterator
     {
         const HashTable<KEY, VALUE>* m_HashTable;
         uint32_t m_EntryIndex;
+        #ifdef __x86_64__
+        uint32_t _pad;
+        #endif
 
     public:
         Iterator(const HashTable<KEY, VALUE>* ht, bool begin) : m_HashTable(ht)
@@ -269,10 +272,10 @@ public:
             }
             m_EntryIndex = 0xffffffff;
         }
-        
+
         const KEY*      GetKey() const      { return &m_HashTable->m_Entries[m_EntryIndex].m_Key; }
         const VALUE*    GetValue() const    { return &m_HashTable->m_Values[m_HashTable->m_Entries[m_EntryIndex].m_Index].m_Value; }
-        
+
         inline Iterator& operator++ ()
         {
             ++m_EntryIndex;
@@ -299,12 +302,18 @@ private:
     {
         KEY         m_Key;      // Key is also the hash
         uint32_t    m_Index;    // Index into the values array
+        #ifdef __x86_64__
+        uint32_t    _pad;
+        #endif
     };
 
     struct Value
     {
         VALUE       m_Value;
         uint32_t    m_Next;     // Index into the values array
+        #ifdef __x86_64__
+        uint32_t    _pad;
+        #endif
     };
 
     Entry*      m_Entries;
@@ -334,17 +343,17 @@ private:
         }
         return 0;
     }
-    
+
     inline bool IsFree(uint32_t entryindex) const
     {
         return m_Entries[entryindex].m_Index == 0xFFFFFFFF;
     }
-    
+
     inline uint32_t Distance(uint32_t index_stored) const
     {
         uint32_t index_init = m_Entries[index_stored].m_Key % m_Capacity;
         return index_stored - index_init + (index_init <= index_stored ? 0u : m_Capacity);
-    }   
+    }
 };
 
 } // namespace
