@@ -250,22 +250,18 @@ static bool IsSorted(uint64_t* a, size_t size)
     return true;
 }
 
-static void PrintArray(uint64_t *a, size_t size)
-{
-    for (size_t i = 0; i < size; ++i)
-    {
-        printf("%02d: %016x\n", (int)i, a[i]);
-    }
-}
+// static void PrintArray(uint64_t *a, size_t size)
+// {
+//     for (size_t i = 0; i < size; ++i)
+//     {
+//         printf("%02d: %016x\n", (int)i, a[i]);
+//     }
+// }
 
 TEST_F(AlgorithmTest, SortRadixStable)
 {
-    bool is_sorted = true;
-    uint32_t hash = 0;
-    uint64_t sum = 0;
-
     uint32_t array_size = (uint32_t)ctx->unsorted.size();
-    uint32_t buffer_size = buffer_size * (uint32_t)sizeof(uint64_t);
+    uint32_t buffer_size = array_size * (uint32_t)sizeof(uint64_t);
     do {
         for (uint32_t i = 0; i < array_size; ++i)
         {
@@ -305,14 +301,14 @@ struct SortValue {
 //     return buffer + JC_TEST_SNPRINTF(buffer, buffer_len, "{%llu, %llu}", value->key, value->payload);
 // }
 
-static void PrintSortValues(SortValue* values, uint32_t count)
-{
-    for (uint32_t i = 0; i < count; ++i) {
-        uint16_t* p = (uint16_t*)&values[i];
-        printf("{ %u, %u }, 0x%04x\n", values[i].key, values[i].payload, (uint32_t)*p );
-    }
-    printf("\n");
-}
+// static void PrintSortValues(SortValue* values, uint32_t count)
+// {
+//     for (uint32_t i = 0; i < count; ++i) {
+//         uint16_t *p = (uint16_t *)(void*)&values[i];
+//         printf("{ %u, %u }, 0x%04x\n", values[i].key, values[i].payload, (uint32_t)*p );
+//     }
+//     printf("\n");
+// }
 
 TEST_F(AlgorithmTest, SortRadixStruct)
 {
