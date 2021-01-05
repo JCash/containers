@@ -1,4 +1,5 @@
 
+#define JC_TEST_USE_DEFAULT_MAIN
 #include "jc_test.h"
 #include <jc/hashtable.h>
 

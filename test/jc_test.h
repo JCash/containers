@@ -10,8 +10,11 @@
  *
  * HISTORY:
  *
+ *      0.6     2020-03-12  Fixed bootstrap issue w/static initializers
+ *                          Added support for JC_TEST_USE_COLORS to force color on/off
+ *                          Added support for JC_TEST_USE_DEFAULT_MAIN
  *      0.5     2019-11-10  Added support for logging enum values
-                            Added ASSERT_ARRAY_EQ
+ *                          Added ASSERT_ARRAY_EQ
  *      0.4     2019-08-10  Fix for outputting 64 bit integer values upon error
  *                          Skipping tests now doesn't output extraneous info
  *      0.3     2019-04-25  Ansi colors for Win32
@@ -280,10 +283,12 @@ typedef struct jc_test_stats {
 typedef struct jc_test_fixture {
     virtual ~jc_test_fixture();
     virtual void SetParam();
+    virtual void Instantiate();
     jc_test_fixture*            next;       // linked list
     jc_test_entry*              tests;      // linked list
     const char*                 name;       // The name of the fixture
     const char*                 filename;   // The filename of the current ASSERT/EXPECT
+    const char*                 prototype;  // The name of any prototype fixture
     struct jc_test_fixture*     parent;     // In case of parameterized tests, this points to the first test
     jc_test_void_staticfunc     fixture_setup;
     jc_test_void_staticfunc     fixture_teardown;
@@ -313,7 +318,7 @@ typedef struct jc_test_state {
     jc_test_fixture*    fixtures;
     jc_test_stats       stats;
     int                 num_fixtures:31;
-    unsigned int        is_a_tty:1;
+    unsigned int        use_colors:1;
     unsigned int        :32;
 } jc_test_state;
 
@@ -722,6 +727,10 @@ struct jc_test_cmp_eq_helper<true> {
 
 #define SCOPED_TRACE(_MSG)  // nop
 
+// doctest compatible
+#define CHECK( VALUE ) ASSERT_TRUE(VALUE)
+#define CHECK_EQ( A, B ) ASSERT_EQ(A, B)
+
 template<typename T>
 struct jc_test_value_iterator {
     virtual ~jc_test_value_iterator();
@@ -754,8 +763,16 @@ template<typename ParamType> const ParamType* jc_test_params_class<ParamType>::p
 template<typename ParamType>
 struct jc_test_fixture_with_param : public jc_test_fixture {
     void SetParam() { JC_TEST_CAST(jc_test_params_class<ParamType>*, jc_test_get_state()->current_test)->SetParam(param); }
+    void Instantiate();
     const ParamType* param;
 };
+
+template<typename ParamType>
+void jc_test_create_from_prototype(jc_test_fixture_with_param<ParamType>* fixture);
+
+template<typename ParamType>
+void jc_test_fixture_with_param<ParamType>::Instantiate() { jc_test_create_from_prototype(this); }
+
 
 struct jc_test_factory_base_interface {
     virtual ~jc_test_factory_base_interface();
@@ -851,18 +868,52 @@ jc_test_fixture* jc_test_alloc_fixture_with_param(const char* name, unsigned int
 }
 
 template<typename ParamType>
+void jc_test_create_from_prototype(jc_test_fixture_with_param<ParamType>* fixture) {
+
+    jc_test_fixture* prototype_fixture = jc_test_find_fixture(fixture->prototype, JC_TEST_FIXTURE_TYPE_PARAMS_CLASS);
+    if (!prototype_fixture) {
+        JC_TEST_LOGF(0, 0, 0, JC_TEST_EVENT_GENERIC, "Couldn't find fixture of name %s\n", fixture->prototype);
+        JC_TEST_ASSERT_FN(prototype_fixture != 0);
+    }
+    JC_TEST_ASSERT_FN(prototype_fixture->type == JC_TEST_FIXTURE_TYPE_PARAMS_CLASS);
+
+    fixture->fixture_setup = prototype_fixture->fixture_setup;
+    fixture->fixture_teardown = prototype_fixture->fixture_teardown;
+
+    fixture->num_tests = prototype_fixture->num_tests;
+    jc_test_entry* prototype_test = prototype_fixture->tests;
+    jc_test_entry* first = 0;
+    jc_test_entry* prev = 0;
+    while (prototype_test) {
+        jc_test_entry* test = new jc_test_entry;
+        test->next = 0;
+        test->name = prototype_test->name;
+        test->factory = 0;
+        test->fail = 0;
+        test->skipped = 0;
+
+        jc_test_factory_interface<ParamType>* factory = JC_TEST_CAST(jc_test_factory_interface<ParamType>*, prototype_test->factory);
+        factory->SetParam(fixture->param);
+        test->instance = factory->New();
+
+        if (!first) {
+            first = test;
+            prev = test;
+        } else {
+            prev->next = test;
+            prev = test;
+        }
+        prototype_test = prototype_test->next;
+    }
+    fixture->tests = first;
+}
+
+template<typename ParamType>
 int jc_test_register_param_tests(const char* prototype_fixture_name, const char* fixture_name, jc_test_value_iterator<ParamType>* values)
 {
     unsigned int index = 0;
     jc_test_fixture* first_fixture = 0;
     while (!values->Empty()) {
-        jc_test_fixture* prototype_fixture = jc_test_find_fixture(prototype_fixture_name, JC_TEST_FIXTURE_TYPE_PARAMS_CLASS);
-        if (!prototype_fixture) {
-            JC_TEST_LOGF(0, 0, 0, JC_TEST_EVENT_GENERIC, "Couldn't find fixture of name %s\n", prototype_fixture_name);
-            JC_TEST_ASSERT_FN(prototype_fixture != 0);
-            return 0;
-        }
-        JC_TEST_ASSERT_FN(prototype_fixture->type == JC_TEST_FIXTURE_TYPE_PARAMS_CLASS);
 
         // Allocate a new fixture, and create the test class
         jc_test_fixture_with_param<ParamType>* fixture = JC_TEST_CAST(jc_test_fixture_with_param<ParamType>*,
@@ -875,35 +926,7 @@ int jc_test_register_param_tests(const char* prototype_fixture_name, const char*
         fixture->parent = first_fixture;
         fixture->index = index++;
         fixture->param = values->Get();
-        fixture->fixture_setup = prototype_fixture->fixture_setup;
-        fixture->fixture_teardown = prototype_fixture->fixture_teardown;
-
-        fixture->num_tests = prototype_fixture->num_tests;
-        jc_test_entry* prototype_test = prototype_fixture->tests;
-        jc_test_entry* first = 0;
-        jc_test_entry* prev = 0;
-        while (prototype_test) {
-            jc_test_entry* test = new jc_test_entry;
-            test->next = 0;
-            test->name = prototype_test->name;
-            test->factory = 0;
-            test->fail = 0;
-            test->skipped = 0;
-
-            jc_test_factory_interface<ParamType>* factory = JC_TEST_CAST(jc_test_factory_interface<ParamType>*, prototype_test->factory);
-            factory->SetParam(fixture->param);
-            test->instance = factory->New();
-
-            if (!first) {
-                first = test;
-                prev = test;
-            } else {
-                prev->next = test;
-                prev = test;
-            }
-            prototype_test = prototype_test->next;
-        }
-        fixture->tests = first;
+        fixture->prototype = prototype_fixture_name;
 
         values->Advance();
 
@@ -920,14 +943,16 @@ int jc_test_register_param_tests(const char* prototype_fixture_name, const char*
 #define JC_TEST_MAKE_FUNCTION_NAME(X, Y)        JC_TEST_MAKE_NAME2(X, Y)
 #define JC_TEST_MAKE_UNIQUE_NAME(X, Y, LINE)    JC_TEST_MAKE_NAME3(X, Y, LINE)
 
-#define TEST(testfixture,testfn)                                                                                            \
+#define TEST3(testfixture,testfn,testname)                                                                                  \
 class JC_TEST_MAKE_CLASS_NAME(testfixture,testfn) : public jc_test_base_class {                                             \
     virtual void TestBody();                                                                                                \
 };                                                                                                                          \
 static int JC_TEST_MAKE_UNIQUE_NAME(testfixture,testfn,__LINE__) JC_TEST_UNUSED = jc_test_register_class_test(              \
-        #testfixture, #testfn, jc_test_base_class::SetUpTestCase, jc_test_base_class::TearDownTestCase,                     \
+        testname, #testfn, jc_test_base_class::SetUpTestCase, jc_test_base_class::TearDownTestCase,                         \
         new JC_TEST_MAKE_CLASS_NAME(testfixture,testfn), JC_TEST_FIXTURE_TYPE_CLASS);                                       \
 void JC_TEST_MAKE_CLASS_NAME(testfixture,testfn)::TestBody()
+
+#define TEST(testfixture,testfn) TEST3(testfixture,testfn,#testfixture)
 
 #define TEST_F(testfixture,testfn)                                                                                          \
     class JC_TEST_MAKE_CLASS_NAME(testfixture,testfn) : public testfixture {                                                \
@@ -977,12 +1002,17 @@ template<template <typename T> class BaseClass> struct jc_test_template_sel {
                 JC_TEST_MAKE_NAME2(testfixture,Types)>::register_test(#testfixture, #testfn, 0);            \
     template<typename T> void JC_TEST_MAKE_CLASS_NAME(testfixture,testfn)<T>::TestBody()
 
+#define TEST_CASE(name) TEST3(JC_TEST_MAKE_NAME2(_JC_TEST_ANON, __LINE__), name, "")
 
 #if !defined(_MSC_VER)
 #pragma GCC diagnostic pop
 #endif
 
 #endif // JC_TEST_H
+
+#ifdef JC_TEST_USE_DEFAULT_MAIN
+#define JC_TEST_IMPLEMENTATION
+#endif
 
 #ifdef JC_TEST_IMPLEMENTATION
 #undef JC_TEST_IMPLEMENTATION
@@ -1022,7 +1052,7 @@ template <> char* jc_test_print_value(char* buffer, size_t buffer_len, const flo
 #define JC_TEST_CLR_MAGENTA "\x1B[35m"
 #define JC_TEST_CLR_CYAN    "\x1B[36m"
 
-#define JC_TEST_COL(CLR) (jc_test_get_state()->is_a_tty ? JC_TEST_CLR_ ## CLR : "")
+#define JC_TEST_COL(CLR) (jc_test_get_state()->use_colors ? JC_TEST_CLR_ ## CLR : "")
 
 static size_t jc_test_snprint_time(char* buffer, size_t buffer_len, jc_test_time_t t);
 
@@ -1074,9 +1104,9 @@ void jc_test_logf(const jc_test_fixture* fixture, const jc_test_entry* test, con
             JC_TEST_SNPRINTF(cursor, JC_TEST_STATIC_CAST(size_t,end-cursor), "/%d ", fixture->index);
         }
     } else if (event == JC_TEST_EVENT_TEST_TEARDOWN) {
-        const char* pass = jc_test_get_state()->is_a_tty ? JC_TEST_CLR_GREEN "PASS" JC_TEST_CLR_DEFAULT : "PASS";
-        const char* fail = jc_test_get_state()->is_a_tty ? JC_TEST_CLR_RED "FAIL" JC_TEST_CLR_DEFAULT : "FAIL";
-        const char* skipped = jc_test_get_state()->is_a_tty ? JC_TEST_CLR_MAGENTA "SKIPPED" JC_TEST_CLR_DEFAULT : "SKIPPED";
+        const char* pass = jc_test_get_state()->use_colors ? JC_TEST_CLR_GREEN "PASS" JC_TEST_CLR_DEFAULT : "PASS";
+        const char* fail = jc_test_get_state()->use_colors ? JC_TEST_CLR_RED "FAIL" JC_TEST_CLR_DEFAULT : "FAIL";
+        const char* skipped = jc_test_get_state()->use_colors ? JC_TEST_CLR_MAGENTA "SKIPPED" JC_TEST_CLR_DEFAULT : "SKIPPED";
 
         cursor += JC_TEST_SNPRINTF(cursor, JC_TEST_STATIC_CAST(size_t,end-cursor), "\n%s%s%s", JC_TEST_COL(YELLOW), test->name, JC_TEST_COL(DEFAULT));
         if (fixture->index != 0xFFFFFFFF) {
@@ -1304,6 +1334,7 @@ jc_test_factory_base_interface::~jc_test_factory_base_interface() {}
 
 jc_test_fixture::~jc_test_fixture() {}
 void jc_test_fixture::SetParam() {}
+void jc_test_fixture::Instantiate() {}
 
 jc_test_base_class::~jc_test_base_class() {}
 void jc_test_base_class::SetUp() {}
@@ -1440,7 +1471,6 @@ static void jc_test_run_fixture(jc_test_fixture* fixture) {
 
     jc_test_memset(&fixture->stats, 0, sizeof(fixture->stats));
 
-
     if (fixture->skipped) {
         fixture->stats.num_skipped += fixture->num_tests;
         return;
@@ -1450,6 +1480,9 @@ static void jc_test_run_fixture(jc_test_fixture* fixture) {
     if (fixture->first) {
         JC_TEST_LOGF(fixture, 0, 0, JC_TEST_EVENT_FIXTURE_SETUP, 0);
     }
+
+    if (fixture->prototype)
+        fixture->Instantiate();
 
     if (fixture->first && fixture->fixture_setup != 0) {
         fixture->fixture_setup();
@@ -1664,10 +1697,8 @@ int jc_test_run_all() {
     return num_fail;
 }
 
-#if defined(JC_TEST_NO_COLORS)
-    #define JC_TEST_ISATTY(_X) 0U
-#else
-#ifndef JC_TEST_ISATTY
+#if !defined(JC_TEST_USE_COLORS)
+#if !defined(JC_TEST_ISATTY) // this is only needed if we're trying to find out if the output supports ansi colors
 
 #if defined(__CYGWIN__) || !defined(_WIN32)
     #include <unistd.h> // isatty
@@ -1716,28 +1747,35 @@ int jc_test_run_all() {
     }
 #endif // _WIN32
 #endif // JC_TEST_ISATTY
-#endif // JC_TEST_NO_COLORS
+#endif // JC_TEST_USE_COLORS
+
+static int _jc_get_tty_color_support() {
+    #if defined(JC_TEST_USE_COLORS)
+        return JC_TEST_USE_COLORS;
+    #else
+        int is_a_tty = JC_TEST_ISATTY(1);
+        #if defined(_WIN32)
+        if (is_a_tty) { // Try enabling ANSI escape sequence support on Windows 10 terminals.
+            DWORD mode;
+            HANDLE console_ = GetStdHandle(STD_OUTPUT_HANDLE);
+            if (GetConsoleMode(console_, &mode)) {
+                SetConsoleMode(console_, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+            } else {
+                is_a_tty = 0;
+            }
+        }
+        #endif
+        return is_a_tty;
+    #endif
+}
 
 void jc_test_init(int* argc, char** argv) {
+    jc_test_get_state()->use_colors = JC_TEST_STATIC_CAST(unsigned int, _jc_get_tty_color_support());
+
     if (jc_test_parse_commandline(argc, argv)) {
         jc_test_usage();
         JC_TEST_EXIT(1);
     }
-
-    jc_test_get_state()->is_a_tty = JC_TEST_ISATTY(1);
-
-    #if !defined(JC_TEST_NO_COLORS)
-    #if defined(_WIN32)
-    // Try enabling ANSI escape sequence support on Windows 10 terminals.
-    if (jc_test_get_state()->is_a_tty) {
-        DWORD mode;
-        HANDLE console_ = GetStdHandle(STD_OUTPUT_HANDLE);
-        if (GetConsoleMode(console_, &mode)) {
-            SetConsoleMode(console_, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
-        }
-    }
-    #endif
-    #endif // JC_TEST_NO_COLORS
 }
 
 #if !defined(_MSC_VER)
@@ -1745,6 +1783,12 @@ void jc_test_init(int* argc, char** argv) {
 #endif
 #endif
 
+#ifdef JC_TEST_USE_DEFAULT_MAIN
+int main(int argc, char** argv) {
+    jc_test_init(&argc, argv);
+    return jc_test_run_all();
+}
+#endif
 
 /*
 
