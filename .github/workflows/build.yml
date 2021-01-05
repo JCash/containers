@@ -1,0 +1,31 @@
+name: Build
+
+on: [push, pull_request_target]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build tests
+        run: ./scripts/compile_clang.sh
+      - name: Run Tests
+        run: ./scripts/run_tests.sh
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build tests
+        run: ./scripts/compile_clang.sh
+      - name: Run Tests
+        run: ./scripts/run_tests.sh
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build tests
+        run: ./scripts/compile_cl.bat
+      - name: Run Tests
+        run: ./scripts/run_tests.bat

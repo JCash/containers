@@ -1,7 +1,8 @@
-|Branch      | OSX / Linux | Windows     |
-|------------|-------------|-------------|
-|master      | [![Build Status](https://travis-ci.org/JCash/containers.svg?branch=master)](https://travis-ci.org/JCash/containers?branch=master) | [![Build status](https://ci.appveyor.com/api/projects/status/vi3jklpkj9eb5sfr/branch/master?svg=true)](https://ci.appveyor.com/project/JCash/containers/branch/master) |
-|dev         | [![Build Status](https://travis-ci.org/JCash/containers.svg?branch=dev)](https://travis-ci.org/JCash/containers?branch=dev) | [![Build status](https://ci.appveyor.com/api/projects/status/vi3jklpkj9eb5sfr/branch/dev?svg=true)](https://ci.appveyor.com/project/JCash/containers/branch/dev) |
+| Build Status | macOS / Linux / Windows   |
+|--------------|---------------------------|
+|master        | [![Build Status](https://github.com/jcash/containers/workflows/Build/badge.svg?branch=master)](https://github.com/JCash/containers/actions?query=branch%3Amaster) |
+|dev           | [![Build Status](https://github.com/jcash/containers/workflows/Build/badge.svg?branch=dev)](https://github.com/JCash/containers/actions?query=branch%3Adev) |
+
 
 
 # Containers
