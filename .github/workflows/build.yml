@@ -1,0 +1,12 @@
+name: Build
+
+on: [push, pull_request_target]
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build tests
+        run: ./scripts/compile_clang.sh
+      - name: Run Tests
+        run: ./scripts/run_tests.sh
