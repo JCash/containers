@@ -23,8 +23,8 @@ PREFIX=jc
 
 function compile_test {
     local name=$1
-    clang++ -v -o ./build/${PREFIX}_test_${name}.o $OPT $DISASSEMBLY $ARCH $CXXFLAGS -c test/${name}.cpp
-    clang++ -v -o ./build/${PREFIX}_${name} $OPT $ARCH $LDFLAGS ./build/${PREFIX}_test_${name}.o
+    clang++ -o ./build/${PREFIX}_test_${name}.o $OPT $DISASSEMBLY $ARCH $CXXFLAGS -c test/${name}.cpp
+    clang++ -o ./build/${PREFIX}_${name} $OPT $ARCH $LDFLAGS ./build/${PREFIX}_test_${name}.o
 }
 
 time compile_test array
