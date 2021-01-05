@@ -3,6 +3,7 @@
 #include <jc/algorithm.h>
 #define JC_SORT_IMPLEMENTATION
 #include <jc/sort.h>
+#define JC_TEST_USE_DEFAULT_MAIN
 #include "jc_test.h"
 #include <algorithm>
 #include <vector>
@@ -239,56 +240,110 @@ TEST_F(AlgorithmTest, LowerBoundFile)
     delete[] a;
 }
 
+static bool IsSorted(uint64_t* a, size_t size)
+{
+    for (size_t i = 0; i < size-1; ++i)
+    {
+        if (a[i] > a[i+1])
+            return false;
+    }
+    return true;
+}
+
+// static void PrintArray(uint64_t *a, size_t size)
+// {
+//     for (size_t i = 0; i < size; ++i)
+//     {
+//         printf("%02d: %016x\n", (int)i, a[i]);
+//     }
+// }
 
 TEST_F(AlgorithmTest, SortRadixStable)
 {
-    bool is_sorted = true;
-    uint32_t hash = 0;
-    uint64_t sum = 0;
-    while(is_sorted)
-    {
-        sum = ctx->unsorted[0];
-        for(size_t i = 1; i < ctx->unsorted.size(); ++i)
+    uint32_t array_size = (uint32_t)ctx->unsorted.size();
+    uint32_t buffer_size = array_size * (uint32_t)sizeof(uint64_t);
+    do {
+        for (uint32_t i = 0; i < array_size; ++i)
         {
-            if (ctx->unsorted[i-1] > ctx->unsorted[i])
-            {
-                is_sorted = false;
-            }
-            hash = Hash32((uint8_t*)&ctx->unsorted[i], sizeof(ctx->unsorted[0]), hash);
-            sum += ctx->unsorted[i];
+            ctx->unsorted[i] = (uint64_t)rand();
         }
+    } while (IsSorted(&ctx->unsorted[0], array_size));
 
-        if(is_sorted)
-        {
-            for( uint32_t i = 0; i < ctx->unsorted.size(); ++i )
-            {
-                ctx->unsorted[i] = (uint64_t)rand();
-            }
-        }
-    }
+    std::vector<uint64_t> array_copy(ctx->unsorted);
+    std::sort(array_copy.begin(), array_copy.end());
 
-    hash += (hash << 3);
-    hash ^= (hash >> 11);
-    hash += (hash << 15);
+    ASSERT_TRUE(IsSorted(&array_copy[0], array_size));
 
-    ASSERT_TRUE(!is_sorted);
+    uint32_t expected_hash = Hash32((uint8_t *)&array_copy[0], buffer_size, 0);
 
     std::vector<uint64_t> tmp;
-    tmp.resize(ctx->unsorted.size());
+    tmp.resize(array_size);
+
     uint64_t* begin = &ctx->unsorted[0];
-    jc::radix_sort_stable<uint64_t>(begin, begin + ctx->unsorted.size(), &tmp[0]);
-    uint64_t* sorted = begin; // Since we sort an even number of bytes, this is true
+    jc::radix_sort<uint64_t>(begin, begin + array_size, &tmp[0]);
+    // Since we sort an even number of bytes,
+    // the final destination is the original buffer
+    uint64_t *sorted = begin;
 
-    uint32_t hash_after = 0;
-    uint64_t sum_after = sorted[0];
-    for(size_t i = 1; i < ctx->unsorted.size(); ++i)
-    {
-        ASSERT_TRUE( sorted[i-1] <= sorted[i] );
-        sum_after += sorted[i];
-        hash_after = Hash32((uint8_t*)&sorted[i], sizeof(sorted[0]), hash_after);
-    }
+    uint32_t sorted_hash = Hash32((uint8_t *)sorted, buffer_size, 0);
+    ASSERT_TRUE(IsSorted(sorted, array_size));
 
-    ASSERT_EQ(sum, sum_after);
-    ASSERT_NE(hash, hash_after);
+    ASSERT_EQ(expected_hash, sorted_hash);
+}
 
+struct SortValue {
+    uint8_t key;
+    uint8_t payload;
+};
+
+
+// template <> char* jc_test_print_value(char* buffer, size_t buffer_len, const SortValue* value) {
+//     return buffer + JC_TEST_SNPRINTF(buffer, buffer_len, "{%llu, %llu}", value->key, value->payload);
+// }
+
+// static void PrintSortValues(SortValue* values, uint32_t count)
+// {
+//     for (uint32_t i = 0; i < count; ++i) {
+//         uint16_t *p = (uint16_t *)(void*)&values[i];
+//         printf("{ %u, %u }, 0x%04x\n", values[i].key, values[i].payload, (uint32_t)*p );
+//     }
+//     printf("\n");
+// }
+
+TEST_F(AlgorithmTest, SortRadixStruct)
+{
+    #define SENTINEL_VALUE 0xcd //cdcdcdcdcdcdcd
+    #define SENTINEL {SENTINEL_VALUE,SENTINEL_VALUE}
+    #define SENTINEL_SIZE 1
+
+    SortValue values[]              = {{4, 3}, {1, 9}, {2, 3}, {1, 2}, {0, 2}, {4, 2}, {1, 5}, SENTINEL };
+    SortValue expected_structkey[]  = {{0, 2}, {1, 9}, {1, 2}, {1, 5}, {2, 3}, {4, 3}, {4, 2}, SENTINEL};
+    SortValue expected_stable[]     = {{0, 2}, {1, 2}, {4, 2}, {2, 3}, {4, 3}, {1, 5}, {1, 9}, SENTINEL};
+
+    uint32_t size = (uint32_t)sizeof(values)/sizeof(values[0]) - SENTINEL_SIZE;
+    SortValue* tmp = (SortValue*)malloc(sizeof(values));
+    memcpy(tmp, values, sizeof(values));
+
+    //printf("Original values\n");
+    //PrintSortValues(values, size+SENTINEL_SIZE);
+    //PrintSortValues(tmp, size+SENTINEL_SIZE);
+
+    jc::radix_sort_n<sizeof(values[0].key)>(values, values + size, tmp);
+
+    ASSERT_ARRAY_EQ(expected_structkey, values);
+    ASSERT_EQ(SENTINEL_VALUE, tmp[size].key);
+    ASSERT_EQ(SENTINEL_VALUE, tmp[size].payload);
+    ASSERT_EQ(SENTINEL_VALUE, values[size].key);
+    ASSERT_EQ(SENTINEL_VALUE, values[size].payload);
+
+    jc::radix_sort(values, values + size, tmp);
+
+    ASSERT_ARRAY_EQ(expected_stable, values);
+    ASSERT_EQ(SENTINEL_VALUE, tmp[size].key);
+    ASSERT_EQ(SENTINEL_VALUE, tmp[size].payload);
+    ASSERT_EQ(SENTINEL_VALUE, values[size].key);
+    ASSERT_EQ(SENTINEL_VALUE, values[size].payload);
+
+    #undef SENTINEL
+    #undef SENTINEL_SIZE
 }
