@@ -1,5 +1,5 @@
 echo off
 
-.\build\jc_algorithm.exe
-.\build\jc_array.exe
-.\build\jc_hashtable.exe
+.\build\algorithm.exe
+.\build\array.exe
+.\build\hashtable.exe

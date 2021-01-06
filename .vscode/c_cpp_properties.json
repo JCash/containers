@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": ["JC_TEST_IMPLEMENTATION"],
+            "macFrameworkPath": [],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c89",
+            "cppStandard": "c++98",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}

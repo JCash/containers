@@ -2,6 +2,11 @@
 
 set -e
 
-./build/jc_array
-./build/jc_algorithm
-./build/jc_hashtable
+TESTS="array hashtable algorithm"
+if [[ $# -gt 0 ]] ; then
+    TESTS="$*"
+fi
+
+for name in $TESTS; do
+    time ./build/$name
+done

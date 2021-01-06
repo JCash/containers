@@ -1,0 +1,98 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build All",
+            "type": "shell",
+            "command": "./scripts/compile_clang.sh",
+            "windows": {
+                "command": ".\\scripts\\compile_cl.bat"
+            },
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "Build - algorithm",
+            "type": "shell",
+            "command": "OPT=-O0 ./scripts/compile_clang.sh algorithm",
+            "windows": {
+                "command": ".\\scripts\\compile_cl.bat"
+            },
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+        },
+        {
+            "label": "Build - array",
+            "type": "shell",
+            "command": "OPT=-O0 ./scripts/compile_clang.sh array",
+            "windows": {
+                "command": ".\\scripts\\compile_cl.bat"
+            },
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Build - hashtable",
+            "type": "shell",
+            "command": "OPT=-O0 ./scripts/compile_clang.sh hashtable",
+            "windows": {
+                "command": ".\\scripts\\compile_cl.bat"
+            },
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Build - hashtable - ASAN",
+            "type": "shell",
+            "command": "OPT=-O0 USE_ASAN=1 ./scripts/compile_clang.sh hashtable",
+            "windows": {
+                "command": ".\\scripts\\compile_cl.bat"
+            },
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Run All",
+            "type": "shell",
+            "command": "./scripts/run_tests.sh",
+            "windows": {
+                "command": ".\\scripts\\run_tests.bat"
+            },
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        }
+    ]
+}
