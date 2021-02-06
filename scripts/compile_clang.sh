@@ -44,7 +44,7 @@ if [ "$CXX" == "clang++" ]; then
     CXXFLAGS="$CXXFLAGS -Wall -Weverything -Wno-poison-system-directories -Wno-global-constructors"
 fi
 
-if [ "$CXX" != "c++98" ]; then
+if [ "$STDVERSION" != "c++98" ]; then
     CXXFLAGS="$CXXFLAGS -Wno-zero-as-null-pointer-constant -Wno-c++98-compat"
 fi
 
@@ -55,7 +55,7 @@ function compile_test {
     clang++ -o ./build/${name} $OPT $ARCH $LDFLAGS ./build/test_${name}.o
 }
 
-TESTS="array hashtable algorithm"
+TESTS="array hashtable algorithm rle"
 if [[ $# -gt 0 ]] ; then
     TESTS="$*"
 fi

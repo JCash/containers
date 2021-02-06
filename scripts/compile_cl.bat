@@ -54,6 +54,7 @@ mkdir build
 %TIMEIT% cl.exe /O2 /D_CRT_SECURE_NO_WARNINGS /nologo /D_HAS_EXCEPTIONS=0 /EHsc /W4 /wd4611 /Isrc /Itest test/algorithm.cpp /link /out:.\build\algorithm.exe
 %TIMEIT% cl.exe /O2 /D_CRT_SECURE_NO_WARNINGS /nologo /D_HAS_EXCEPTIONS=0 /EHsc /W4 /wd4611 /Isrc /Itest test/array.cpp /link /out:.\build\array.exe
 %TIMEIT% cl.exe /O2 /D_CRT_SECURE_NO_WARNINGS /nologo /D_HAS_EXCEPTIONS=0 /EHsc /W4 /wd4611 /Isrc /Itest test/hashtable.cpp /link /out:.\build\hashtable.exe
+%TIMEIT% cl.exe /O2 /D_CRT_SECURE_NO_WARNINGS /nologo /D_HAS_EXCEPTIONS=0 /EHsc /W4 /wd4611 /Isrc /Itest test/rle.cpp /link /out:.\build\rle.exe
 
 del *.obj
 
