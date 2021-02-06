@@ -64,9 +64,9 @@ public:
     const T*    End() const                     { return m_End; }
     bool        Empty() const                   { return m_End == m_Start; }
     bool        Full() const                    { return m_End == m_Back; }
-    size_t      Size() const                    { return m_End - m_Start; }
+    size_t      Size() const                    { return (size_t)(m_End - m_Start); }
     /// Gets the capacity of the array
-    size_t      Capacity() const                { return m_Back - m_Start; }
+    size_t      Capacity() const                { return (size_t)(m_Back - m_Start); }
     /// Increases or decreases capacity. Invalidates pointers to elements
     void        SetCapacity(size_t capacity);
     /// If the size is larger than the current capacity, it reallocates, thus invalidates pointers to elements
@@ -99,11 +99,11 @@ private:
 template <typename T>
 void Array<T>::SetCapacity(size_t capacity)
 {
-    size_t old_capacity = m_Back - m_Start;
+    size_t old_capacity = (size_t)(m_Back - m_Start);
     if (capacity == old_capacity)
         return;
 
-    size_t size = m_End - m_Start;
+    size_t size = (size_t)(m_End - m_Start);
     m_Start = (T*)realloc(m_Start, sizeof(T) * capacity);
     m_End = m_Start + size;
     m_Back = m_Start + capacity;

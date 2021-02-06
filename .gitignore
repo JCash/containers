@@ -13,19 +13,16 @@
 *.dylib
 *.dll
 
-# Fortran module files
-*.mod
-
 # Compiled Static libraries
 *.lai
 *.la
-*.a
-*.lib
 
 # Executables
 *.exe
 *.out
 *.app
+
+*.DS_Store
 
 build/**
 benchmarks/build/**
