@@ -100,7 +100,7 @@ struct jc_test_base_class {
     virtual void TestBody() = 0;        // Implemented by TEST_F and TEST_P
 private:
     struct Setup_should_be_spelled_SetUp {};
-    virtual Setup_should_be_spelled_SetUp* Setup() { return 0; } // Trick from GTEST to make sure users don't accidentally misspell the function
+    virtual Setup_should_be_spelled_SetUp* Setup(); // Trick from GTEST to make sure users don't accidentally misspell the function
 };
 
 // A parameterized test class, to use with TEST_P and INSTANTIATE_TEST_CASE_P
@@ -257,6 +257,9 @@ typedef void* (*jc_test_fixture_setup_func)();
 struct jc_test_factory_base_interface;
 typedef void (*jc_test_void_staticfunc)();
 typedef void (jc_test_base_class::*jc_test_void_memberfunc)();
+
+
+jc_test_base_class::Setup_should_be_spelled_SetUp* jc_test_base_class::Setup() { return 0; } // Trick from GTEST to make sure users don't accidentally misspell the function
 
 typedef struct jc_test_entry {
     jc_test_entry*            next;       // linked list
