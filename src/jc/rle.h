@@ -3,7 +3,7 @@ ABOUT:
     Adaptive run length encoding of a byte buffer
 
 VERSION:
-    1.00 - (2021-02-) Initial commit
+    1.00 - (2021-02-06) Initial commit
 
 LICENSE:
 
@@ -75,7 +75,6 @@ extern uint32_t jc_rle_encode(uint32_t size, const uint8_t* in, uint8_t* out);
 */
 extern uint32_t jc_rle_decode(uint32_t size, const uint8_t* in, uint8_t* out);
 
-
 /**
 * Outputs the encoded data in tuples of "(length,payload) ..." for easier debugging
 * @name jc_rle_debug_print
@@ -83,6 +82,7 @@ extern uint32_t jc_rle_decode(uint32_t size, const uint8_t* in, uint8_t* out);
 * @param encoded    The encoded data
 */
 extern void jc_rle_debug_print(uint32_t size, const uint8_t* encoded);
+
 
 #endif // JC_RLE_H
 /* ******************************************************************************************************** */
