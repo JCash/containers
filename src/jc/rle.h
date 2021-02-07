@@ -88,6 +88,7 @@ extern void jc_rle_debug_print(uint32_t size, const uint8_t* encoded);
 /* ******************************************************************************************************** */
 
 #ifdef JC_RLE_IMPLEMENTATION
+#undef JC_RLE_IMPLEMENTATION
 
 #ifndef JC_RLE_PRINTF
     #include <stdio.h>
