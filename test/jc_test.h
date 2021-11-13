@@ -204,7 +204,11 @@ struct jc_test_params_class : public jc_test_base_class {
 #endif
 #if __cplusplus >= 201103L
     #pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
-    #define JC_TEST_CPP_OVERRIDE override
+    #if !defined(_MSC_VER)
+        #define JC_TEST_CPP_OVERRIDE override
+    #else
+        #define JC_TEST_CPP_OVERRIDE
+    #endif
 #else
     #define JC_TEST_CPP_OVERRIDE
 #endif
