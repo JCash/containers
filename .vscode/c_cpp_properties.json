@@ -5,7 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**"
             ],
-            "defines": ["JC_TEST_IMPLEMENTATION"],
+            "defines": ["JC_TEST_IMPLEMENTATION","JC_BITARRAY_IMPLEMENTATION"],
             "macFrameworkPath": [],
             "compilerPath": "/usr/bin/clang",
             "cStandard": "c89",
