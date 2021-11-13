@@ -45,16 +45,9 @@ A fast and small C++ container for storing dynamic arrays.
 * ~3x faster than std::vector, and ~2x faster than eastl::vector when using "push_back"
 * Otherwise same performance as the others
 
-## [jc/test](src/jc/test.h)
+## [jc::BitArray](src/jc/bitarray.h)
 
-A tiny C/C++ test framework:
-
-* Less than 1kloc.
-* Very fast compile times
-* Minimal executable size overhead
-* Header only
-* Usable as a GTEST replacement (for a subset of features)
-
+* Header only C/C++ bit array
 
 # [Benchmarks](benchmarks/README.md)
 

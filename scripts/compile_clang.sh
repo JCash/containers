@@ -48,6 +48,10 @@ if [ "$STDVERSION" != "c++98" ]; then
     CXXFLAGS="$CXXFLAGS -Wno-zero-as-null-pointer-constant -Wno-c++98-compat"
 fi
 
+if [ "$STDVERSION" == "c++98" ]; then
+    CXXFLAGS="$CXXFLAGS -Wno-suggest-destructor-override -Wno-suggest-override"
+fi
+
 function compile_test {
     local name=$1
     echo "COMPILING $name"
@@ -55,7 +59,7 @@ function compile_test {
     clang++ -o ./build/${name} $OPT $ARCH $LDFLAGS ./build/test_${name}.o
 }
 
-TESTS="array hashtable algorithm rle"
+TESTS="array hashtable algorithm rle bitarray"
 if [[ $# -gt 0 ]] ; then
     TESTS="$*"
 fi

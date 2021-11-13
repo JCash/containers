@@ -2,7 +2,7 @@
 
 set -e
 
-TESTS="array hashtable algorithm rle"
+TESTS="array hashtable algorithm rle bitarray"
 if [[ $# -gt 0 ]] ; then
     TESTS="$*"
 fi

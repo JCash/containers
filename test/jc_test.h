@@ -193,6 +193,8 @@ struct jc_test_params_class : public jc_test_base_class {
 #endif
 #endif
 
+#define JC_TEST_CPP_OVERRIDE
+
 // C++0x and above
 #if !defined(_MSC_VER)
 #pragma GCC diagnostic push
@@ -204,8 +206,12 @@ struct jc_test_params_class : public jc_test_base_class {
 #endif
 #if __cplusplus >= 201103L
     #pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
+    #if defined(JC_TEST_CPP_OVERRIDE)
+        #undef JC_TEST_CPP_OVERRIDE
+        #define JC_TEST_CPP_OVERRIDE override
+    #endif
 #endif
-#endif
+#endif // !defined(_MSC_VER)
 
 #if __cplusplus > 199711L
     #include <cstddef> // nullptr_t
@@ -948,7 +954,7 @@ int jc_test_register_param_tests(const char* prototype_fixture_name, const char*
 
 #define TEST3(testfixture,testfn,testname)                                                                                  \
 class JC_TEST_MAKE_CLASS_NAME(testfixture,testfn) : public jc_test_base_class {                                             \
-    virtual void TestBody();                                                                                                \
+    virtual void TestBody() JC_TEST_CPP_OVERRIDE;                                                                           \
 };                                                                                                                          \
 static int JC_TEST_MAKE_UNIQUE_NAME(testfixture,testfn,__LINE__) JC_TEST_UNUSED = jc_test_register_class_test(              \
         testname, #testfn, jc_test_base_class::SetUpTestCase, jc_test_base_class::TearDownTestCase,                         \
@@ -959,7 +965,7 @@ void JC_TEST_MAKE_CLASS_NAME(testfixture,testfn)::TestBody()
 
 #define TEST_F(testfixture,testfn)                                                                                          \
     class JC_TEST_MAKE_CLASS_NAME(testfixture,testfn) : public testfixture {                                                \
-        virtual void TestBody();                                                                                            \
+        virtual void TestBody() JC_TEST_CPP_OVERRIDE;                                                                       \
     };                                                                                                                      \
     static int JC_TEST_MAKE_UNIQUE_NAME(testfixture,testfn,__LINE__) JC_TEST_UNUSED = jc_test_register_class_test(          \
             #testfixture, #testfn, testfixture::SetUpTestCase, testfixture::TearDownTestCase,                               \
@@ -968,7 +974,7 @@ void JC_TEST_MAKE_CLASS_NAME(testfixture,testfn)::TestBody()
 
 #define TEST_P(testfixture,testfn)                                                                                          \
     class JC_TEST_MAKE_CLASS_NAME(testfixture,testfn) : public testfixture {                                                \
-        virtual void TestBody();                                                                                            \
+        virtual void TestBody() JC_TEST_CPP_OVERRIDE;                                                                       \
     };                                                                                                                      \
     static int JC_TEST_MAKE_UNIQUE_NAME(testfixture,testfn,__LINE__) JC_TEST_UNUSED = jc_test_register_param_class_test(    \
             #testfixture, #testfn, testfixture::SetUpTestCase, testfixture::TearDownTestCase,                               \
@@ -995,7 +1001,7 @@ template<template <typename T> class BaseClass> struct jc_test_template_sel {
 
 #define TYPED_TEST(testfixture,testfn)                                                                      \
     template<typename T> class JC_TEST_MAKE_CLASS_NAME(testfixture,testfn) : public testfixture<T> {        \
-        virtual void TestBody();                                                                            \
+        virtual void TestBody() JC_TEST_CPP_OVERRIDE;                                                       \
         typedef testfixture<T> TestFixture;                                                                 \
         typedef T TypeParam;                                                                                \
     };                                                                                                      \

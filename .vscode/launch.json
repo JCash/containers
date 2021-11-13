@@ -43,6 +43,19 @@
             "externalConsole": false,
             "MIMode": "lldb",
             "osx": {}
-        }
+        },
+        {
+            "name": "bitarray",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/bitarray",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "osx": {}
+        },
     ]
 }
