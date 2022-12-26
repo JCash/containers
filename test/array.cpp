@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <jc/array.h>
+#include <jc/cpp/array.h>
 #include <vector>
 #define JC_TEST_USE_DEFAULT_MAIN
 #include "jc_test.h"
@@ -31,10 +31,10 @@ class ArrayTest : public jc_test_base_class
 {
 protected:
     ArrayTest() {}
-    virtual ~ArrayTest();
-    void SetUp()
+    virtual ~ArrayTest() override;
+    void SetUp() override
     {
-        size_t count = 65436 + rand() % 100;
+        size_t count = 65436 + size_t(rand() % 100);
         numbers.resize(count);
         sum = FillArray(numbers, count);
     }

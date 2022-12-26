@@ -1,6 +1,6 @@
 #include <stdint.h>
 #define JC_BITARRAY_IMPLEMENTATION
-#include <jc/bitarray.h>
+#include <jc/c/bitarray.h>
 #define JC_TEST_USE_DEFAULT_MAIN
 #include "jc_test.h"
 
@@ -124,7 +124,7 @@ TYPED_TEST(InterfaceTest, Clear)
 
     uint8_t zeroes[] = {0x00, 0x00, 0x00};
     uint8_t ones[] = {0xFF, 0xFF, 0xFF};
-    
+
     TestFixture::m_Test.Clear(ba, 1);
     ASSERT_ARRAY_EQ_LEN(ones, bai->bits, bai->capacity);
 
@@ -142,7 +142,7 @@ TYPED_TEST(InterfaceTest, IsAllSet)
     uint32_t bitcount = 17;
     typename TypeParam::ArrayType* ba = TestFixture::m_Test.Create(bitcount);
     ASSERT_EQ(3U, TestFixture::m_Test.Capacity(ba));
-    
+
     TestFixture::m_Test.Clear(ba, 1);
     ASSERT_EQ(1U, TestFixture::m_Test.IsAllOnes(ba));
     ASSERT_EQ(0U, TestFixture::m_Test.IsAllZeroes(ba));
@@ -160,7 +160,7 @@ TYPED_TEST(InterfaceTest, SetGetBit)
     uint32_t bitcount = 17;
     typename TypeParam::ArrayType* ba = TestFixture::m_Test.Create(bitcount);
     ASSERT_EQ(3U, TestFixture::m_Test.Capacity(ba));
-    
+
     TestFixture::m_Test.Clear(ba, 0);
 
     for (uint32_t i = 0; i < bitcount; ++i)
@@ -192,7 +192,7 @@ TYPED_TEST(InterfaceTest, SetGetBit)
     TestFixture::m_Test.SetBit(ba, 11, 1);
     TestFixture::m_Test.SetBit(ba, 13, 1);
     TestFixture::m_Test.SetBit(ba, 15, 1);
-    
+
     ASSERT_EQ(0xAA, bai->bits[1]);
 
     TestFixture::m_Test.Destroy(ba);
@@ -203,7 +203,7 @@ TYPED_TEST(InterfaceTest, Erase)
     uint32_t bitcount = 17;
     typename TypeParam::ArrayType* ba = TestFixture::m_Test.Create(bitcount);
     ASSERT_EQ(3U, TestFixture::m_Test.Capacity(ba));
-    
+
     jcba_bitarray* bai = TestFixture::m_Test.GetInternal(ba);
 
     bai->bits[0] = 0x0F;
