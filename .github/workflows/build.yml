@@ -22,9 +22,15 @@ jobs:
         run: ./scripts/run_tests.sh
 
   build-windows:
+    strategy:
+      matrix:
+        arch: [amd64, amd64_x86] #, amd64_arm64]
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.arch }}
       - name: Build tests
         run: ./scripts/compile_cl.bat
       - name: Run Tests
