@@ -64,8 +64,7 @@ typedef int (*jc_rbt_compare_fn)(const void*, const void*);
 struct jc_rbt_node_
 {
     jc_rbt_node*    parent;
-    jc_rbt_node*    left;
-    jc_rbt_node*    right;
+    jc_rbt_node*    child[2]; // 0 : left, 1: right
     void*           data;
     uint8_t         red:1;
     uint8_t         :7;
@@ -119,8 +118,8 @@ jc_rbt_tree* jc_rbt_create( jc_rbt_compare_fn compare_fn, jc_rbt_alloc_fn alloc_
     jc_rbt_tree* tree = (jc_rbt_tree*)alloc_fn(sizeof(jc_rbt_tree));
     tree->nil = &tree->_nil;
     tree->_nil.parent = tree->nil;
-    tree->_nil.left = tree->nil;
-    tree->_nil.right = tree->nil;
+    tree->_nil.child[0] = tree->nil;
+    tree->_nil.child[1] = tree->nil;
     tree->_nil.data = 0;
     tree->_nil.red = 0;
     tree->root = tree->nil;
@@ -159,7 +158,7 @@ static void jc_rbt_free_node(jc_rbt_tree* tree, jc_rbt_node* node)
 static jc_rbt_node* jc_rbt_new_node(jc_rbt_tree* tree)
 {
     jc_rbt_node* node = jc_rbt_alloc_node(tree);
-    node->parent = node->left = node->right = tree->nil;
+    node->parent = node->child[0] = node->child[1] = tree->nil;
     node->data = 0;
     node->red = 0;
     return node;
@@ -169,44 +168,44 @@ static void jc_rbt_delete_node(jc_rbt_tree* tree, jc_rbt_node* node)
 {
     if (node == tree->nil)
         return;
-    jc_rbt_delete_node(tree, node->left);
-    jc_rbt_delete_node(tree, node->right);
+    jc_rbt_delete_node(tree, node->child[0]);
+    jc_rbt_delete_node(tree, node->child[1]);
     jc_rbt_free_node(tree, node);
 }
 
 static inline void jc_rbt_rotate_left(jc_rbt_tree* tree, jc_rbt_node* node)
 {
-    jc_rbt_node* child = node->right;
-    node->right = child->left;
-    if (node->right != tree->nil)
-        node->right->parent = node;
+    jc_rbt_node* child = node->child[1];
+    node->child[1] = child->child[0];
+    if (node->child[1] != tree->nil)
+        node->child[1]->parent = node;
     child->parent = node->parent;
     if (node->parent == tree->nil)
         tree->root = child;
     else
-    if (node == node->parent->left)
-        node->parent->left = child;
+    if (node == node->parent->child[0])
+        node->parent->child[0] = child;
     else
-        node->parent->right = child;
-    child->left = node;
+        node->parent->child[1] = child;
+    child->child[0] = node;
     node->parent = child;
 }
 
 static inline void jc_rbt_rotate_right(jc_rbt_tree* tree, jc_rbt_node* node)
 {
-    jc_rbt_node* child = node->left;
-    node->left = child->right;
-    if (node->left != tree->nil)
-        node->left->parent = node;
+    jc_rbt_node* child = node->child[0];
+    node->child[0] = child->child[1];
+    if (node->child[0] != tree->nil)
+        node->child[0]->parent = node;
     child->parent = node->parent;
     if (node->parent == tree->nil)
         tree->root = child;
     else
-    if (node == node->parent->left)
-        node->parent->left = child;
+    if (node == node->parent->child[0])
+        node->parent->child[0] = child;
     else
-        node->parent->right = child;
-    child->right = node;
+        node->parent->child[1] = child;
+    child->child[1] = node;
     node->parent = child;
 }
 
@@ -218,7 +217,7 @@ jc_rbt_node* jc_rbt_find(jc_rbt_tree* tree, void* key)
         int cmp = tree->compare_fn(key, node->data);
         if (cmp == 0)
             return node;
-        node = cmp < 0 ? node->left : node->right;
+        node = cmp < 0 ? node->child[0] : node->child[1];
     }
     return 0;
 }
@@ -228,9 +227,9 @@ static void jc_rbt_insert_fixup(jc_rbt_tree* tree, jc_rbt_node* node)
     do
     {
         jc_rbt_node* grandparent = node->parent->parent;
-        if (node->parent == grandparent->left)
+        if (node->parent == grandparent->child[0])
         {
-            jc_rbt_node* uncle = grandparent->right;
+            jc_rbt_node* uncle = grandparent->child[1];
             if (uncle->red)
             {
                 node->parent->red = 0;
@@ -240,7 +239,7 @@ static void jc_rbt_insert_fixup(jc_rbt_tree* tree, jc_rbt_node* node)
             }
             else
             {
-                if (node == node->parent->right)
+                if (node == node->parent->child[1])
                 {
                     node = node->parent;
                     jc_rbt_rotate_left(tree, node);
@@ -253,7 +252,7 @@ static void jc_rbt_insert_fixup(jc_rbt_tree* tree, jc_rbt_node* node)
         }
         else
         {
-            jc_rbt_node* uncle = grandparent->left;
+            jc_rbt_node* uncle = grandparent->child[0];
             if (uncle->red)
             {
                 node->parent->red = 0;
@@ -263,7 +262,7 @@ static void jc_rbt_insert_fixup(jc_rbt_tree* tree, jc_rbt_node* node)
             }
             else
             {
-                if (node == node->parent->left)
+                if (node == node->parent->child[0])
                 {
                     node = node->parent;
                     jc_rbt_rotate_right(tree, node);
@@ -286,9 +285,9 @@ void jc_rbt_insert_node(jc_rbt_tree* tree, jc_rbt_node* parent, int cmp, jc_rbt_
     else
     {
         if(cmp < 0)
-            parent->left = child;
+            parent->child[0] = child;
         else
-            parent->right = child;
+            parent->child[1] = child;
     }
 
     if (child->parent->red)
@@ -306,16 +305,16 @@ void jc_rbt_insert(jc_rbt_tree* tree, void* key)
         parent = node;
         int cmp = tree->compare_fn(key, node->data);
         if (cmp < 0)
-            node = node->left;
+            node = node->child[0];
         else if (cmp > 0)
-            node = node->right;
+            node = node->child[1];
         else {
             return; // Key already exists
         }
     }
 
     jc_rbt_node* new_node = jc_rbt_alloc_node(tree);
-    new_node->left = new_node->right = tree->nil;
+    new_node->child[0] = new_node->child[1] = tree->nil;
     new_node->parent = parent;
     new_node->data = key;
     new_node->red = 1;
@@ -333,18 +332,18 @@ static void jc_rbt_remove_fixup(jc_rbt_tree* tree, jc_rbt_node* node)
     const jc_rbt_node* root = tree->root;
     do
     {
-        if (node == node->parent->left)
+        if (node == node->parent->child[0])
         {
-            jc_rbt_node* sibling = node->parent->right;
+            jc_rbt_node* sibling = node->parent->child[1];
             if (sibling->red)
             {
                 sibling->red = 0;
                 node->parent->red = 1;
                 jc_rbt_rotate_left(tree, node->parent);
-                sibling = node->parent->right;
+                sibling = node->parent->child[1];
             }
 
-            if (!sibling->left->red && !sibling->right->red)
+            if (!sibling->child[0]->red && !sibling->child[1]->red)
             {
                 sibling->red = 1;
                 if (node->parent->red)
@@ -359,16 +358,16 @@ static void jc_rbt_remove_fixup(jc_rbt_tree* tree, jc_rbt_node* node)
             }
             else
             {
-                if (!sibling->right->red)
+                if (!sibling->child[1]->red)
                 {
-                    sibling->left->red = 0;
+                    sibling->child[0]->red = 0;
                     sibling->red = 1;
                     jc_rbt_rotate_right(tree, sibling);
-                    sibling = node->parent->right;
+                    sibling = node->parent->child[1];
                 }
 
                 sibling->red = node->parent->red;
-                sibling->right->red = 0;
+                sibling->child[1]->red = 0;
                 node->parent->red = 0;
                 jc_rbt_rotate_left(tree, node->parent);
                 break;
@@ -376,16 +375,16 @@ static void jc_rbt_remove_fixup(jc_rbt_tree* tree, jc_rbt_node* node)
         }
         else
         {
-            jc_rbt_node* sibling = node->parent->left;
+            jc_rbt_node* sibling = node->parent->child[0];
             if (sibling->red)
             {
                 sibling->red = 0;
                 node->parent->red = 1;
                 jc_rbt_rotate_right(tree, node->parent);
-                sibling = node->parent->left;
+                sibling = node->parent->child[0];
             }
 
-            if (!sibling->left->red && !sibling->right->red)
+            if (!sibling->child[0]->red && !sibling->child[1]->red)
             {
                 sibling->red = 1;
                 if (node->parent->red)
@@ -400,16 +399,16 @@ static void jc_rbt_remove_fixup(jc_rbt_tree* tree, jc_rbt_node* node)
             }
             else
             {
-                if (!sibling->left->red)
+                if (!sibling->child[0]->red)
                 {
-                    sibling->right->red = 0;
+                    sibling->child[1]->red = 0;
                     sibling->red = 1;
                     jc_rbt_rotate_left(tree, sibling);
-                    sibling = node->parent->left;
+                    sibling = node->parent->child[0];
                 }
 
                 sibling->red = node->parent->red;
-                sibling->left->red = 0;
+                sibling->child[0]->red = 0;
                 node->parent->red = 0;
                 jc_rbt_rotate_right(tree, node->parent);
                 break;
@@ -420,15 +419,15 @@ static void jc_rbt_remove_fixup(jc_rbt_tree* tree, jc_rbt_node* node)
 
 static jc_rbt_node* jc_rbt_successor(jc_rbt_tree* tree, jc_rbt_node* node)
 {
-    jc_rbt_node* n = node->right;
+    jc_rbt_node* n = node->child[1];
     if (n != tree->nil)
     {
-        while (n->left != tree->nil)
-            n = n->left;
+        while (n->child[0] != tree->nil)
+            n = n->child[0];
     }
     else
     {
-        for (n = node->parent; node == n->right; node = n, n = n->parent)
+        for (n = node->parent; node == n->child[1]; node = n, n = n->parent)
         {}
     }
     return n;
@@ -441,7 +440,7 @@ jc_rbt_node* jc_rbt_remove_node(jc_rbt_tree* tree, jc_rbt_node* node)
     assert(node != 0);
 
     jc_rbt_node* target;
-    if (node->left == tree->nil || node->right == tree->nil)
+    if (node->child[0] == tree->nil || node->child[1] == tree->nil)
     {
         target = node;
     }
@@ -451,7 +450,7 @@ jc_rbt_node* jc_rbt_remove_node(jc_rbt_tree* tree, jc_rbt_node* node)
         node->data = target->data;
     }
 
-    jc_rbt_node* child = target->left == tree->nil ? target->right : target->left;
+    jc_rbt_node* child = target->child[0] == tree->nil ? target->child[1] : target->child[0];
 
     if (!target->red)
     {
@@ -465,12 +464,12 @@ jc_rbt_node* jc_rbt_remove_node(jc_rbt_tree* tree, jc_rbt_node* node)
 
     if (target->parent == tree->nil)
         tree->root = child;
-    else if (target == target->parent->left)
-        target->parent->left = child;
+    else if (target == target->parent->child[0])
+        target->parent->child[0] = child;
     else
-        target->parent->right = child;
+        target->parent->child[1] = child;
 
-    target->left = target->right = tree->nil;
+    target->child[0] = target->child[1] = tree->nil;
     return target;
 }
 
