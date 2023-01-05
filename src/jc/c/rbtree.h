@@ -173,40 +173,32 @@ static void jc_rbt_delete_node(jc_rbt_tree* tree, jc_rbt_node* node)
     jc_rbt_free_node(tree, node);
 }
 
-static inline void jc_rbt_rotate_left(jc_rbt_tree* tree, jc_rbt_node* node)
+static inline void jc_rbt_rotate_dir(jc_rbt_tree* tree, jc_rbt_node* node, int dir)
 {
-    jc_rbt_node* child = node->child[1];
-    node->child[1] = child->child[0];
-    if (node->child[1] != tree->nil)
-        node->child[1]->parent = node;
+    int odir = 1 - dir; // other child
+    jc_rbt_node* child = node->child[odir];
+    node->child[odir] = child->child[dir];
+    if (node->child[odir] != tree->nil)
+        node->child[odir]->parent = node;
     child->parent = node->parent;
     if (node->parent == tree->nil)
         tree->root = child;
     else
-    if (node == node->parent->child[0])
-        node->parent->child[0] = child;
+    if (node == node->parent->child[dir])
+        node->parent->child[dir] = child;
     else
-        node->parent->child[1] = child;
-    child->child[0] = node;
+        node->parent->child[odir] = child;
+    child->child[dir] = node;
     node->parent = child;
 }
 
+static inline void jc_rbt_rotate_left(jc_rbt_tree* tree, jc_rbt_node* node)
+{
+    jc_rbt_rotate_dir(tree, node, 0);
+}
 static inline void jc_rbt_rotate_right(jc_rbt_tree* tree, jc_rbt_node* node)
 {
-    jc_rbt_node* child = node->child[0];
-    node->child[0] = child->child[1];
-    if (node->child[0] != tree->nil)
-        node->child[0]->parent = node;
-    child->parent = node->parent;
-    if (node->parent == tree->nil)
-        tree->root = child;
-    else
-    if (node == node->parent->child[0])
-        node->parent->child[0] = child;
-    else
-        node->parent->child[1] = child;
-    child->child[1] = node;
-    node->parent = child;
+    jc_rbt_rotate_dir(tree, node, 1);
 }
 
 jc_rbt_node* jc_rbt_find(jc_rbt_tree* tree, void* key)
