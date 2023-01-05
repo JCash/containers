@@ -66,7 +66,7 @@ struct jc_rbt_node_
     jc_rbt_node*    parent;
     jc_rbt_node*    child[2]; // 0 : left, 1: right
     void*           data;
-    uint8_t         red:1;
+    uint8_t         red:1; // boolean
     uint8_t         :7;
 };
 
@@ -95,6 +95,7 @@ jc_rbt_node* jc_rbt_remove_node(jc_rbt_tree* tree, jc_rbt_node* node);
 //  https://www.happycoders.eu/algorithms/red-black-tree-java/
 //  https://algorithmtutor.com/Data-Structures/Tree/Red-Black-Trees/
 
+// The usage of the "nil" member simplifies some of the operations such as rotation
 struct jc_rbt_tree_
 {
     jc_rbt_node*        root;
@@ -192,15 +193,6 @@ static inline void jc_rbt_rotate_dir(jc_rbt_tree* tree, jc_rbt_node* node, int d
     node->parent = child;
 }
 
-static inline void jc_rbt_rotate_left(jc_rbt_tree* tree, jc_rbt_node* node)
-{
-    jc_rbt_rotate_dir(tree, node, 0);
-}
-static inline void jc_rbt_rotate_right(jc_rbt_tree* tree, jc_rbt_node* node)
-{
-    jc_rbt_rotate_dir(tree, node, 1);
-}
-
 jc_rbt_node* jc_rbt_find(jc_rbt_tree* tree, void* key)
 {
     jc_rbt_node* node = tree->root;
@@ -219,56 +211,36 @@ static void jc_rbt_insert_fixup(jc_rbt_tree* tree, jc_rbt_node* node)
     do
     {
         jc_rbt_node* grandparent = node->parent->parent;
-        if (node->parent == grandparent->child[0])
+        for (int dir = 0; dir < 2; ++dir)
         {
-            jc_rbt_node* uncle = grandparent->child[1];
-            if (uncle->red)
+            int odir = 1 - dir;
+            if (node->parent == grandparent->child[dir])
             {
-                node->parent->red = 0;
-                uncle->red = 0;
-                node = grandparent;
-                node->red = 1;
-            }
-            else
-            {
-                if (node == node->parent->child[1])
+                jc_rbt_node* uncle = grandparent->child[odir];
+                if (uncle->red)
                 {
-                    node = node->parent;
-                    jc_rbt_rotate_left(tree, node);
+                    node->parent->red = 0;
+                    uncle->red = 0;
+                    node = grandparent;
+                    node->red = 1;
                 }
-
-                node->parent->red = 0;
-                grandparent->red = 1;
-                jc_rbt_rotate_right(tree, grandparent);
-            }
-        }
-        else
-        {
-            jc_rbt_node* uncle = grandparent->child[0];
-            if (uncle->red)
-            {
-                node->parent->red = 0;
-                uncle->red = 0;
-                node = grandparent;
-                node->red = 1;
-            }
-            else
-            {
-                if (node == node->parent->child[0])
+                else
                 {
-                    node = node->parent;
-                    jc_rbt_rotate_right(tree, node);
-                }
+                    if (node == node->parent->child[odir])
+                    {
+                        node = node->parent;
+                        jc_rbt_rotate_dir(tree, node, dir);
+                    }
 
-                node->parent->red = 0;
-                grandparent->red = 1;
-                jc_rbt_rotate_left(tree, grandparent);
+                    node->parent->red = 0;
+                    grandparent->red = 1;
+                    jc_rbt_rotate_dir(tree, grandparent, odir);
+                }
             }
         }
     } while (node->parent->red);
     tree->root->red = 0;
 }
-
 
 void jc_rbt_insert_node(jc_rbt_tree* tree, jc_rbt_node* parent, int cmp, jc_rbt_node* child)
 {
@@ -276,15 +248,12 @@ void jc_rbt_insert_node(jc_rbt_tree* tree, jc_rbt_node* parent, int cmp, jc_rbt_
         tree->root = child;
     else
     {
-        if(cmp < 0)
-            parent->child[0] = child;
-        else
-            parent->child[1] = child;
+        if(cmp < 0) parent->child[0] = child;
+        else        parent->child[1] = child;
     }
 
     if (child->parent->red)
         jc_rbt_insert_fixup(tree, child);
-
     tree->root->red = 0;
 }
 
@@ -324,86 +293,49 @@ static void jc_rbt_remove_fixup(jc_rbt_tree* tree, jc_rbt_node* node)
     const jc_rbt_node* root = tree->root;
     do
     {
-        if (node == node->parent->child[0])
+        for (int dir = 0; dir < 2; ++dir)
         {
-            jc_rbt_node* sibling = node->parent->child[1];
-            if (sibling->red)
+            int odir = 1 - dir;
+            if (node == node->parent->child[dir])
             {
-                sibling->red = 0;
-                node->parent->red = 1;
-                jc_rbt_rotate_left(tree, node->parent);
-                sibling = node->parent->child[1];
-            }
-
-            if (!sibling->child[0]->red && !sibling->child[1]->red)
-            {
-                sibling->red = 1;
-                if (node->parent->red)
+                jc_rbt_node* sibling = node->parent->child[odir];
+                if (sibling->red)
                 {
-                    node->parent->red = 0;
-                    break;
+                    sibling->red = 0;
+                    node->parent->red = 1;
+                    jc_rbt_rotate_dir(tree, node->parent, dir);
+                    sibling = node->parent->child[odir];
+                }
+
+                if (!sibling->child[dir]->red && !sibling->child[odir]->red)
+                {
+                    sibling->red = 1;
+                    if (node->parent->red)
+                    {
+                        node->parent->red = 0;
+                        return;
+                    }
+                    else
+                    {
+                        node = node->parent;
+                    }
                 }
                 else
                 {
-                    node = node->parent;
-                }
-            }
-            else
-            {
-                if (!sibling->child[1]->red)
-                {
-                    sibling->child[0]->red = 0;
-                    sibling->red = 1;
-                    jc_rbt_rotate_right(tree, sibling);
-                    sibling = node->parent->child[1];
-                }
+                    if (!sibling->child[odir]->red)
+                    {
+                        sibling->child[dir]->red = 0;
+                        sibling->red = 1;
+                        jc_rbt_rotate_dir(tree, sibling, odir);
+                        sibling = node->parent->child[odir];
+                    }
 
-                sibling->red = node->parent->red;
-                sibling->child[1]->red = 0;
-                node->parent->red = 0;
-                jc_rbt_rotate_left(tree, node->parent);
-                break;
-            }
-        }
-        else
-        {
-            jc_rbt_node* sibling = node->parent->child[0];
-            if (sibling->red)
-            {
-                sibling->red = 0;
-                node->parent->red = 1;
-                jc_rbt_rotate_right(tree, node->parent);
-                sibling = node->parent->child[0];
-            }
-
-            if (!sibling->child[0]->red && !sibling->child[1]->red)
-            {
-                sibling->red = 1;
-                if (node->parent->red)
-                {
+                    sibling->red = node->parent->red;
+                    sibling->child[odir]->red = 0;
                     node->parent->red = 0;
-                    break;
+                    jc_rbt_rotate_dir(tree, node->parent, dir);
+                    return;
                 }
-                else
-                {
-                    node = node->parent;
-                }
-            }
-            else
-            {
-                if (!sibling->child[0]->red)
-                {
-                    sibling->child[1]->red = 0;
-                    sibling->red = 1;
-                    jc_rbt_rotate_left(tree, sibling);
-                    sibling = node->parent->child[0];
-                }
-
-                sibling->red = node->parent->red;
-                sibling->child[0]->red = 0;
-                node->parent->red = 0;
-                jc_rbt_rotate_right(tree, node->parent);
-                break;
             }
         }
     } while (node != root);
