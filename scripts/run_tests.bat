@@ -5,3 +5,4 @@ echo off
 .\build\hashtable.exe
 .\build\rle.exe
 .\build\bitarray.exe
+.\build\ringbuffer.exe

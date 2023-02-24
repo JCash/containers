@@ -491,14 +491,26 @@ inline int jc_test_cmp_ARRAY_EQ_LEN(const char* a, const char* b, size_t length,
 }
 
 struct jc_test_cmp_eq_helper {
+
+#if __cplusplus > 199711L
     template <typename T1, typename T2,
         typename std::enable_if<!std::is_integral<T1>::value ||
                                 !std::is_pointer<T2>::value>::type* = nullptr>
     static int compare(const T1& a, const T2& b, const char* exprA, const char* exprB) {
         return jc_test_cmp_EQ(a, b, exprA, exprB);
     }
+#endif
 
-    static int Compare(const long long& a, const long long& b, const char* exprA, const char* exprB) {
+    static int compare(const uint32_t& a, const int32_t& b, const char* exprA, const char* exprB) {
+        return jc_test_cmp_EQ(a, (uint32_t)b, exprA, exprB);
+    }
+    static int compare(const int32_t& a, const uint32_t& b, const char* exprA, const char* exprB) {
+        return jc_test_cmp_EQ((uint32_t)a, b, exprA, exprB);
+    }
+    static int compare(const uint32_t& a, const uint32_t& b, const char* exprA, const char* exprB) {
+        return jc_test_cmp_EQ(a, b, exprA, exprB);
+    }
+    static int compare(const int32_t& a, const int32_t& b, const char* exprA, const char* exprB) {
         return jc_test_cmp_EQ(a, b, exprA, exprB);
     }
 

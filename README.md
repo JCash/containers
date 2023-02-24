@@ -48,6 +48,12 @@ A fast and small C++ container for storing dynamic arrays.
 ## [jc::BitArray](src/jc/bitarray.h)
 
 * Header only C/C++ bit array
+## [jc::RingBuffer](src/jc/ringbuffer.h)
+
+A small C++ ring buffer
+
+* ~120 lines of code
+* Can be resized (using realloc and copying items)
 
 # [Benchmarks](benchmarks/README.md)
 
@@ -74,36 +80,36 @@ Performance examples for jc::Array.(See benchmark page for more stats)
         float   f;
     };
     typedef jc::HashTable<uint32_t, SPod> hashtable_t;
-    
+
     uint32_t numelements    = 1000; // The maximum number of entries to store
     uint32_t load_factor    = 85; // percent
-    uint32_t tablesize      = uint32_t(numelements / (load_factor/100.0f)); 
+    uint32_t tablesize      = uint32_t(numelements / (load_factor/100.0f));
     uint32_t sizeneeded     = hashtable_t::CalcSize(tablesize);
-    
+
     void* mem = malloc(sizeneeded);
-    
+
     hashtable_t ht;
     ht.Create(numelements, mem);
-    
+
     SPod value = { 1, 2.0f };
     ht.Put(17, value);
-    
+
     Spod* pval = ht.Get(17);
     assert( pval->i == 1 );
     assert( pval->f == 2.0f );
-    
+
     hashtable_t it = ht.Begin();
     hashtable_t itend = ht.End();
     for(; it != itend; ++it)
     {
         printf("key: %u  value: %d, %f\n", *it.GetKey(), it.GetValue()->i, it.GetValue()->f);
     }
-    
+
     ht.Erase(17);
-    
+
     free(mem);
 
-    
+
 ## jc::Array
 
     #include <jc/array.h>
@@ -112,11 +118,43 @@ Performance examples for jc::Array.(See benchmark page for more stats)
     a.SetCapacity(4);
     for(size_t i = 0; i < a.Capacity(); ++i)
         a.Push(i);
-    
-    a.EraseSwap(0); // 0,1,2,3 -> 3,1,2    
-    
+
+    a.EraseSwap(0); // 0,1,2,3 -> 3,1,2
+
     size_t sum = 0;
     for(size_t i = 0; i < a.Size(); ++i)
         sum += a[i];
 
-    
+## jc::RingBuffer
+
+    #include <jc/ringbuffer.h>
+
+    jc::RingBuffer<int> a;
+    a.SetCapacity(4);
+    for(size_t i = 0; i < a.Capacity(); ++i)
+        a.Push(i);
+    // [0,1,2,3]
+
+    print("%d", a.Pop()); // -> 0
+    // [1,2,3]
+
+    a.Push(4);
+    // [1,2,3,4]
+
+    // Buffer is full.
+    // Either increase size...
+    if (a.Full())
+        a.SetCapacity(6);
+    // [1,2,3,4]
+
+    a.Push(5);
+    a.Push(6);
+    // [1,2,3,4,5,6]
+
+    // ... or, if full again, use the PushUnchecked()
+    a.PushUnchecked(7);
+    // [2,3,4,5,6,7]
+
+    // Loop over the items
+    for(int i = 0; i < a.Size(); ++i)
+        print("%d", a[i]);

@@ -17,5 +17,6 @@ set FLAGS=/O2 /D_CRT_SECURE_NO_WARNINGS /nologo /D_HAS_EXCEPTIONS=0 /EHsc /W4 /w
 %TIMEIT% cl.exe %FLAGS% test\hashtable.cpp /link /out:.\build\hashtable.exe
 %TIMEIT% cl.exe %FLAGS% test\rle.cpp /link /out:.\build\rle.exe
 %TIMEIT% cl.exe %FLAGS% test\bitarray.cpp /link /out:.\build\bitarray.exe
+%TIMEIT% cl.exe %FLAGS% test\ringbuffer.cpp /link /out:.\build\ringbuffer.exe
 
 del *.obj
