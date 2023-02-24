@@ -1,39 +1,9 @@
 #include <stdint.h>
-#include <deque>
+#include <string.h> // memset
 #include <jc/cpp/ringbuffer.h>
 
 #define JC_TEST_USE_DEFAULT_MAIN
 #include "jc_test.h"
-
-template<typename T>
-static int FillBuffer(T& a, size_t count)
-{
-    int sum = 0;
-    for( uint32_t i = 0; i < count; ++i)
-    {
-        a[i] = i % 4000;
-        sum += a[i];
-    }
-    return sum;
-}
-
-class RingBufferTest : public jc_test_base_class
-{
-protected:
-    RingBufferTest() {}
-    virtual ~RingBufferTest() JC_OVERRIDE;
-    void SetUp() JC_OVERRIDE
-    {
-        size_t count = (size_t)(65436 + rand() % 100);
-        numbers.resize(count);
-        FillBuffer(numbers, count);
-    }
-
-    std::deque<int> numbers;
-};
-
-RingBufferTest::~RingBufferTest() {}
-
 
 static void DebugPrint(jc::RingBuffer<int>& buf) {
     uint32_t cap = buf.Capacity();
@@ -63,7 +33,7 @@ static void DebugPrint(jc::RingBuffer<int>& buf) {
     printf("\n");
 }
 
-TEST_F(RingBufferTest, Create)
+TEST(RingBufferTest, Create)
 {
     jc::RingBuffer<int> a;
     ASSERT_FALSE(a.Empty());
@@ -76,7 +46,7 @@ TEST_F(RingBufferTest, Create)
 }
 
 
-TEST_F(RingBufferTest, Add)
+TEST(RingBufferTest, Add)
 {
     int maxcount = 5;
     int array[6] = {0};
