@@ -1,8 +1,8 @@
 #include <stdint.h>
 #define JC_ALGORITHM_IMPLEMENTATION
-#include <jc/algorithm.h>
+#include <jc/cpp/algorithm.h>
 #define JC_SORT_IMPLEMENTATION
-#include <jc/sort.h>
+#include <jc/cpp/sort.h>
 #define JC_TEST_USE_DEFAULT_MAIN
 #include "jc_test.h"
 #include <algorithm>
@@ -78,7 +78,7 @@ public:
 
     static void SetUpTestCase() {
         ctx = new SCtxAlgorithm;
-        size_t count = 65536 + rand() % 100;
+        size_t count = 65536 + size_t(rand() % 100);
         size_t num_buckets = 20;
         ctx->renderobjects.reserve(count);
         for( size_t i = 0; i < count; ++i)
@@ -96,7 +96,7 @@ public:
     }
 
 protected:
-    void SetUp()
+    void SetUp() override
     {
         ctx->ranges.clear();
         uint32_t count = 3000;
@@ -107,7 +107,7 @@ protected:
         }
     }
 
-    virtual ~AlgorithmTest();
+    virtual ~AlgorithmTest() override;
 };
 
 AlgorithmTest::~AlgorithmTest() {}

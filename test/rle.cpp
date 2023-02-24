@@ -4,7 +4,7 @@
 
 #define JC_RLE_IMPLEMENTATION
 //#define JC_RLE_DEBUG
-#include <jc/rle.h>
+#include <jc/c/rle.h>
 
 #include <memory.h>
 
@@ -99,6 +99,3 @@ TEST(Rle, Decode)
         ASSERT_ARRAY_EQ_LEN(test.m_Expected, buffer, decodedlen);
     }
 }
-
-
-

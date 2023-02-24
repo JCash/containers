@@ -22,7 +22,7 @@ fi
 echo Using OPT=$OPT
 
 if [ "$STDVERSION" == "" ]; then
-    STDVERSION=c++98
+    STDVERSION=c++11 # jctest minimum
 fi
 echo Using -std=$STDVERSION
 
@@ -45,7 +45,7 @@ if [ "$CXX" == "clang++" ]; then
 fi
 
 if [ "$STDVERSION" != "c++98" ]; then
-    CXXFLAGS="$CXXFLAGS -Wno-zero-as-null-pointer-constant -Wno-c++98-compat"
+    CXXFLAGS="$CXXFLAGS -Wno-zero-as-null-pointer-constant -Wno-c++98-compat -Wno-c++98-compat-pedantic"
 else
     CXXFLAGS="$CXXFLAGS -Wno-suggest-destructor-override -Wno-suggest-override"
 fi
@@ -57,7 +57,7 @@ function compile_test {
     clang++ -o ./build/${name} $OPT $ARCH $LDFLAGS ./build/test_${name}.o
 }
 
-TESTS="array hashtable algorithm rle ringbuffer"
+TESTS="array hashtable algorithm rle bitarray ringbuffer"
 if [[ $# -gt 0 ]] ; then
     TESTS="$*"
 fi

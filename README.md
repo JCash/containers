@@ -45,13 +45,15 @@ A fast and small C++ container for storing dynamic arrays.
 * ~3x faster than std::vector, and ~2x faster than eastl::vector when using "push_back"
 * Otherwise same performance as the others
 
+## [jc::BitArray](src/jc/bitarray.h)
+
+* Header only C/C++ bit array
 ## [jc::RingBuffer](src/jc/ringbuffer.h)
 
 A small C++ ring buffer
 
 * ~120 lines of code
 * Can be resized (using realloc and copying items)
-
 
 # [Benchmarks](benchmarks/README.md)
 

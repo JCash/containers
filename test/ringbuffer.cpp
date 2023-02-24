@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <deque>
-#include <jc/ringbuffer.h>
+#include <jc/cpp/ringbuffer.h>
 
 #define JC_TEST_USE_DEFAULT_MAIN
 #include "jc_test.h"

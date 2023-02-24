@@ -1,7 +1,7 @@
 
 #define JC_TEST_USE_DEFAULT_MAIN
 #include "jc_test.h"
-#include <jc/hashtable.h>
+#include <jc/cpp/hashtable.h>
 
 #include <stdlib.h>
 
@@ -25,14 +25,14 @@ typedef jc::HashTable<uint64_t, SPod> TestHT64;
 class HashTableTest : public jc_test_base_class
 {
 protected:
-    virtual ~HashTableTest();
-    void SetUp() {
+    virtual ~HashTableTest() override;
+    void SetUp() override {
         htcount = 10;
         memorysize = TestHT64::CalcSize(htcount);
         memory = malloc( memorysize );
         ht.Create(htcount, memory);
     }
-    void TearDown() {
+    void TearDown() override {
         free(memory);
     }
     uint32_t    htcount;
