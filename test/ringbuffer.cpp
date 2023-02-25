@@ -36,9 +36,10 @@ static void DebugPrint(jc::RingBuffer<int>& buf) {
 TEST(RingBufferTest, Create)
 {
     jc::RingBuffer<int> a;
-    ASSERT_FALSE(a.Empty());
-    ASSERT_TRUE(a.Full());
     ASSERT_EQ(0, a.Capacity());
+    ASSERT_EQ(0, a.Size());
+    ASSERT_TRUE(a.Empty());
+    ASSERT_TRUE(a.Full());
 
     jc::RingBuffer<int> b(5);
     ASSERT_TRUE(b.Empty());

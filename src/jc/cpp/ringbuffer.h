@@ -16,6 +16,7 @@ DISCLAIMER:
 
 #pragma once
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <assert.h> // disable with NDEBUG
 
@@ -42,7 +43,7 @@ public:
                                                             m_Max - (m_Tail - m_Head);
                                                 }
     /// Empty if Size()==0
-    bool        Empty() const                   { return !m_Full && Size()==0; }
+    bool        Empty() const                   { return Size()==0; }
     bool        Full() const                    { return m_Full!=0; }
     /// Clears the buffer and sets size to 0. Does not free memory
     void        Clear()                         { m_Head = m_Tail = 0; m_Full = m_Max==0; }
