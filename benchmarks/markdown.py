@@ -19,7 +19,7 @@ def get_path_from_test_name(category, name):
 
 def get_log(path):
     lines = []
-    with open(path, 'rb') as f:
+    with open(path, 'rt') as f:
         for line in f.readlines():
             if line.startswith('# '):
                 continue
@@ -46,14 +46,14 @@ if __name__ == '__main__':
     category= sys.argv[2]
     log     = sys.argv[3]
 
-    print "# %s benchmarks" % title
-    print ""
-    print "Benchmarks run on a:", get_machine(), " ", get_cpu() 
-    print ""
+    print("# %s benchmarks" % title)
+    print("")
+    print("Benchmarks run on a:", get_machine(), " ", get_cpu() )
+    print("")
 
     lines = get_log(log)
 
-    print "# Images"
+    print("# Images")
 
     tests = get_tests(lines)
     i = 0
@@ -61,20 +61,20 @@ if __name__ == '__main__':
         if ('dmHashTable' in test):
             continue
         if (i % 2) == 0:
-            print '_\n<br/>'
+            print('_\n<br/>')
         i = i + 1
-        print '<img src="%s" alt="%s" width="350">' % (get_path_from_test_name(category, test), test)
+        print('<img src="%s" alt="%s" width="350">' % (get_path_from_test_name(category, test), test))
 
 
-    print ""
-    print "# Tables"
-    print ""
+    print("")
+    print("# Tables")
+    print("")
 
-    print "### %s" % log
-    print ""
+    print("### %s" % log)
+    print("")
     for line in lines:
         if 'dmHashTable' in line:
             continue
         tokens = line.split()
         tokens = map(sub, tokens)
-        print " ".join(tokens)
+        print(" ".join(tokens))

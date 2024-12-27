@@ -37,7 +37,6 @@ function benchmark {
     done
 }
 
-
 function benchmark_array {
     local SERIES=()
     count=100000
@@ -46,7 +45,9 @@ function benchmark_array {
          SERIES+="$count "
          ((count+=100000))
     done
-    benchmark "stl eastl boost jc carray" "$SERIES"
+    benchmark "carray stl boost jc" "$SERIES"
+}
+
 }
 
 case $TESTCATEGORY in
