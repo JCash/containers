@@ -10,6 +10,7 @@ ABOUT:
     - Supports values with = operator
 
 VERSION:
+    2.11 - (2024-12-28) - Added Full()
     2.10 - (2024-12-28) - Added SetCapacity() and dynamic size support
     2.01 - (2016-11-06) - Removed requirement of allocating memory at power of 2 sizes
     2.00 - (2016-06-04) - Changed to two arrays: entries & values
@@ -298,6 +299,11 @@ public:
     inline uint32_t Size() const
     {
         return m_Size;
+    }
+
+    inline bool Full() const
+    {
+        return m_Size == m_Capacity;
     }
 
     class Iterator
