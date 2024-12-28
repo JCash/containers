@@ -434,12 +434,13 @@ TEST_F(HashTableTest, SetCapacity)
             {
                 uint32_t target_size = table_size + grow_iter;
 
-                ht.SetCapacity(target_size + grow_iter);
+                ht.SetCapacity(target_size);
 
                 FillMaps(map, ht, target_size);
 
                 ASSERT_EQ(map.size(), ht.Size());
                 ASSERT_EQ(target_size, ht.Size());
+                ASSERT_TRUE(ht.Full());
 
                 // Compare
                 AssertEqual(map, ht);
