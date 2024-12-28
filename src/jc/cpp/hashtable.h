@@ -10,6 +10,7 @@ ABOUT:
     - Supports values with = operator
 
 VERSION:
+    2.10 - (2024-12-28) - Added SetCapacity() and dynamic size support
     2.01 - (2016-11-06) - Removed requirement of allocating memory at power of 2 sizes
     2.00 - (2016-06-04) - Changed to two arrays: entries & values
                         - Removed empty key (API change)
@@ -91,6 +92,10 @@ USAGE:
 #include <string.h>
 #include <assert.h>
 
+#if defined(__x86_64__) || defined(__arm64) || defined(__aarch64__) || defined(__ppc64__) || defined(_WIN64)
+    #define JC_HT_64BIT
+#endif
+
 namespace jc
 {
 
@@ -102,6 +107,8 @@ public:
     typedef KEY key_type;
     typedef VALUE mapped_type;
 
+    static const uint32_t INVALID_INDEX = 0xFFFFFFFF;
+
     // Calculate the size of the memory needed
     static uint32_t CalcSize(uint32_t capacity)
     {
@@ -110,27 +117,72 @@ public:
 
     HashTable()
     {
+        memset(this, 0, sizeof(*this));
     }
 
     HashTable(uint32_t capacity, void* mem)
+    : m_UserAllocated(1)
     {
         Create(capacity, mem);
     }
 
-    void Create(uint32_t capacity, void* mem)
+    ~HashTable()
     {
-        m_Capacity      = capacity;
-        m_Entries       = reinterpret_cast<Entry*>(mem);
-        m_Values        = reinterpret_cast<Value*>(m_Entries + m_Capacity);
-        Clear();
+        if (!m_UserAllocated)
+        {
+            free((void*)m_Entries);
+        }
+    }
+
+    inline void Create(uint32_t capacity, void* mem)
+    {
+        assert(m_UserAllocated==1 || m_Entries==0);
+        CreateFromMem(capacity, mem, 1);
     }
 
     inline void Clear()
     {
         m_Size = 0;
-        m_FreeList = 0xFFFFFFFF;
+        m_FreeList = INVALID_INDEX;
         m_InitialFreeList = 0;
         memset(m_Entries, 0xFF, sizeof(Entry) * m_Capacity);
+    }
+
+    inline void SetCapacity(uint32_t capacity)
+    {
+        assert(capacity < 0xFFFFFFFF);
+        assert(m_Size <= capacity);
+        assert(!m_UserAllocated);
+
+        if (m_Entries == 0)
+        {
+            uint32_t memsize = CalcSize(capacity);
+            void* mem = malloc(memsize);
+            CreateFromMem(capacity, mem, 0);
+        }
+        else
+        {
+            // Remap
+            HashTable<KEY, VALUE> tmp;
+            tmp.SetCapacity(capacity);
+
+            for (HashTable<KEY, VALUE>::Iterator it = Begin(); it != End(); ++it)
+            {
+                tmp.Put(*it.GetKey(), *it.GetValue());
+            }
+
+            // swap the internals
+            free((void*)m_Entries);
+
+            m_Entries         = tmp.m_Entries;
+            m_Values          = tmp.m_Values;
+            m_InitialFreeList = tmp.m_InitialFreeList;
+            m_FreeList        = tmp.m_FreeList;
+            m_Capacity        = capacity;
+
+            // avoid double delete
+            tmp.m_Entries = 0;
+        }
     }
 
     inline VALUE* Get(const KEY& key)
@@ -219,7 +271,7 @@ public:
 
         m_Values[m_Entries[index].m_Index].m_Next = m_FreeList;
         m_FreeList = m_Entries[index].m_Index;
-        assert( m_FreeList != 0xFFFFFFFF );
+        assert( m_FreeList != INVALID_INDEX );
 
         uint32_t previndex = index;
         uint32_t swapindex;
@@ -230,7 +282,7 @@ public:
 
             if( IsFree(swapindex) || Distance(swapindex) == 0 )
             {
-                m_Entries[previndex].m_Index = 0xFFFFFFFF;
+                m_Entries[previndex].m_Index = INVALID_INDEX;
                 break;
             }
             m_Entries[previndex] = m_Entries[swapindex];
@@ -252,7 +304,7 @@ public:
     {
         const HashTable<KEY, VALUE>* m_HashTable;
         uint32_t m_EntryIndex;
-        #ifdef __x86_64__
+        #if defined(JC_HT_64BIT)
         uint32_t _pad;
         #endif
 
@@ -263,14 +315,14 @@ public:
             {
                 for( uint32_t i = 0; i < m_HashTable->m_Capacity; ++i)
                 {
-                    if( m_HashTable->m_Entries[i].m_Index != 0xFFFFFFFF )
+                    if( m_HashTable->m_Entries[i].m_Index != HashTable::INVALID_INDEX )
                     {
                         m_EntryIndex = i;
                         return;
                     }
                 }
             }
-            m_EntryIndex = 0xffffffff;
+            m_EntryIndex = INVALID_INDEX;
         }
 
         const KEY*      GetKey() const      { return &m_HashTable->m_Entries[m_EntryIndex].m_Key; }
@@ -281,12 +333,12 @@ public:
             ++m_EntryIndex;
             for( ; m_EntryIndex < m_HashTable->m_Capacity; ++m_EntryIndex)
             {
-                if( m_HashTable->m_Entries[m_EntryIndex].m_Index != 0xFFFFFFFF )
+                if( m_HashTable->m_Entries[m_EntryIndex].m_Index != INVALID_INDEX )
                 {
                     return *this;
                 }
             }
-            m_EntryIndex = 0xFFFFFFFF;
+            m_EntryIndex = INVALID_INDEX;
             return *this;
         }
 
@@ -302,7 +354,7 @@ private:
     {
         KEY         m_Key;      // Key is also the hash
         uint32_t    m_Index;    // Index into the values array
-        #ifdef __x86_64__
+        #if defined(JC_HT_64BIT)
         uint32_t    _pad;
         #endif
     };
@@ -311,7 +363,7 @@ private:
     {
         VALUE       m_Value;
         uint32_t    m_Next;     // Index into the values array
-        #ifdef __x86_64__
+        #if defined(JC_HT_64BIT)
         uint32_t    _pad;
         #endif
     };
@@ -321,7 +373,17 @@ private:
     uint32_t    m_InitialFreeList; // while <capacity, points to the next free value node
     uint32_t    m_FreeList; // A list of free value nodes
     uint32_t    m_Capacity;
-    uint32_t    m_Size;
+    uint32_t    m_Size:31;
+    uint32_t    m_UserAllocated:1;
+
+    inline void CreateFromMem(uint32_t capacity, void* mem, uint32_t user_allocated)
+    {
+        m_Capacity      = capacity;
+        m_Entries       = reinterpret_cast<Entry*>(mem);
+        m_Values        = reinterpret_cast<Value*>(m_Entries + m_Capacity);
+        m_UserAllocated = user_allocated;
+        Clear();
+    }
 
     inline const VALUE* GetInternal(const KEY& key) const
     {
@@ -346,7 +408,7 @@ private:
 
     inline bool IsFree(uint32_t entryindex) const
     {
-        return m_Entries[entryindex].m_Index == 0xFFFFFFFF;
+        return m_Entries[entryindex].m_Index == INVALID_INDEX;
     }
 
     inline uint32_t Distance(uint32_t index_stored) const

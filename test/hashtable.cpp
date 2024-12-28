@@ -313,6 +313,42 @@ TEST_F(HashTableTest, AddRemoveAdd)
     free(memory);
 }
 
+template<typename KEY, typename VALUE>
+static void AssertEqual(std::map<KEY, VALUE>& map, jc::HashTable<KEY, VALUE>& ht)
+{
+    std::map<uint32_t, uint32_t>::iterator iter;
+    for( iter = map.begin(); iter != map.end(); ++iter)
+    {
+        uint32_t key = iter->first;
+        ASSERT_NE(uintptr_t(0), uintptr_t(ht.Get(key)));
+        ASSERT_EQ(iter->second, *ht.Get(key));
+    }
+}
+
+template<typename KEY, typename VALUE>
+static void FillMaps(std::map<KEY, VALUE>& map, jc::HashTable<KEY, VALUE>& ht, uint32_t count)
+{
+    while (map.size() != count)
+    {
+        if (map.size() < count)
+        {
+            uint32_t key = uint32_t(rand() & 0x3ff); // keys up to 1023...
+            uint32_t val = uint32_t(rand());
+
+            map[key] = val;
+            ht.Put(key, val);
+        }
+        else
+        {
+            uint32_t key = map.begin()->first;
+            map.erase(map.begin());
+            ht.Erase(key);
+        }
+
+        ASSERT_EQ(map.size(), ht.Size());
+    }
+}
+
 TEST_F(HashTableTest, AddRemoveAdd2)
 {
 	const uint32_t N = 20;
@@ -341,37 +377,13 @@ TEST_F(HashTableTest, AddRemoveAdd2)
                     target_size = count;
                 }
 
-                while (map.size() != target_size)
-                {
-                    if (map.size() < target_size)
-                    {
-                        uint32_t key = uint32_t(rand() & 0x3ff); // keys up to 1023...
-                        uint32_t val = uint32_t(rand());
-
-                        map[key] = val;
-                        ht.Put(key, val);
-                    }
-                    else
-                    {
-                        uint32_t key = map.begin()->first;
-                        map.erase(map.begin());
-                        ht.Erase(key);
-                    }
-
-                    ASSERT_EQ(map.size(), ht.Size());
-                }
+                FillMaps(map, ht, target_size);
 
                 ASSERT_EQ(map.size(), ht.Size());
                 ASSERT_EQ(target_size, ht.Size());
             }
             // Compare
-            std::map<uint32_t, uint32_t>::iterator iter;
-            for( iter = map.begin(); iter != map.end(); ++iter)
-            {
-                uint32_t key = iter->first;
-                ASSERT_NE(uintptr_t(0), uintptr_t(ht.Get(key)));
-                ASSERT_EQ(iter->second, *ht.Get(key));
-            }
+            AssertEqual(map, ht);
         }
     }
 
@@ -402,4 +414,36 @@ TEST_F(HashTableTest, Bug_Erase)
     ht.Erase( key );
 
     free(memory);
+}
+
+TEST_F(HashTableTest, SetCapacity)
+{
+    const uint32_t N = 20;
+
+    for (uint32_t count = 1; count < N; ++count)
+    {
+        for (uint32_t table_size = 1; table_size <= 2*N; ++table_size)
+        {
+            std::map<uint32_t, uint32_t> map;
+
+            jc::HashTable<uint32_t, uint32_t> ht;
+            ht.SetCapacity(table_size);
+
+            const uint32_t grow_iter_count = 20;
+            for (uint32_t grow_iter = 1; grow_iter < grow_iter_count; ++grow_iter)
+            {
+                uint32_t target_size = table_size + grow_iter;
+
+                ht.SetCapacity(target_size + grow_iter);
+
+                FillMaps(map, ht, target_size);
+
+                ASSERT_EQ(map.size(), ht.Size());
+                ASSERT_EQ(target_size, ht.Size());
+
+                // Compare
+                AssertEqual(map, ht);
+            }
+        }
+    }
 }

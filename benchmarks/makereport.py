@@ -26,7 +26,7 @@ def convert_time(t, unit):
 
 def parse_log(report, reportpath):
     counts = []
-    with open(reportpath, 'rb') as f:
+    with open(reportpath, 'rt') as f:
         n = -1
         iterations = -1
         for line in f:
@@ -70,8 +70,8 @@ def parse_log(report, reportpath):
 
 def collect_table_data(counts, report, tabledata):
 
-    for category, tests in report.iteritems():
-        for testname, results in tests.iteritems():
+    for category, tests in report.items():
+        for testname, results in tests.items():
             if testname in ['title', 'scale', 'unit']:
                 continue
             
@@ -84,7 +84,7 @@ def collect_table_data(counts, report, tabledata):
                 tabledata[category][testname]['counts'] = list()
             tabledata[category][testname]['counts'].extend(counts)
             
-            for name, values in results.iteritems():
+            for name, values in results.items():
                 if not name in tabledata[category][testname]:
                     tabledata[category][testname][name] = list()
                 if name in ['title', 'scale', 'unit']:
@@ -96,16 +96,16 @@ def collect_table_data(counts, report, tabledata):
 def make_table_report(data):
     usediff = False
 
-    for category, tests in data.iteritems():
+    for category, tests in data.items():
     
         totaldiff = 0.0
     
-        for testname, results in tests.iteritems():
+        for testname, results in tests.items():
             if testname in ['title', 'scale', 'formatter', 'unit']:
                 continue
             
             columns = list()
-            for name, values in results.iteritems():
+            for name, values in results.items():
                 if len(values) < len(results['counts']):
                     values.extend( (len(results['counts']) - len(values)) * [0.0])
                 columns.append( [name]+values )
@@ -114,11 +114,11 @@ def make_table_report(data):
             scale = tests['scale']
             title = tests['title']
             
-            matrix = zip(*columns)
+            matrix = list(zip(*columns))
             
             rows = [list(matrix[0])]
             for row in matrix[1:]:
-                rows.append( [str(row[0])] + map(formatter, map(lambda x: scale * x, row[1:]) ) )
+                rows.append( [str(row[0])] + list(map(formatter, map(lambda x: scale * x, row[1:]) )) )
             
             lengths = [0] * len(rows[0])
             for row in rows:
@@ -136,10 +136,10 @@ def make_table_report(data):
                 else:
                     headersunderline.append( '-' * (length + 2) )
                     
-            print "## " + title + " " + testname
-            print ""
-            print '|' + '|'.join(headers) + '|'
-            print '|' + '|'.join(headersunderline) + '|'
+            print("## " + title + " " + testname)
+            print("")
+            print('|' + '|'.join(headers) + '|')
+            print('|' + '|'.join(headersunderline) + '|')
 
             for row in rows[1:]:
                 values = []
@@ -148,23 +148,23 @@ def make_table_report(data):
                     value = v.ljust(length)
                     values.append( ' ' + value + ' ')
                 
-                print '|' + '|'.join(values) + '|',
+                print('|' + '|'.join(values) + '|',)
                 if not usediff:
-                    print ""
+                    print("")
                 
                 diff = 0.0
                 if usediff:
                     tokens = values[-1].split()
                     diff = float(tokens[0]) - float(values[-2].split()[0])
-                    print diff, tokens[1]
+                    print(diff, tokens[1])
                     
             totaldiff += diff
             
-            print ""
-            print ""
+            print("")
+            print("")
         
         if usediff:
-            print "Total diff:", totaldiff
+            print("Total diff:", totaldiff)
 
 
 if __name__ == '__main__':
@@ -213,4 +213,4 @@ if __name__ == '__main__':
     make_table_report(tabledata)
 
     timeend = time.time()
-    print "# Report made in %f seconds" % (timeend - timestart)
+    print("# Report made in %f seconds" % (timeend - timestart))

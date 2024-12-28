@@ -19,7 +19,7 @@ def convert_time(t, unit):
     
 def parse_log(path):
     tests = []
-    with open(path, 'rb') as f:
+    with open(path, 'rt') as f:
         lines = f.readlines()
         
         headers = None
@@ -95,7 +95,7 @@ def render_matplotlib(test, outputdir):
     bars = []
     offset = 0
     markers='ov*sxd'
-    for i, (name, values) in enumerate(test['headers'].iteritems()):
+    for i, (name, values) in enumerate(test['headers'].items()):
         values = [x * scale for x in values]
         plt.plot(test['counts'], values, label=name, color=random_color(), marker=markers[i % len(markers)])
         offset += bar_width
@@ -111,7 +111,7 @@ def render_matplotlib(test, outputdir):
     plt.savefig(outpath)
     plt.close()
 
-    print "Wrote", outpath
+    print("Wrote", outpath)
             
 if __name__ == '__main__':
     tests = parse_log(sys.argv[1])

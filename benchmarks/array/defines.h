@@ -63,7 +63,7 @@ typedef struct SValue
     typedef valuelarge_t* container_valuelarge_t;
 
 #elif defined(IMPL_JC)
-    #include <jc/array.h>
+    #include <jc/cpp/array.h>
     #define CONTAINERNAME "jc::Array"
     #define SET_CAPACITY(_CONTAINER, _SIZE) (_CONTAINER).SetCapacity(_SIZE)
     #define SET_SIZE(_CONTAINER, _SIZE)     (_CONTAINER).SetSize(_SIZE)
