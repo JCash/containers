@@ -10,8 +10,7 @@ ABOUT:
     - Supports values with = operator
 
 VERSION:
-    2.11 - (2024-12-28) - Added Full()
-    2.10 - (2024-12-28) - Added SetCapacity() and dynamic size support
+    2.10 - (2024-12-28) - Added SetCapacity(), Full() and Capacity()
     2.01 - (2016-11-06) - Removed requirement of allocating memory at power of 2 sizes
     2.00 - (2016-06-04) - Changed to two arrays: entries & values
                         - Removed empty key (API change)
@@ -299,6 +298,11 @@ public:
     inline uint32_t Size() const
     {
         return m_Size;
+    }
+
+    inline uint32_t Capacity() const
+    {
+        return m_Capacity;
     }
 
     inline bool Full() const
