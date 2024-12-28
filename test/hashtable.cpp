@@ -428,6 +428,7 @@ TEST_F(HashTableTest, SetCapacity)
 
             jc::HashTable<uint32_t, uint32_t> ht;
             ht.SetCapacity(table_size);
+            ASSERT_EQ(table_size, ht.Capacity());
 
             const uint32_t grow_iter_count = 20;
             for (uint32_t grow_iter = 1; grow_iter < grow_iter_count; ++grow_iter)
@@ -435,6 +436,7 @@ TEST_F(HashTableTest, SetCapacity)
                 uint32_t target_size = table_size + grow_iter;
 
                 ht.SetCapacity(target_size);
+                ASSERT_EQ(target_size, ht.Capacity());
 
                 FillMaps(map, ht, target_size);
 
