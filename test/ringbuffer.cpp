@@ -405,3 +405,55 @@ TEST(RingBufferTest, FlattenUnordered_Wrapped)
     const int expected[7] = {8,9,10,11,5,6,7};
     ASSERT_ARRAY_EQ_LEN(expected, rb.Buffer(), 7);
 }
+
+TEST(RingBufferTest, Erase_Contiguous_Middle)
+{
+    jc::RingBuffer<int> rb(8);
+    for (int i = 0; i < 6; ++i) rb.Push(i); // 0..5
+
+    rb.Erase(2); // remove '2'
+    ASSERT_EQ(5u, rb.Size());
+    const int expected1[5] = {0,1,3,4,5};
+    for (uint32_t i = 0; i < 5; ++i)
+    {
+        ASSERT_EQ(expected1[i], rb[i]);
+    }
+}
+
+TEST(RingBufferTest, Erase_Wrapped_Middle)
+{
+    jc::RingBuffer<int> rb(8);
+    for (int i = 0; i < 8; ++i) rb.Push(i); // 0..7 full
+    for (int i = 0; i < 5; ++i) rb.Pop();   // -> [5,6,7]
+    for (int i = 8; i < 12; ++i) rb.Push(i); // wrap -> [5,6,7,8,9,10,11]
+
+    rb.Erase(3); // remove '8'
+
+    ASSERT_EQ(6u, rb.Size());
+    const int expected2[6] = {5,6,7,9,10,11};
+    for (uint32_t i = 0; i < 6; ++i)
+    {
+        ASSERT_EQ(expected2[i], rb[i]);
+    }
+}
+
+TEST(RingBufferTest, Erase_HeadZero_TailPositive)
+{
+    jc::RingBuffer<int> rb(10);
+    // Create head==0, tail>0, sequence [4,5,6,7,8,9]
+    for (int i = 0; i < 6; ++i) rb.Push(i); // 0..5
+    for (int i = 0; i < 4; ++i) rb.Pop();   // tail=4, size=2
+    for (int i = 6; i < 10; ++i) rb.Push(i); // wraps, head==0
+
+    ASSERT_EQ(0u, rb.Head());
+    ASSERT_EQ(4u, rb.Tail());
+
+    rb.Erase(1); // remove '5'
+
+    ASSERT_EQ(5u, rb.Size());
+    const int expected3[5] = {4,6,7,8,9};
+    for (uint32_t i = 0; i < 5; ++i)
+    {
+        ASSERT_EQ(expected3[i], rb[i]);
+    }
+}
