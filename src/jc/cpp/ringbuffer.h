@@ -319,8 +319,8 @@ void RingBuffer<T>::ReverseRange(uint32_t begin, uint32_t end_exclusive)
 
 VERSION:
 
-    1.1 Added Swap() function
-    1.0 Initial version
+    1.1 2025-10-08  Added Swap(), Erase() and Flatten*() functions
+    1.0             Initial version
 
 
 LICENSE:
