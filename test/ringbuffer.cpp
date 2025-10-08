@@ -5,7 +5,8 @@
 #define JC_TEST_USE_DEFAULT_MAIN
 #include "jc_test.h"
 
-static void DebugPrint(jc::RingBuffer<int>& buf) {
+static void DebugPrint(jc::RingBuffer<int>& buf)
+{
     uint32_t cap = buf.Capacity();
     uint32_t tail = buf.Tail();
     uint32_t head = buf.Head();
@@ -15,20 +16,20 @@ static void DebugPrint(jc::RingBuffer<int>& buf) {
 
     printf("  ");
     for (uint32_t i = 0; i < cap; ++i) {
-        printf("%d", data[i]);
+        printf("%2d", data[i]);
     }
     printf("\n");
 
     printf("  ");
     for (uint32_t i = 0; i < cap; ++i) {
         if (head == i && head == tail)
-            printf("^");
+            printf(" ^");
         else if (head == i)
-            printf("H");
+            printf(" H");
         else if (tail == i)
-            printf("T");
+            printf(" T");
         else
-            printf(" ");
+            printf("  ");
     }
     printf("\n");
 }
@@ -239,4 +240,168 @@ TEST(RingBufferTest, Swap)
     ASSERT_EQ(2, a.Size());
     ASSERT_EQ(4, a[0]);
     ASSERT_EQ(5, a[1]);
+}
+
+TEST(RingBufferTest, Flatten_InPlace_ContiguousOffset)
+{
+    jc::RingBuffer<int> rb(10);
+    // Push 6 elements: 0..5
+    for (int i = 0; i < 6; ++i) rb.Push(i);
+    // Pop 2 -> logical sequence 2..5, contiguous but offset (tail=2)
+    rb.Pop(); rb.Pop();
+
+    ASSERT_EQ(4u, rb.Size());
+    rb.Flatten();
+
+    ASSERT_EQ(0u, rb.Tail());
+    ASSERT_EQ(4u, rb.Head());
+    const int expected1[4] = {2,3,4,5};
+    ASSERT_ARRAY_EQ_LEN(expected1, rb.Buffer(), 4);
+}
+
+TEST(RingBufferTest, Flatten_InPlace_Wrapped)
+{
+    jc::RingBuffer<int> rb(10);
+    // Fill to full 0..9
+    for (int i = 0; i < 10; ++i) rb.Push(i);
+    // Pop 6 -> tail moves to 6, size=4
+    for (int i = 0; i < 6; ++i) rb.Pop();
+    // Push 4 more -> wrap head, logical seq 6..13, size=8
+    for (int i = 10; i < 14; ++i) rb.Push(i);
+
+    ASSERT_EQ(8u, rb.Size());
+    rb.Flatten();
+
+    ASSERT_EQ(0u, rb.Tail());
+    ASSERT_EQ(8u, rb.Head());
+    const int expected2[8] = {6,7,8,9,10,11,12,13};
+    ASSERT_ARRAY_EQ_LEN(expected2, rb.Buffer(), 8);
+}
+
+TEST(RingBufferTest, Flatten_HeadZero_TailPositive)
+{
+    jc::RingBuffer<int> rb(10);
+    // Push 6 elements: 0..5  => head=6, tail=0
+    for (int i = 0; i < 6; ++i) rb.Push(i);
+    // Pop 4              => head=6, tail=4, size=2
+    for (int i = 0; i < 4; ++i) rb.Pop();
+    // Push 4 elements: 6..9 => head wraps to 0, tail=4, size=6, not full
+    for (int i = 6; i < 10; ++i) rb.Push(i);
+
+    ASSERT_EQ(0u, rb.Head());
+    ASSERT_EQ(4u, rb.Tail());
+    ASSERT_EQ(6u, rb.Size());
+    ASSERT_FALSE(rb.Full());
+
+    rb.Flatten();
+
+    ASSERT_EQ(0u, rb.Tail());
+    ASSERT_EQ(6u, rb.Head());
+    const int expected[6] = {4,5,6,7,8,9};
+    ASSERT_ARRAY_EQ_LEN(expected, rb.Buffer(), 6);
+}
+
+TEST(RingBufferTest, Flatten_AlreadyContiguous_Empty)
+{
+    jc::RingBuffer<int> rb(10);
+    ASSERT_EQ(0u, rb.Size());
+    ASSERT_EQ(0u, rb.Tail());
+    ASSERT_EQ(0u, rb.Head());
+    ASSERT_FALSE(rb.Full());
+
+    rb.Flatten();
+
+    ASSERT_EQ(0u, rb.Size());
+    ASSERT_EQ(0u, rb.Tail());
+    ASSERT_EQ(0u, rb.Head());
+    ASSERT_FALSE(rb.Full());
+}
+
+TEST(RingBufferTest, Flatten_AlreadyContiguous_TailZero_NotFull)
+{
+    jc::RingBuffer<int> rb(10);
+    for (int i = 0; i < 6; ++i) rb.Push(i);
+
+    ASSERT_EQ(0u, rb.Tail());
+    ASSERT_EQ(6u, rb.Head());
+    ASSERT_EQ(6u, rb.Size());
+    ASSERT_FALSE(rb.Full());
+
+    rb.Flatten();
+
+    ASSERT_EQ(0u, rb.Tail());
+    ASSERT_EQ(6u, rb.Head());
+    const int expected[6] = {0,1,2,3,4,5};
+    ASSERT_ARRAY_EQ_LEN(expected, rb.Buffer(), 6);
+}
+
+TEST(RingBufferTest, Flatten_AlreadyContiguous_TailZero_Full)
+{
+    jc::RingBuffer<int> rb(10);
+    for (int i = 0; i < 10; ++i) rb.Push(i);
+    ASSERT_TRUE(rb.Full());
+    ASSERT_EQ(10u, rb.Size());
+    ASSERT_EQ(0u, rb.Tail());
+    ASSERT_EQ(0u, rb.Head());
+
+    rb.Flatten();
+
+    ASSERT_TRUE(rb.Full());
+    ASSERT_EQ(0u, rb.Tail());
+    ASSERT_EQ(0u, rb.Head());
+    const int expected[10] = {0,1,2,3,4,5,6,7,8,9};
+    ASSERT_ARRAY_EQ_LEN(expected, rb.Buffer(), 10);
+}
+
+// Removed AssertSetEquals; use ASSERT_ARRAY_EQ_LEN to enforce physical start at index 0
+
+TEST(RingBufferTest, FlattenUnordered_Contiguous_NoOp)
+{
+    jc::RingBuffer<int> rb(8);
+    for (int i = 0; i < 5; ++i) rb.Push(i);
+    ASSERT_EQ(0u, rb.Tail());
+    ASSERT_EQ(5u, rb.Head());
+    const int before[5] = {0,1,2,3,4};
+    ASSERT_ARRAY_EQ_LEN(before, rb.Buffer(), 5);
+
+    rb.FlattenUnordered();
+
+    ASSERT_EQ(0u, rb.Tail());
+    ASSERT_EQ(5u, rb.Head());
+    ASSERT_ARRAY_EQ_LEN(before, rb.Buffer(), 5);
+}
+
+TEST(RingBufferTest, FlattenUnordered_ContiguousOffset)
+{
+    jc::RingBuffer<int> rb(8);
+    for (int i = 0; i < 5; ++i) rb.Push(i); // 0..4
+    rb.Pop(); rb.Pop(); // logical: 2..4
+    // make it contiguous offset: tail=2, head=5
+    ASSERT_EQ(2u, rb.Tail());
+    ASSERT_EQ(5u, rb.Head());
+    rb.FlattenUnordered();
+
+    ASSERT_EQ(0u, rb.Tail());
+    ASSERT_EQ(3u, rb.Head());
+    const int expected[3] = {2,3,4};
+    ASSERT_ARRAY_EQ_LEN(expected, rb.Buffer(), 3);
+}
+
+TEST(RingBufferTest, FlattenUnordered_Wrapped)
+{
+    jc::RingBuffer<int> rb(8);
+    for (int i = 0; i < 8; ++i) rb.Push(i); // full
+    for (int i = 0; i < 5; ++i) rb.Pop();   // size=3, tail moves to 5
+    for (int i = 8; i < 12; ++i) rb.Push(i); // wrap, size=7, tail=5, head=4
+
+    ASSERT_EQ(5u, rb.Tail());
+    ASSERT_EQ(4u, rb.Head());
+    ASSERT_EQ(7u, rb.Size());
+
+    rb.FlattenUnordered();
+
+    ASSERT_EQ(0u, rb.Tail());
+    ASSERT_EQ(7u, rb.Head());
+    const int expected[7] = {8,9,10,11,5,6,7};
+    ASSERT_ARRAY_EQ_LEN(expected, rb.Buffer(), 7);
 }

@@ -20,6 +20,8 @@ DISCLAIMER:
 #include <stdlib.h>
 #include <assert.h> // disable with NDEBUG
 
+#include <string.h> // memmove
+
 #define JC_SWAP(type, lhs, rhs)\
     {\
         type tmp = rhs;\
@@ -80,8 +82,8 @@ public:
     const T&    operator[] (size_t i) const     { assert(i < Size()); return m_Buffer[(m_Tail + i) % m_Max]; }
 
     // Useful for sorting
-    void        Flatten();          // linearizes the ringbuffer into a contiguous array.
-    void        FlattenUnordered(); // faster than Flatten(), good if you are going to sort it directly after anyways
+    void        Flatten();           // in-place linearization so data starts at m_Buffer[0]
+    void        FlattenUnordered();  // compacts contiguously without preserving logical order
     T*          Buffer() const               { return m_Buffer; }
 
     // Mainly for unit tests
@@ -99,6 +101,8 @@ private:
     RingBuffer(const RingBuffer<T>& rhs);
     RingBuffer<T>& operator= (const RingBuffer<T>& rhs);
     bool operator== (const RingBuffer<T>& rhs);
+
+    void ReverseRange(uint32_t begin, uint32_t end_exclusive);
 
     void Free() {
         free(m_Buffer);
@@ -188,23 +192,6 @@ T RingBuffer<T>::Pop()
     return item;
 }
 
-template <typename T>
-void RingBuffer<T>::Flatten()
-{
-    uint32_t size = Size();
-
-    T tmp = m_Buffer[0]; // save this one
-
-    // Copy the items in logical order
-    for (uint32_t i = 0; i < size; ++i)
-    {
-        uint32_t index = (m_Tail + i) % m_Max;
-        m_Buffer[i] = index ? m_Buffer[index] : tmp;
-    }
-
-    m_Tail = 0;
-    m_Head = size-1;
-}
 
 // some cases: .=free, T=Tail, H=Head, *=used
 //  1) [T****H....]
@@ -214,21 +201,80 @@ void RingBuffer<T>::Flatten()
 template <typename T>
 void RingBuffer<T>::FlattenUnordered()
 {
-    if (m_Tail == 0) // case 1, already flattened
+    uint32_t capacity = m_Max;
+    uint32_t size = Size();
+    if (size == 0 || m_Tail == 0)
+        return; // already contiguous or empty
+
+    if (m_Tail < m_Head)
+    {
+        // Single contiguous block at offset; shift entire block to start
+        memmove(m_Buffer, m_Buffer + m_Tail, sizeof(T) * size);
+    }
+    else
+    {
+        // Wrapped case: move the rightmost part down directly after the left part.
+        // This compacts elements into [0..size-1] without preserving order.
+        uint32_t right_len = capacity - m_Tail; // [m_Tail .. m_Max)
+        memmove(m_Buffer + m_Head, m_Buffer + m_Tail, sizeof(T) * right_len);
+    }
+
+    m_Tail = 0;
+    m_Head = size;
+}
+
+// In-place linearization. After this call, the logical sequence is contiguous
+// at m_Buffer[0..Size()-1]. Does not allocate temporary buffers.
+template <typename T>
+void RingBuffer<T>::Flatten()
+{
+    uint32_t capacity = m_Max;
+    uint32_t size = Size();
+
+    // Early out when already contiguous (tail at 0) or empty
+    // No state changes in these cases.
+    if (size == 0 || m_Tail == 0)
         return;
 
-    uint32_t size = Size();
-    if (m_Tail < m_Head) // case 2: [...T***H..] -> [T***H.....]
+    if (m_Tail < m_Head)
     {
-        memmove(m_Buffer, m_Buffer+m_Tail, sizeof(T) * size);
+        // Single contiguous block but offset; shift down to index 0
+        memmove(m_Buffer, m_Buffer + m_Tail, sizeof(T) * size);
     }
-    else // case 3. Make [*H...T****] -> [*HT****...] -> [T*****H...]
+    else
     {
-        memmove(m_Buffer+m_Head, m_Buffer+m_Tail, sizeof(T) * (m_Max - m_Tail));
+        // Wrapped case: rotate the whole buffer left by m_Tail positions.
+        // This makes the logical tail land at index 0. Elements outside
+        // [0..size-1] are unspecified and may contain moved free slots.
+        uint32_t n = capacity;
+        uint32_t k = m_Tail % n;
+        if (k)
+        {
+            ReverseRange(0, k);
+            ReverseRange(k, n);
+            ReverseRange(0, n);
+        }
     }
+
     m_Tail = 0;
-    m_Head = size-1;
+    m_Head = size;
 }
+
+template <typename T>
+void RingBuffer<T>::ReverseRange(uint32_t begin, uint32_t end_exclusive)
+{
+    while (begin < end_exclusive)
+    {
+        --end_exclusive;
+        if (begin >= end_exclusive)
+            break;
+        T tmp = m_Buffer[begin];
+        m_Buffer[begin] = m_Buffer[end_exclusive];
+        m_Buffer[end_exclusive] = tmp;
+        ++begin;
+    }
+}
+
 
 } // namespace
 
