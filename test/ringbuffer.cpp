@@ -203,3 +203,40 @@ TEST(RingBufferTest, Add)
     ASSERT_TRUE(a.Empty());
     ASSERT_FALSE(a.Full());
 }
+
+TEST(RingBufferTest, Swap)
+{
+    jc::RingBuffer<int> a(5);
+    jc::RingBuffer<int> b(3);
+
+    a.Push(1);
+    a.Push(2);
+    a.Push(3);
+
+    b.Push(4);
+    b.Push(5);
+
+    ASSERT_EQ(5, a.Capacity());
+    ASSERT_EQ(3, a.Size());
+    ASSERT_EQ(1, a[0]);
+    ASSERT_EQ(2, a[1]);
+    ASSERT_EQ(3, a[2]);
+
+    ASSERT_EQ(3, b.Capacity());
+    ASSERT_EQ(2, b.Size());
+    ASSERT_EQ(4, b[0]);
+    ASSERT_EQ(5, b[1]);
+
+    a.Swap(b);
+
+    ASSERT_EQ(5, b.Capacity());
+    ASSERT_EQ(3, b.Size());
+    ASSERT_EQ(1, b[0]);
+    ASSERT_EQ(2, b[1]);
+    ASSERT_EQ(3, b[2]);
+
+    ASSERT_EQ(3, a.Capacity());
+    ASSERT_EQ(2, a.Size());
+    ASSERT_EQ(4, a[0]);
+    ASSERT_EQ(5, a[1]);
+}

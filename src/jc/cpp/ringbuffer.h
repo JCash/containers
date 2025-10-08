@@ -20,6 +20,13 @@ DISCLAIMER:
 #include <stdlib.h>
 #include <assert.h> // disable with NDEBUG
 
+#define JC_SWAP(type, lhs, rhs)\
+    {\
+        type tmp = rhs;\
+        rhs = lhs;\
+        lhs = tmp;\
+    }
+
 namespace jc
 {
 
@@ -33,6 +40,14 @@ public:
     RingBuffer() : m_Buffer(0), m_Head(0), m_Tail(0), m_Max(0), m_Full(1) {}
     RingBuffer(uint32_t capacity) : m_Buffer(0), m_Head(0), m_Tail(0), m_Max(0) { SetCapacity(capacity); }
     ~RingBuffer()                               { Free(); }
+
+    void Swap(RingBuffer<T>& rhs)               {
+                                                    JC_SWAP(T*,       m_Buffer, rhs.m_Buffer);
+                                                    JC_SWAP(uint32_t, m_Head,   rhs.m_Head);
+                                                    JC_SWAP(uint32_t, m_Tail,   rhs.m_Tail);
+                                                    JC_SWAP(uint32_t, m_Max,    rhs.m_Max);
+                                                    JC_SWAP(uint32_t, m_Full,   rhs.m_Full);
+                                                }
 
     /// Gets the size of the buffer
     uint32_t    Size() const                    {
@@ -51,6 +66,9 @@ public:
     uint32_t    Capacity() const                { return (uint32_t)m_Max; }
     /// Increases or decreases capacity. Invalidates pointers to elements
     void        SetCapacity(uint32_t capacity);
+    /// Increases or decreases capacity. Invalidates pointers to elements
+    void        OffsetCapacity(uint32_t grow);
+
     /// Adds one item to the ring buffer. Asserts if the buffer is full
     void        Push(const T& item);
     /// Adds one item to the ring buffer. Does not assert, If full, overwrites the value at the tail.
@@ -61,10 +79,14 @@ public:
     T&          operator[] (size_t i)           { assert(i < Size()); return m_Buffer[(m_Tail + i) % m_Max]; }
     const T&    operator[] (size_t i) const     { assert(i < Size()); return m_Buffer[(m_Tail + i) % m_Max]; }
 
+    // Useful for sorting
+    void        Flatten();          // linearizes the ringbuffer into a contiguous array.
+    void        FlattenUnordered(); // faster than Flatten(), good if you are going to sort it directly after anyways
+    T*          Buffer() const               { return m_Buffer; }
+
     // Mainly for unit tests
     uint32_t    Head() const                 { return m_Head; }
     uint32_t    Tail() const                 { return m_Tail; }
-    T*          Buffer() const               { return m_Buffer; }
 
 private:
     T*          m_Buffer;
@@ -137,6 +159,12 @@ void RingBuffer<T>::SetCapacity(uint32_t capacity)
 }
 
 template <typename T>
+void RingBuffer<T>::OffsetCapacity(uint32_t grow)
+{
+    SetCapacity(Capacity() + grow);
+}
+
+template <typename T>
 void RingBuffer<T>::Push(const T& item)
 {
     assert(!Full());
@@ -160,12 +188,57 @@ T RingBuffer<T>::Pop()
     return item;
 }
 
+template <typename T>
+void RingBuffer<T>::Flatten()
+{
+    uint32_t size = Size();
+
+    T tmp = m_Buffer[0]; // save this one
+
+    // Copy the items in logical order
+    for (uint32_t i = 0; i < size; ++i)
+    {
+        uint32_t index = (m_Tail + i) % m_Max;
+        m_Buffer[i] = index ? m_Buffer[index] : tmp;
+    }
+
+    m_Tail = 0;
+    m_Head = size-1;
+}
+
+// some cases: .=free, T=Tail, H=Head, *=used
+//  1) [T****H....]
+//  2) [...T***H..]
+//  3) [*H...T****]
+
+template <typename T>
+void RingBuffer<T>::FlattenUnordered()
+{
+    if (m_Tail == 0) // case 1, already flattened
+        return;
+
+    uint32_t size = Size();
+    if (m_Tail < m_Head) // case 2: [...T***H..] -> [T***H.....]
+    {
+        memmove(m_Buffer, m_Buffer+m_Tail, sizeof(T) * size);
+    }
+    else // case 3. Make [*H...T****] -> [*HT****...] -> [T*****H...]
+    {
+        memmove(m_Buffer+m_Head, m_Buffer+m_Tail, sizeof(T) * (m_Max - m_Tail));
+    }
+    m_Tail = 0;
+    m_Head = size-1;
+}
+
 } // namespace
+
+#undef JC_SWAP
 
 /*
 
 VERSION:
 
+    1.1 Added Swap() function
     1.0 Initial version
 
 
