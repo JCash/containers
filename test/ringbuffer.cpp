@@ -411,7 +411,8 @@ TEST(RingBufferTest, Erase_Contiguous_Middle)
     jc::RingBuffer<int> rb(8);
     for (int i = 0; i < 6; ++i) rb.Push(i); // 0..5
 
-    rb.Erase(2); // remove '2'
+    int removed = rb.Erase(2); // remove '2'
+    ASSERT_EQ(2, removed);
     ASSERT_EQ(5u, rb.Size());
     const int expected1[5] = {0,1,3,4,5};
     for (uint32_t i = 0; i < 5; ++i)
@@ -427,7 +428,8 @@ TEST(RingBufferTest, Erase_Wrapped_Middle)
     for (int i = 0; i < 5; ++i) rb.Pop();   // -> [5,6,7]
     for (int i = 8; i < 12; ++i) rb.Push(i); // wrap -> [5,6,7,8,9,10,11]
 
-    rb.Erase(3); // remove '8'
+    int removed2 = rb.Erase(3); // remove '8'
+    ASSERT_EQ(8, removed2);
 
     ASSERT_EQ(6u, rb.Size());
     const int expected2[6] = {5,6,7,9,10,11};
@@ -448,7 +450,8 @@ TEST(RingBufferTest, Erase_HeadZero_TailPositive)
     ASSERT_EQ(0u, rb.Head());
     ASSERT_EQ(4u, rb.Tail());
 
-    rb.Erase(1); // remove '5'
+    int removed3 = rb.Erase(1); // remove '5'
+    ASSERT_EQ(5, removed3);
 
     ASSERT_EQ(5u, rb.Size());
     const int expected3[5] = {4,6,7,8,9};

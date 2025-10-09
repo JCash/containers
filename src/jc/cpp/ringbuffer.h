@@ -77,8 +77,8 @@ public:
     void        PushUnchecked(const T& item);
     /// Removes (and returns) the first inserted item from the ring buffer. Asserts if the buffer is empty
     T           Pop();
-    /// Removes the element at logical index (0-based) and keeps order
-    void        Erase(uint32_t index);
+    /// Removes the element at logical index (0-based), keeps order, returns old value
+    T           Erase(uint32_t index);
 
     T&          operator[] (size_t i)           { assert(i < Size()); return m_Buffer[(m_Tail + i) % m_Max]; }
     const T&    operator[] (size_t i) const     { assert(i < Size()); return m_Buffer[(m_Tail + i) % m_Max]; }
@@ -195,13 +195,16 @@ T RingBuffer<T>::Pop()
 }
 
 template <typename T>
-void RingBuffer<T>::Erase(uint32_t index)
+T RingBuffer<T>::Erase(uint32_t index)
 {
     uint32_t size = Size();
     assert(index < size);
 
     // Compute physical index of the element to erase
     uint32_t pos = (m_Tail + index) % m_Max;
+
+    // Store old value to return
+    T old_value = m_Buffer[pos];
 
     // Shift elements left from pos towards head to preserve order
     // Stop when the next index equals m_Head (the logical end)
@@ -225,6 +228,8 @@ void RingBuffer<T>::Erase(uint32_t index)
         --m_Head;
     }
     m_Full = 0;
+
+    return old_value;
 }
 
 
