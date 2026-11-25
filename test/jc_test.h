@@ -190,11 +190,20 @@ struct jc_test_params_class : public jc_test_base_class {
 
 #ifndef JC_TEST_NO_DEATH_TEST
     #include <signal.h>
-    #include <setjmp.h> // setjmp+longjmp
-#if defined(__EMSCRIPTEN__) || defined(__MINGW32__)
-    #define JC_TEST_SETJMP setjmp
+    #include <setjmp.h>
+#if defined(_WIN32) || defined(__CYGWIN__) || defined(__EMSCRIPTEN__)
+    typedef jmp_buf jc_test_jmp_buf;
+    #if defined(__EMSCRIPTEN__) || defined(__MINGW32__)
+        #define JC_TEST_SETJMP setjmp
+    #else
+        #define JC_TEST_SETJMP _setjmp
+    #endif
+    #define JC_TEST_LONGJMP longjmp
 #else
-    #define JC_TEST_SETJMP _setjmp
+    typedef sigjmp_buf jc_test_jmp_buf;
+    // Restore the signal mask when a death test jumps out of its handler.
+    #define JC_TEST_SETJMP(env) sigsetjmp((env), 1)
+    #define JC_TEST_LONGJMP siglongjmp
 #endif
 #endif
 
@@ -324,9 +333,9 @@ typedef struct jc_test_fixture {
 
 typedef struct jc_test_state {
     #if !defined(JC_TEST_NO_DEATH_TEST)
-    jmp_buf             jumpenv;    // Set before trying to catch exceptions
-    // remove padding warning due to jmp_buf struct alignment
-    unsigned char _pad[sizeof(jmp_buf)+sizeof(void*) - (sizeof(jmp_buf)/sizeof(void*))*sizeof(void*)];
+    jc_test_jmp_buf     jumpenv;
+    // remove padding warning due to jumpenv alignment
+    unsigned char _pad[sizeof(void*) + sizeof(jumpenv) % sizeof(void*)];
     #endif
 
     jc_test_entry*      current_test;
@@ -1483,7 +1492,7 @@ static void jc_test_run_fixture(jc_test_fixture* fixture) {
 __attribute__ ((noreturn))
 #endif
 static void jc_test_signal_handler(int) {
-    longjmp(jc_test_get_state()->jumpenv, 1);
+    JC_TEST_LONGJMP(jc_test_get_state()->jumpenv, 1);
 }
 
 #if defined(_WIN32) || defined(__CYGWIN__)
