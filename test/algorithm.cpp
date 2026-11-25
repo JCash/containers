@@ -333,38 +333,80 @@ struct SortValue {
 
 TEST_F(AlgorithmTest, SortRadixStruct)
 {
-    #define SENTINEL_VALUE 0xcd //cdcdcdcdcdcdcd
-    #define SENTINEL {SENTINEL_VALUE,SENTINEL_VALUE}
-    #define SENTINEL_SIZE 1
+    const SortValue input_guard = {0, 0};
+    const SortValue scratch_guard = {0xcd, 0xcd};
+    SortValue by_key[] = {{4, 3}, {1, 9}, {2, 3}, {1, 2}, {0, 2}, {4, 2}, {1, 5}, input_guard};
+    SortValue by_record[ARRAY_SIZE(by_key)];
+    std::copy_n(by_key, ARRAY_SIZE(by_key), by_record);
+    const size_t count = ARRAY_SIZE(by_key) - 1;
 
-    SortValue values[]              = {{4, 3}, {1, 9}, {2, 3}, {1, 2}, {0, 2}, {4, 2}, {1, 5}, SENTINEL };
-    SortValue expected_structkey[]  = {{0, 2}, {1, 9}, {1, 2}, {1, 5}, {2, 3}, {4, 3}, {4, 2}, SENTINEL};
-    SortValue expected_stable[]     = {{0, 2}, {1, 2}, {4, 2}, {2, 3}, {4, 3}, {1, 5}, {1, 9}, SENTINEL};
+    SortValue key_tmp[ARRAY_SIZE(by_key)] = {};
+    key_tmp[count] = scratch_guard;
+    jc::radix_sort_n<sizeof(by_key[0].key)>(by_key, by_key + count, key_tmp);
 
-    uint32_t size = (uint32_t)sizeof(values)/sizeof(values[0]) - SENTINEL_SIZE;
-    SortValue* tmp = (SortValue*)malloc(sizeof(values));
-    memcpy(tmp, values, sizeof(values));
+    SortValue expected_by_key[] = {{0, 2}, {1, 9}, {1, 2}, {1, 5}, {2, 3}, {4, 3}, {4, 2}, input_guard};
+    ASSERT_ARRAY_EQ(expected_by_key, by_key);
+    ASSERT_ARRAY_EQ_LEN(&scratch_guard, key_tmp + count, 1);
 
-    //printf("Original values\n");
-    //PrintSortValues(values, size+SENTINEL_SIZE);
-    //PrintSortValues(tmp, size+SENTINEL_SIZE);
+    SortValue record_tmp[ARRAY_SIZE(by_record)] = {};
+    record_tmp[count] = scratch_guard;
+    jc::radix_sort(by_record, by_record + count, record_tmp);
 
-    jc::radix_sort_n<sizeof(values[0].key)>(values, values + size, tmp);
+    SortValue expected_by_record[] = {{0, 2}, {1, 2}, {4, 2}, {2, 3}, {4, 3}, {1, 5}, {1, 9}, input_guard};
+    ASSERT_ARRAY_EQ(expected_by_record, by_record);
+    ASSERT_ARRAY_EQ_LEN(&scratch_guard, record_tmp + count, 1);
+}
 
-    ASSERT_ARRAY_EQ(expected_structkey, values);
-    ASSERT_EQ(SENTINEL_VALUE, tmp[size].key);
-    ASSERT_EQ(SENTINEL_VALUE, tmp[size].payload);
-    ASSERT_EQ(SENTINEL_VALUE, values[size].key);
-    ASSERT_EQ(SENTINEL_VALUE, values[size].payload);
+template <int KeyBytes, size_t Count>
+static void CheckRadixSortPrefixStability()
+{
+    struct Record
+    {
+        uint8_t key[3];
+        uint8_t payload;
+    };
+    // Some two-byte ties differ in the third byte. Complete keys also repeat.
+    const uint8_t keys[][3] = {
+        {0xff, 0, 1},
+        {0,    1, 0},
+        {1,    0, 1},
+        {0xff, 0, 0},
+        {0,    1, 0},
+        {0xff, 0, 1},
+        {0,    0, 1}
+    };
+    Record values[Count];
+    for (size_t i = 0; i < Count; ++i)
+    {
+        std::copy_n(keys[i % ARRAY_SIZE(keys)], ARRAY_SIZE(values[i].key), values[i].key);
+        // Alternate low and high payloads to make the input order of ties visible.
+        values[i].payload = static_cast<uint8_t>(i % 2 == 0 ? i / 2 : Count - 1 - i / 2);
+    }
+    Record expected[Count];
+    Record tmp[Count];
+    std::copy_n(values, Count, expected);
+    std::stable_sort(expected, expected + Count, [](const Record& a, const Record& b) {
+        for (int byte = KeyBytes - 1; byte >= 0; --byte)
+        {
+            if (a.key[byte] != b.key[byte])
+                return a.key[byte] < b.key[byte];
+        }
+        return false;
+    });
 
-    jc::radix_sort(values, values + size, tmp);
+    jc::radix_sort_n<KeyBytes>(values, values + Count, tmp);
 
-    ASSERT_ARRAY_EQ(expected_stable, values);
-    ASSERT_EQ(SENTINEL_VALUE, tmp[size].key);
-    ASSERT_EQ(SENTINEL_VALUE, tmp[size].payload);
-    ASSERT_EQ(SENTINEL_VALUE, values[size].key);
-    ASSERT_EQ(SENTINEL_VALUE, values[size].payload);
+    EXPECT_ARRAY_EQ(expected, values);
+}
 
-    #undef SENTINEL
-    #undef SENTINEL_SIZE
+TEST_F(AlgorithmTest, SortRadixStableTwoByteKeys)
+{
+    CheckRadixSortPrefixStability<2, 7>();
+    CheckRadixSortPrefixStability<2, 64>();
+}
+
+TEST_F(AlgorithmTest, SortRadixStableThreeByteKeys)
+{
+    CheckRadixSortPrefixStability<3, 7>();
+    CheckRadixSortPrefixStability<3, 64>();
 }
