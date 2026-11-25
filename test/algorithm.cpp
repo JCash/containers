@@ -291,6 +291,27 @@ TEST_F(AlgorithmTest, SortRadixStable)
     ASSERT_EQ(expected_hash, sorted_hash);
 }
 
+TEST_F(AlgorithmTest, SortRadixFullWidthUint64)
+{
+    const size_t bit_count = 64;
+    uint64_t values[bit_count + 3];
+    values[0] = UINT64_MAX;
+    values[1] = UINT64_MAX - 1;
+    for (size_t i = 0; i < bit_count; ++i)
+        values[i + 2] = UINT64_C(1) << (bit_count - 1 - i);
+    values[bit_count + 2] = 0;
+
+    const size_t count = ARRAY_SIZE(values);
+    uint64_t expected[count];
+    uint64_t tmp[count];
+    std::copy_n(values, count, expected);
+    std::sort(expected, expected + count);
+
+    jc::radix_sort(values, values + count, tmp);
+
+    ASSERT_ARRAY_EQ(expected, values);
+}
+
 struct SortValue {
     uint8_t key;
     uint8_t payload;
