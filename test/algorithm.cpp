@@ -242,9 +242,9 @@ TEST_F(AlgorithmTest, LowerBoundFile)
 
 static bool IsSorted(uint64_t* a, size_t size)
 {
-    for (size_t i = 0; i < size-1; ++i)
+    for (size_t i = 1; i < size; ++i)
     {
-        if (a[i] > a[i+1])
+        if (a[i-1] > a[i])
             return false;
     }
     return true;
@@ -409,4 +409,27 @@ TEST_F(AlgorithmTest, SortRadixStableThreeByteKeys)
 {
     CheckRadixSortPrefixStability<3, 7>();
     CheckRadixSortPrefixStability<3, 64>();
+}
+
+TEST_F(AlgorithmTest, SortRadixEmptyAndSingleton)
+{
+    typedef void (*SortFunction)(uint32_t*, uint32_t*, uint32_t*);
+    const SortFunction sorts[] = {jc::radix_sort<uint32_t>, jc::radix_sort_n<3, uint32_t>};
+    for (SortFunction sort : sorts)
+    {
+        uint32_t empty = 17;
+        uint32_t empty_tmp = 23;
+        sort(&empty, &empty, &empty_tmp);
+        ASSERT_EQ(17u, empty);
+        ASSERT_EQ(23u, empty_tmp);
+
+        uint32_t values[] = {11, 0x12345678, 13};
+        uint32_t tmp[] = {21, 0, 23};
+        sort(values + 1, values + 2, tmp + 1);
+        ASSERT_EQ(11u, values[0]);
+        ASSERT_EQ(0x12345678u, values[1]);
+        ASSERT_EQ(13u, values[2]);
+        ASSERT_EQ(21u, tmp[0]);
+        ASSERT_EQ(23u, tmp[2]);
+    }
 }
