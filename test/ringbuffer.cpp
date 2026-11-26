@@ -37,8 +37,8 @@ static void DebugPrint(jc::RingBuffer<int>& buf)
 TEST(RingBufferTest, Create)
 {
     jc::RingBuffer<int> a;
-    ASSERT_EQ(0, a.Capacity());
-    ASSERT_EQ(0, a.Size());
+    ASSERT_EQ(0u, a.Capacity());
+    ASSERT_EQ(0u, a.Size());
     ASSERT_TRUE(a.Empty());
     ASSERT_TRUE(a.Full());
 
@@ -57,7 +57,7 @@ TEST(RingBufferTest, Add)
     jc::RingBuffer<int> a(5);
     memset(a.Buffer(), 0, sizeof(int)*a.Capacity());
 
-    ASSERT_EQ(5, a.Capacity());
+    ASSERT_EQ(5u, a.Capacity());
 
     // add 3
 
@@ -71,7 +71,7 @@ TEST(RingBufferTest, Add)
 
     DebugPrint(a);
 
-    ASSERT_EQ(3, a.Size());
+    ASSERT_EQ(3u, a.Size());
     ASSERT_FALSE(a.Empty());
     ASSERT_FALSE(a.Full());
 
@@ -89,7 +89,7 @@ TEST(RingBufferTest, Add)
 
     DebugPrint(a);
 
-    ASSERT_EQ(5, a.Size());
+    ASSERT_EQ(5u, a.Size());
     ASSERT_FALSE(a.Empty());
     ASSERT_TRUE(a.Full());
 
@@ -110,7 +110,7 @@ TEST(RingBufferTest, Add)
 
     DebugPrint(a);
 
-    ASSERT_EQ(5, a.Size());
+    ASSERT_EQ(5u, a.Size());
     ASSERT_FALSE(a.Empty());
     ASSERT_TRUE(a.Full());
 
@@ -131,7 +131,7 @@ TEST(RingBufferTest, Add)
 
     DebugPrint(a);
 
-    ASSERT_EQ(3, a.Size());
+    ASSERT_EQ(3u, a.Size());
     ASSERT_FALSE(a.Empty());
     ASSERT_FALSE(a.Full());
 
@@ -160,7 +160,7 @@ TEST(RingBufferTest, Add)
     array[1] = 5;
     array[2] = 6;
 
-    ASSERT_EQ(3, a.Size());
+    ASSERT_EQ(3u, a.Size());
     ASSERT_FALSE(a.Empty());
     ASSERT_FALSE(a.Full());
 
@@ -179,7 +179,7 @@ TEST(RingBufferTest, Add)
 
     DebugPrint(a);
 
-    ASSERT_EQ(6, a.Size());
+    ASSERT_EQ(6u, a.Size());
     ASSERT_FALSE(a.Empty());
     ASSERT_TRUE(a.Full());
 
@@ -192,7 +192,7 @@ TEST(RingBufferTest, Add)
 
     DebugPrint(a);
 
-    ASSERT_EQ(0, a.Size());
+    ASSERT_EQ(0u, a.Size());
     ASSERT_TRUE(a.Empty());
     ASSERT_FALSE(a.Full());
 
@@ -200,7 +200,7 @@ TEST(RingBufferTest, Add)
 
     a.Clear();
 
-    ASSERT_EQ(0, a.Size());
+    ASSERT_EQ(0u, a.Size());
     ASSERT_TRUE(a.Empty());
     ASSERT_FALSE(a.Full());
 }
@@ -217,27 +217,27 @@ TEST(RingBufferTest, Swap)
     b.Push(4);
     b.Push(5);
 
-    ASSERT_EQ(5, a.Capacity());
-    ASSERT_EQ(3, a.Size());
+    ASSERT_EQ(5u, a.Capacity());
+    ASSERT_EQ(3u, a.Size());
     ASSERT_EQ(1, a[0]);
     ASSERT_EQ(2, a[1]);
     ASSERT_EQ(3, a[2]);
 
-    ASSERT_EQ(3, b.Capacity());
-    ASSERT_EQ(2, b.Size());
+    ASSERT_EQ(3u, b.Capacity());
+    ASSERT_EQ(2u, b.Size());
     ASSERT_EQ(4, b[0]);
     ASSERT_EQ(5, b[1]);
 
     a.Swap(b);
 
-    ASSERT_EQ(5, b.Capacity());
-    ASSERT_EQ(3, b.Size());
+    ASSERT_EQ(5u, b.Capacity());
+    ASSERT_EQ(3u, b.Size());
     ASSERT_EQ(1, b[0]);
     ASSERT_EQ(2, b[1]);
     ASSERT_EQ(3, b[2]);
 
-    ASSERT_EQ(3, a.Capacity());
-    ASSERT_EQ(2, a.Size());
+    ASSERT_EQ(3u, a.Capacity());
+    ASSERT_EQ(2u, a.Size());
     ASSERT_EQ(4, a[0]);
     ASSERT_EQ(5, a[1]);
 }
