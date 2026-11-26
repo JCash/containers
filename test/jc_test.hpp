@@ -1360,10 +1360,10 @@ int jc_test_cmp_array(const uint8_t* a, const uint8_t* b, size_t len, size_t typ
     const size_t max_num_to_display = 32;
     // Each byte is shown as two characters + start/end color
     const size_t stringsize = max_num_to_display*(2 + sizeof(JC_TEST_CLR_RED)*2) + 1;
-    char stra[stringsize] = {0};
-    char strb[stringsize] = {0};
+    jc_buffered_string stra(stringsize);
+    jc_buffered_string strb(stringsize);
     char indexprefix[stringsize] = {0};
-    char diff[stringsize] = {0};
+    jc_buffered_string diff(stringsize);
     size_t size = len*typesize;
 
     // try to frame the output around the diff
@@ -1389,38 +1389,34 @@ int jc_test_cmp_array(const uint8_t* a, const uint8_t* b, size_t len, size_t typ
 
     jc_test_memset(indexprefix, ' ', 1 + local_index * typesize * (valuetype == 1 ? 1 : 2) + (valuetype == 1 ? 0 : local_index));
 
-    char* pa = stra;
-    char* pb = strb;
-    char* pd = diff;
-    char* penda = pa + stringsize;
-    char* pendb = pb + stringsize;
-    char* pendd = pd + stringsize;
     for(size_t i = start; i < end; i += typesize) {
         int byte_diff = jc_test_memcmp(a+i, b+i, typesize) != JC_TEST_STATIC_CAST(size_t, -1);
         const char* color_a = byte_diff ? JC_TEST_COL(GREEN) : JC_TEST_COL(DEFAULT);
         const char* color_b = byte_diff ? JC_TEST_COL(RED) : JC_TEST_COL(DEFAULT);
 
-        pa += JC_TEST_SNPRINTF(pa, JC_TEST_STATIC_CAST(size_t, penda - pa), "%s", color_a);
-        pb += JC_TEST_SNPRINTF(pb, JC_TEST_STATIC_CAST(size_t, pendb - pb), "%s", color_b);
+        stra.Append(color_a);
+        strb.Append(color_b);
 
         if (valuetype == 1) // char
         {
-            pa += JC_TEST_SNPRINTF(pa, JC_TEST_STATIC_CAST(size_t, penda - pa), "%c", JC_TEST_STATIC_CAST(char, a[i]));
-            pb += JC_TEST_SNPRINTF(pb, JC_TEST_STATIC_CAST(size_t, pendb - pb), "%c", JC_TEST_STATIC_CAST(char, b[i]));
-            diff[(i-start)+0] = byte_diff ? '^' : ' ';
+            stra.Appendf("%c", JC_TEST_STATIC_CAST(char, a[i]));
+            strb.Appendf("%c", JC_TEST_STATIC_CAST(char, b[i]));
+            diff.Append(byte_diff ? "^" : " ");
         }
         else {
             for (int t = JC_TEST_STATIC_CAST(int, typesize)-1; t >= 0; --t) {
-                pa += JC_TEST_SNPRINTF(pa, JC_TEST_STATIC_CAST(size_t, penda - pa), "%02X", a[JC_TEST_STATIC_CAST(size_t, t) + i]);
-                pb += JC_TEST_SNPRINTF(pb, JC_TEST_STATIC_CAST(size_t, pendb - pb), "%02X", b[JC_TEST_STATIC_CAST(size_t, t) + i]);
-                pd += JC_TEST_SNPRINTF(pd, JC_TEST_STATIC_CAST(size_t, pendd - pd), "%s", byte_diff ? "^^" : "  ");
+                stra.Appendf("%02X", a[JC_TEST_STATIC_CAST(size_t, t) + i]);
+                strb.Appendf("%02X", b[JC_TEST_STATIC_CAST(size_t, t) + i]);
+                diff.Append(byte_diff ? "^^" : "  ");
             }
-            pd += JC_TEST_SNPRINTF(pd, JC_TEST_STATIC_CAST(size_t, pendd - pd), "%c", ' ');
+            diff.Append(" ");
         }
-        int add_space = valuetype != 1 && (i < (end - typesize));
-        pa += JC_TEST_SNPRINTF(pa, JC_TEST_STATIC_CAST(size_t, penda - pa), "%s%s", JC_TEST_COL(DEFAULT), add_space ? " " : "");
-        pb += JC_TEST_SNPRINTF(pb, JC_TEST_STATIC_CAST(size_t, pendb - pb), "%s%s", JC_TEST_COL(DEFAULT), add_space ? " " : "");
-
+        stra.Append(JC_TEST_COL(DEFAULT));
+        strb.Append(JC_TEST_COL(DEFAULT));
+        if (valuetype != 1 && i < end - typesize) {
+            stra.Append(" ");
+            strb.Append(" ");
+        }
     }
     const char* emptyprefix = "   ";
     const char* prefix = start == 0 ? (valuetype == 1 ? "  \"" : "  [") : (valuetype == 1 ? "\".." : "[..");
@@ -1430,9 +1426,9 @@ int jc_test_cmp_array(const uint8_t* a, const uint8_t* b, size_t len, size_t typ
             "\nValue of %s == %s\nIndex:   %s%s%zu\nExpected: %s%s%s\nActual:   %s%s%s\nDiff:     %s%s\n",
             exprA, exprB,
             emptyprefix, indexprefix, erroroffset/typesize,
-            prefix, stra, suffix,
-            prefix, strb, suffix,
-            emptyprefix, diff);
+            prefix, stra.buffer, suffix,
+            prefix, strb.buffer, suffix,
+            emptyprefix, diff.buffer);
     return 0;
 }
 
